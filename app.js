@@ -183,6 +183,77 @@ const AIOApp = (() => {
     return data;
   }
 
+  // ---------- DADOS OFICIAIS (INMET via bridge Python · fallback Open-Meteo) ----------
+  // Fonte preferencial: telemetry/weather-oficial.json gerado por bridge/dados_dinamicos.py.
+  // Se indisponível, consulta as APIs oficiais do INMET direto no navegador (CORS liberado
+  // para o GitHub Pages); se nada responder, segue com o Open-Meteo (modelo).
+  let oficialCache = null, oficialAt = 0;
+  async function fetchOficial(){
+    if(oficialCache && Date.now()-oficialAt < AIO.oficial.ttl_ms) return oficialCache;
+    try{
+      const res = await fetch(AIO.oficial.source + '?t=' + Date.now());
+      if(!res.ok) throw new Error('HTTP ' + res.status);
+      const data = await res.json();
+      if(!data || !data.calculos) throw new Error('schema inválido');
+      oficialCache = data; oficialAt = Date.now();
+      return data;
+    }catch(e){
+      const live = await fetchOficialINMET().catch(()=>null);
+      if(live){ oficialCache = live; oficialAt = Date.now(); }
+      return oficialCache || null;
+    }
+  }
+  async function fetchOficialINMET(){
+    // Estação automática mais próxima (Caraúbas-PB geocode 2504074) — dados em tempo real.
+    const est = await fetch(`https://apiprevmet3.inmet.gov.br/estacao/proxima/2504074`).then(r=>r.json());
+    const d = est.dados, s = est.estacao;
+    if(!d || !s) throw new Error('INMET sem dados');
+    const vel = +d.VEN_VEL||0, raj = +d.VEN_RAJ||0;
+    return {
+      fonte:`INMET estação ${s.CODIGO} (${s.NOME}, ${s.DISTANCIA_EM_KM} km) — em tempo real`,
+      estacao:{ codigo:s.CODIGO, nome:s.NOME, uf:s.UF, distancia_km:s.DISTANCIA_EM_KM, medicao:`${d.DT_MEDICAO} ${d.HR_MEDICAO}` },
+      atual:{ temperatura_c:+d.TEM_INS||0, umidade_pct:+d.UMD_INS||0, pressao_hpa:+d.PRE_INS||0,
+        vento_kmh:+(vel*3.6).toFixed(1), rajada_kmh:+(raj*3.6).toFixed(1), vento_dir_deg:+d.VEN_DIR||0,
+        chuva_mm:+d.CHUVA||0, temp_max_c:+d.TEM_MAX||0, temp_min_c:+d.TEM_MIN||0 },
+      calculos:{ hidrologia:null, risco_fogo:null, arvores:null }
+    };
+  }
+  // Preenche os cards "Condições Atuais" e os modelos derivados com a fonte oficial.
+  async function applyOficial(){
+    const o = await fetchOficial();
+    if(!o) return;
+    const a = o.atual;
+    if(a){
+      gauge('gaugeTemp', a.temperatura_c, 45, '°C', '#3fe0ff');
+      gauge('gaugeHum', a.umidade_pct, 100, '%', '#12e0b0');
+      gauge('gaugeWind', a.vento_kmh, 60, 'km/h', '#ffb545');
+    }
+    const c = o.calculos || {};
+    if(c.hidrologia && c.hidrologia.q_m3s != null){
+      const h = c.hidrologia;
+      setVal('hydroQ', h.q_m3s + ' <span class="kpi-unit">m³/s</span>');
+      setVal('hydroClass', `<i class="fa-solid fa-water"></i> ${h.classe} · chuva hoje ${(h.precip_hoje_mm||0).toFixed(1)} mm`);
+      const vq = document.getElementById('hydroVisorQ');
+      if(vq) vq.innerHTML = h.q_m3s + ' <span>m³/s</span>';
+      setVal('hydroVisorVol', `Q = A × V · ${h.v_ms} m/s × ${h.area_m2} m² · volume 24h: ${fmtInt(h.vol_diario_m3)} m³`);
+      const cl = document.getElementById('hydroVisorClass');
+      if(cl){ cl.textContent = h.classe; cl.className = 'status-badge ' + (h.classe==='SECA'?'crit':h.classe==='CAUDAL ALTO'||h.classe==='EXTRAORDINÁRIO'?'warn':'ok'); }
+    }
+    if(c.eto_mm_dia != null){
+      setVal('etoVal', c.eto_mm_dia + ' <span class="kpi-unit">mm/dia</span>');
+      setVal('etoSub', `<i class="fa-solid fa-cloud-sun"></i> INMET · ${c.eto_metodo||'Hargreaves–Samani'}`);
+    }
+    if(c.arvores && c.arvores.arvores){
+      setVal('treesVal', fmtInt(c.arvores.arvores) + ' <span class="kpi-unit">árvores</span>');
+      setVal('treesSub', `<i class="fa-solid fa-seedling"></i> ${fmtInt(c.arvores.arvores_no_raio)} no raio de ${AIO.project.raio_delimitado_km} km`);
+    }
+    if(o.fonte){
+      setVal('dashSyncTime', `${new Date().toLocaleTimeString('pt-BR')} · ${o.fonte}`);
+      const src = document.getElementById('hydroNote');
+      if(src) src.textContent = `Fonte oficial: ${o.fonte}. Modelo Q = A × V com dados INMET.`;
+    }
+  }
+
   // ---------- TELEMETRIA IoT · ESTAÇÃO DE CAMPO (PoC M1) ----------
   let telemetryCache = null, telemetryAt = 0;
   async function fetchStationTelemetry(){
@@ -521,6 +592,7 @@ const AIOApp = (() => {
     if(!precipCache) fetchHydroPrecip().then(()=>updateHydroCard());   // série real de chuva p/ Q=A×V
     updateEToCard();
     updateTreesCard();
+    applyOficial();                                                    // fonte preferencial INMET (bridge Python)
 
     // Evolução dos índices espectrais (NDVI real quando disponível)
     const evo = ec('chartIndicesEvo');
@@ -1114,7 +1186,8 @@ const AIOApp = (() => {
     setInterval(()=>{ if(document.getElementById('page-ia')) runAI(); }, 3*60*1000);
   }
 
-  return { go, toast, runAI, boot, deleteReport, restoreReports, exportReport, deletedReports };
+  return { go, toast, runAI, boot, deleteReport, restoreReports, exportReport, deletedReports,
+    debug:{ fetchWeather, fetchOficial, fetchHydroPrecip, updateFireCard, updateHydroCard, updateEToCard, updateTreesCard, applyOficial } };
 })();
 
 window.addEventListener('load', () => AIOApp.boot());

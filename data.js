@@ -103,6 +103,15 @@ const AIO = {
     {label:"Último mês (Jul–Ago/2026)", file:"Sentinel-2_L2A-3_NDVI-2026-07-02T00_00_00_000Z-2026-08-02T23_59_59_999Z.csv"},
   ],
 
+  // ---------- DADOS OFICIAIS · INMET (base de cálculos Python, bridge/dados_dinamicos.py) ----------
+  // O bridge gera telemetry/weather-oficial.json a partir das fontes oficiais do INMET
+  // (estação automática mais próxima + previsão) e Open-Meteo. O app usa como fonte
+  // preferencial com fallback para Open-Meteo direto quando o arquivo estiver ausente.
+  oficial:{
+    source:"https://raw.githubusercontent.com/kraefegg/AIO-Observatory/main/telemetry/weather-oficial.json",
+    ttl_ms:600000,                       // 10 min de frescura do payload
+  },
+
   // ---------- TELEMETRIA IoT · KIT ESTAÇÃO METEOROLÓGICA (PoC M1) ----------
   // Contrato JSON publicado pelo firmware (firmware/station_weather.py) — ver docs/telemetry-contract.md.
   // A ponte MQTT→GitHub publica o último payload em telemetry/station-latest.json (raw do repo).

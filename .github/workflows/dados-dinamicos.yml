@@ -1,0 +1,59 @@
+# ============ AIO OBSERVATORY — DADOS DINÂMICOS (INMET oficial) ============
+# Roda a base de cálculos (bridge/dados_dinamicos.py) em agendamento e
+# commita telemetry/weather-oficial.json de volta ao repositório.
+# O app lê o JSON como fonte preferencial (AIO.oficial.source) com fallback
+# para as APIs do INMET/Open-Meteo direto no navegador.
+#
+# Disparos:
+#   · schedule: a cada 30 min (dados de estação INMET atualizam de hora em hora)
+#   · workflow_dispatch: manual (botão "Run workflow" no GitHub)
+#   · push: ao atualizar o script do bridge (para validar imediatamente)
+
+name: Dados Dinâmicos (INMET oficial)
+
+on:
+  schedule:
+    - cron: "0,30 * * * *"
+  workflow_dispatch:
+  push:
+    paths:
+      - "bridge/dados_dinamicos.py"
+      - ".github/workflows/dados-dinamicos.yml"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: dados-dinamicos
+  cancel-in-progress: false
+
+jobs:
+  gerar:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Gerar weather-oficial.json
+        run: python bridge/dados_dinamicos.py
+
+      - name: Commitar e enviar JSON atualizado
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add telemetry/weather-oficial.json
+          if git diff --cached --quiet; then
+            echo "Sem mudanças no JSON — nada a commitar."
+          else
+            git commit -m "chore: atualizar telemetry/weather-oficial.json (dados dinâmicos INMET)"
+            git push
+          fi
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
