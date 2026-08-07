@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AIO — Artificial Intelligence Observatory | PRAD Caraúbas-PB</title>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Rajdhani:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- BOOT SEQUENCE -->
+<div id="boot-screen">
+  <div class="boot-inner">
+    <div class="boot-logo">
+      <svg viewBox="0 0 100 100" class="boot-ring"><circle cx="50" cy="50" r="44" /></svg>
+      <div class="boot-mark">AIO</div>
+    </div>
+    <div class="boot-title">ARTIFICIAL INTELLIGENCE OBSERVATORY</div>
+    <div class="boot-sub">PRAD CARAÚBAS-PB · SISTEMA DE MONITORAMENTO GEOAMBIENTAL</div>
+    <div class="boot-bar"><div class="boot-fill" id="bootFill"></div></div>
+    <div class="boot-log" id="bootLog"></div>
+  </div>
+</div>
+
+<!-- SCANLINE / VIGNETTE OVERLAY -->
+<div class="hud-overlay"></div>
+
+<div class="app" id="app" style="display:none">
+
+  <!-- TOPBAR -->
+  <header class="topbar">
+    <div class="topbar-left">
+      <button class="burger" id="burgerBtn"><i class="fa-solid fa-bars"></i></button>
+      <div class="brand">
+        <div class="brand-mark"><i class="fa-solid fa-satellite"></i></div>
+        <div class="brand-text">
+          <span class="brand-name">AIO<em>·</em>OBSERVATORY</span>
+          <span class="brand-sub">PRAD Caraúbas–PB · 5,73 km²</span>
+        </div>
+      </div>
+    </div>
+    <div class="topbar-center">
+      <div class="clock-block">
+        <span id="clockTime">--:--:--</span>
+        <span id="clockDate">-- --- ----</span>
+      </div>
+      <div class="topbar-divider"></div>
+      <div class="coord-block"><i class="fa-solid fa-location-crosshairs"></i> 07°43'42"S 36°29'37"W</div>
+      <div class="topbar-divider"></div>
+      <div class="status-chip live" id="netStatus"><span class="dot"></span> LINK ATIVO</div>
+    </div>
+    <div class="topbar-right">
+      <button class="icon-btn" id="themeToggle" title="Alternar tema"><i class="fa-solid fa-circle-half-stroke"></i></button>
+      <button class="icon-btn" id="alertBtn" title="Alertas"><i class="fa-solid fa-triangle-exclamation"></i><span class="badge-dot" id="alertCount">3</span></button>
+      <div class="op-id">
+        <div class="op-avatar">RS</div>
+        <div class="op-meta"><span>Railson Silva</span><small>Diretor Técnico</small></div>
+      </div>
+    </div>
+  </header>
+
+  <div class="shell">
+    <!-- SIDEBAR -->
+    <nav class="sidebar" id="sidebar">
+      <div class="nav-scroll">
+        <div class="nav-group-label">OPERAÇÕES</div>
+        <a class="nav-link active" data-page="dashboard"><i class="fa-solid fa-gauge-high"></i><span>Dashboard</span></a>
+        <a class="nav-link" data-page="meteorologia"><i class="fa-solid fa-cloud-sun-rain"></i><span>Meteorologia</span></a>
+        <a class="nav-link" data-page="climatologia"><i class="fa-solid fa-temperature-three-quarters"></i><span>Climatologia</span></a>
+
+        <div class="nav-group-label">SUPERFÍCIE</div>
+        <a class="nav-link" data-page="vegetacao"><i class="fa-solid fa-seedling"></i><span>Vegetação</span></a>
+        <a class="nav-link" data-page="solo"><i class="fa-solid fa-mound"></i><span>Solo</span></a>
+        <a class="nav-link" data-page="hidrico"><i class="fa-solid fa-droplet"></i><span>Recursos Hídricos</span></a>
+        <a class="nav-link" data-page="sensoriamento"><i class="fa-solid fa-satellite-dish"></i><span>Sensoriamento Remoto</span></a>
+
+        <div class="nav-group-label">DADOS</div>
+        <a class="nav-link" data-page="mapas"><i class="fa-solid fa-map-location-dot"></i><span>Mapas</span></a>
+        <a class="nav-link" data-page="csv"><i class="fa-solid fa-table"></i><span>Dados CSV</span></a>
+        <a class="nav-link" data-page="relatorios"><i class="fa-solid fa-file-export"></i><span>Relatórios</span></a>
+        <a class="nav-link" data-page="ia"><i class="fa-solid fa-brain"></i><span>Análise IA</span></a>
+
+        <div class="nav-group-label">SISTEMA</div>
+        <a class="nav-link" data-page="config"><i class="fa-solid fa-sliders"></i><span>Configurações</span></a>
+      </div>
+      <div class="nav-footer">
+        <div class="signal-bars"><i></i><i></i><i></i><i></i><i></i></div>
+        <div class="nav-footer-text">
+          <span>OPEN-METEO LINK</span>
+          <small id="apiPing">ping —</small>
+        </div>
+      </div>
+    </nav>
+
+    <!-- MAIN CONTENT -->
+    <main class="content" id="content">
+      <!-- pages injected by app.js -->
+    </main>
+  </div>
+</div>
+
+<!-- SCRIPTS -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.4/chart.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/echarts/5.5.1/echarts.min.js"></script>
+<script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/papaparse/5.4.1/papaparse.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<script src="https://unpkg.com/@tmcw/togeojson@5.8.1/dist/togeojson.umd.js"></script>
+<script src="data.js"></script>
+<script src="pages.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

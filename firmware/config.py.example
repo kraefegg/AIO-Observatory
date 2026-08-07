@@ -1,0 +1,21 @@
+# Copie para config.py e preencha. NUNCA versionar config.py (contém credenciais).
+# Use: copy config.py.example config.py
+
+WIFI_SSID = "SUA_REDE"
+WIFI_PASS = "SUA_SENHA"
+
+# Broker MQTT (ex.: HiveMQ Cloud / EMQX / TTN)
+MQTT_BROKER = "broker.exemplo.com"
+MQTT_PORT = 8883
+MQTT_USER = ""
+MQTT_PASS = ""
+MQTT_TOPIC = "aio/telemetry/car01"
+
+SITE_ID = "car01"
+
+# Ciclo de coleta (segundos) — deep sleep entre envios
+SLEEP_S = 600
+
+# Pinos I2C (ESP32-S3)
+I2C_SCL = 8
+I2C_SDA = 9

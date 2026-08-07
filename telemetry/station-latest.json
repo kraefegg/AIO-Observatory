@@ -1,0 +1,16 @@
+{
+  "site": "car01",
+  "ts": "2026-08-06T13:05:00Z",
+  "metrics": {
+    "temperature_c": 27.4,
+    "humidity_pct": 52,
+    "pressure_hpa": 988,
+    "wind_speed_kmh": 14.2,
+    "wind_gust_kmh": 21.5,
+    "wind_dir_deg": 135,
+    "rain_24h_mm": 0.0,
+    "solar_mj_m2": 18.4
+  },
+  "battery_v": 4.1,
+  "rssi_dbm": -67
+}

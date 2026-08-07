@@ -1,0 +1,12 @@
+# Snapshots de distribuição (o proprietário re-exporta — ver AGENTS.md)
+AIO_Observatory/
+AIO_Observatory_v2/
+*.zip
+
+# Segredos e configuração local
+.env
+firmware/config.py
+
+# Runtime
+node_modules/
+*.log
