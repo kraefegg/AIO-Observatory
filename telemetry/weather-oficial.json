@@ -2,7 +2,7 @@
   "schema": "AIO.weather.oficial/v1",
   "site": "car01",
   "geocode": "2504074",
-  "ts": "2026-08-08T05:13:33+00:00",
+  "ts": "2026-08-08T06:03:27+00:00",
   "fonte": "INMET estação A387 (SANTA CRUZ DO CAPIBARIBE, 36 km) · INMET previsão oficial 15 dias · Open-Meteo precipitação real 7 dias",
   "estacao": {
     "codigo": "A387",
@@ -11,19 +11,19 @@
     "distancia_km": "36",
     "lat": "-7.95083333",
     "lon": "-36.22583332",
-    "medicao": "2026-08-08 0400",
+    "medicao": "2026-08-08 0500",
     "atual": {
       "temperatura_c": 21.8,
-      "sensacao_c": 22.4,
-      "umidade_pct": 89.0,
-      "pressao_hpa": 963.9,
-      "vento_kmh": 6.8,
-      "rajada_kmh": 18.0,
-      "vento_dir_deg": 121.0,
+      "sensacao_c": 21.8,
+      "umidade_pct": 88.0,
+      "pressao_hpa": 963.6,
+      "vento_kmh": 7.9,
+      "rajada_kmh": 17.3,
+      "vento_dir_deg": 116.0,
       "chuva_mm": 0.0,
       "radiacao_kjm2": 0.0,
-      "temp_max_c": 22.2,
-      "temp_min_c": 21.8
+      "temp_max_c": 21.9,
+      "temp_min_c": 21.7
     }
   },
   "previsao15d": [
@@ -31,26 +31,26 @@
       "data": "08/08/2026",
       "manha": {
         "resumo": "Poucas nuvens",
-        "temp_max": 31,
-        "temp_min": 19,
-        "vento": "Moderados",
-        "dir_vento": "E-SE",
+        "temp_max": 32,
+        "temp_min": 18,
+        "vento": "Fracos",
+        "dir_vento": "SE-E",
         "icone": "29"
       },
       "tarde": {
         "resumo": "Poucas nuvens",
-        "temp_max": 31,
-        "temp_min": 19,
-        "vento": "Fracos",
+        "temp_max": 32,
+        "temp_min": 18,
+        "vento": "Moderados",
         "dir_vento": "E-SE",
         "icone": "29"
       },
       "noite": {
         "resumo": "Poucas nuvens",
-        "temp_max": 31,
-        "temp_min": 19,
+        "temp_max": 32,
+        "temp_min": 18,
         "vento": "Fracos",
-        "dir_vento": "SE-E",
+        "dir_vento": "E-SE",
         "icone": "51"
       }
     },
@@ -189,7 +189,7 @@
     "temp_min": 19.4
   },
   "calculos": {
-    "eto_mm_dia": 1.9,
+    "eto_mm_dia": 1.34,
     "eto_metodo": "Hargreaves–Samani (Tmax/Tmin INMET + Ra astronômica)",
     "hidrologia": {
       "q_m3s": 2.3,
