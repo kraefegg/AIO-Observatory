@@ -2,7 +2,7 @@
   "schema": "AIO.weather.oficial/v1",
   "site": "car01",
   "geocode": "2504074",
-  "ts": "2026-08-08T12:24:57+00:00",
+  "ts": "2026-08-08T13:24:54+00:00",
   "fonte": "INMET estação A387 (SANTA CRUZ DO CAPIBARIBE, 36 km) · INMET previsão oficial 15 dias · Open-Meteo precipitação real 7 dias",
   "estacao": {
     "codigo": "A387",
@@ -11,19 +11,19 @@
     "distancia_km": "36",
     "lat": "-7.95083333",
     "lon": "-36.22583332",
-    "medicao": "2026-08-08 1200",
+    "medicao": "2026-08-08 1300",
     "atual": {
-      "temperatura_c": 24.9,
-      "sensacao_c": 23.8,
-      "umidade_pct": 71.0,
-      "pressao_hpa": 965.6,
-      "vento_kmh": 10.1,
-      "rajada_kmh": 24.5,
-      "vento_dir_deg": 123.0,
+      "temperatura_c": 27.5,
+      "sensacao_c": 25.4,
+      "umidade_pct": 59.0,
+      "pressao_hpa": 965.4,
+      "vento_kmh": 13.0,
+      "rajada_kmh": 27.4,
+      "vento_dir_deg": 100.0,
       "chuva_mm": 0.0,
-      "radiacao_kjm2": 1966.3,
-      "temp_max_c": 26.2,
-      "temp_min_c": 24.0
+      "radiacao_kjm2": 2492.1,
+      "temp_max_c": 27.7,
+      "temp_min_c": 24.9
     }
   },
   "previsao15d": [
@@ -38,12 +38,12 @@
         "icone": "29"
       },
       "tarde": {
-        "resumo": "Poucas nuvens",
+        "resumo": "Muitas nuvens",
         "temp_max": 32,
         "temp_min": 18,
         "vento": "Moderados",
         "dir_vento": "E-SE",
-        "icone": "29"
+        "icone": "34"
       },
       "noite": {
         "resumo": "Poucas nuvens",
@@ -189,7 +189,7 @@
     "temp_min": 19.4
   },
   "calculos": {
-    "eto_mm_dia": 4.8,
+    "eto_mm_dia": 5.57,
     "eto_metodo": "Hargreaves–Samani (Tmax/Tmin INMET + Ra astronômica)",
     "hidrologia": {
       "q_m3s": 1.41,
