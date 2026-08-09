@@ -2,7 +2,7 @@
   "schema": "AIO.weather.oficial/v1",
   "site": "car01",
   "geocode": "2504074",
-  "ts": "2026-08-09T06:07:13+00:00",
+  "ts": "2026-08-09T07:29:29+00:00",
   "fonte": "INMET estação A387 (SANTA CRUZ DO CAPIBARIBE, 36 km) · INMET previsão oficial 15 dias · Open-Meteo precipitação real 7 dias",
   "estacao": {
     "codigo": "A387",
@@ -11,15 +11,15 @@
     "distancia_km": "36",
     "lat": "-7.95083333",
     "lon": "-36.22583332",
-    "medicao": "2026-08-09 0500",
+    "medicao": "2026-08-09 0700",
     "atual": {
-      "temperatura_c": 22.2,
-      "sensacao_c": 21.1,
-      "umidade_pct": 88.0,
-      "pressao_hpa": 963.5,
-      "vento_kmh": 10.8,
-      "rajada_kmh": 21.6,
-      "vento_dir_deg": 131.0,
+      "temperatura_c": 22.3,
+      "sensacao_c": 23.2,
+      "umidade_pct": 87.0,
+      "pressao_hpa": 964.0,
+      "vento_kmh": 6.1,
+      "rajada_kmh": 15.8,
+      "vento_dir_deg": 117.0,
       "chuva_mm": 0.0,
       "radiacao_kjm2": 0.0,
       "temp_max_c": 22.3,
@@ -57,27 +57,27 @@
     {
       "data": "10/08/2026",
       "manha": {
-        "resumo": "Claro",
-        "temp_max": 30,
-        "temp_min": 17,
+        "resumo": "Muitas nuvens",
+        "temp_max": 31,
+        "temp_min": 18,
         "vento": "Moderados",
         "dir_vento": "SE-E",
-        "icone": "28"
+        "icone": "34"
       },
       "tarde": {
-        "resumo": "Claro",
-        "temp_max": 30,
-        "temp_min": 17,
-        "vento": "Fracos",
+        "resumo": "Muitas nuvens",
+        "temp_max": 31,
+        "temp_min": 18,
+        "vento": "Moderados",
         "dir_vento": "SE-E",
-        "icone": "28"
+        "icone": "34"
       },
       "noite": {
         "resumo": "Claro",
-        "temp_max": 30,
-        "temp_min": 17,
+        "temp_max": 31,
+        "temp_min": 18,
         "vento": "Fracos",
-        "dir_vento": "SE-W",
+        "dir_vento": "SE-E",
         "icone": "12"
       }
     },
