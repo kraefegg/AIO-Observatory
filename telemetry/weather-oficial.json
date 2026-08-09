@@ -2,7 +2,7 @@
   "schema": "AIO.weather.oficial/v1",
   "site": "car01",
   "geocode": "2504074",
-  "ts": "2026-08-09T17:02:52+00:00",
+  "ts": "2026-08-09T17:55:26+00:00",
   "fonte": "INMET estação A387 (SANTA CRUZ DO CAPIBARIBE, 36 km) · INMET previsão oficial 15 dias · Open-Meteo precipitação real 7 dias",
   "estacao": {
     "codigo": "A387",
@@ -11,19 +11,19 @@
     "distancia_km": "36",
     "lat": "-7.95083333",
     "lon": "-36.22583332",
-    "medicao": "2026-08-09 1600",
+    "medicao": "2026-08-09 1700",
     "atual": {
-      "temperatura_c": 30.5,
-      "sensacao_c": 28.7,
+      "temperatura_c": 30.1,
+      "sensacao_c": 27.2,
       "umidade_pct": 42.0,
-      "pressao_hpa": 963.7,
-      "vento_kmh": 10.8,
-      "rajada_kmh": 27.7,
-      "vento_dir_deg": 98.0,
+      "pressao_hpa": 962.9,
+      "vento_kmh": 15.1,
+      "rajada_kmh": 31.0,
+      "vento_dir_deg": 131.0,
       "chuva_mm": 0.0,
-      "radiacao_kjm2": 3025.2,
+      "radiacao_kjm2": 2849.4,
       "temp_max_c": 31.3,
-      "temp_min_c": 29.8
+      "temp_min_c": 29.6
     }
   },
   "previsao15d": [
@@ -58,7 +58,7 @@
       "data": "10/08/2026",
       "manha": {
         "resumo": "Muitas nuvens",
-        "temp_max": 31,
+        "temp_max": 32,
         "temp_min": 18,
         "vento": "Moderados",
         "dir_vento": "SE-E",
@@ -66,7 +66,7 @@
       },
       "tarde": {
         "resumo": "Muitas nuvens",
-        "temp_max": 31,
+        "temp_max": 32,
         "temp_min": 18,
         "vento": "Moderados",
         "dir_vento": "SE-E",
@@ -74,10 +74,10 @@
       },
       "noite": {
         "resumo": "Poucas nuvens",
-        "temp_max": 31,
+        "temp_max": 32,
         "temp_min": 18,
         "vento": "Fracos",
-        "dir_vento": "SE-E",
+        "dir_vento": "SE-S",
         "icone": "51"
       }
     },
@@ -189,7 +189,7 @@
     "temp_min": 17.5
   },
   "calculos": {
-    "eto_mm_dia": 4.48,
+    "eto_mm_dia": 4.76,
     "eto_metodo": "Hargreaves–Samani (Tmax/Tmin INMET + Ra astronômica)",
     "hidrologia": {
       "q_m3s": 1.09,
@@ -211,7 +211,7 @@
       "raio_km": 3.0
     },
     "risco_fogo": {
-      "risco_pct": 46,
+      "risco_pct": 51,
       "dias_sem_chuva": 1
     }
   }
