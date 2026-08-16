@@ -2,7 +2,7 @@
   "schema": "AIO.weather.oficial/v1",
   "site": "car01",
   "geocode": "2504074",
-  "ts": "2026-08-16T05:51:04+00:00",
+  "ts": "2026-08-16T06:21:49+00:00",
   "fonte": "INMET estação A387 (SANTA CRUZ DO CAPIBARIBE, 36 km) · INMET previsão oficial 15 dias · Open-Meteo precipitação real 7 dias",
   "estacao": {
     "codigo": "A387",
@@ -11,19 +11,19 @@
     "distancia_km": "36",
     "lat": "-7.95083333",
     "lon": "-36.22583332",
-    "medicao": "2026-08-16 0500",
+    "medicao": "2026-08-16 0600",
     "atual": {
-      "temperatura_c": 20.9,
-      "sensacao_c": 19.2,
-      "umidade_pct": 79.0,
-      "pressao_hpa": 965.5,
-      "vento_kmh": 10.1,
+      "temperatura_c": 20.7,
+      "sensacao_c": 19.8,
+      "umidade_pct": 80.0,
+      "pressao_hpa": 965.1,
+      "vento_kmh": 8.3,
       "rajada_kmh": 17.6,
-      "vento_dir_deg": 164.0,
+      "vento_dir_deg": 171.0,
       "chuva_mm": 0.0,
       "radiacao_kjm2": 0.0,
-      "temp_max_c": 21.2,
-      "temp_min_c": 20.6
+      "temp_max_c": 21.1,
+      "temp_min_c": 20.5
     }
   },
   "previsao15d": [
@@ -57,20 +57,20 @@
     {
       "data": "17/08/2026",
       "manha": {
-        "resumo": "Encoberto",
-        "temp_max": 29,
-        "temp_min": 19,
+        "resumo": "Nublado",
+        "temp_max": 30,
+        "temp_min": 17,
         "vento": "Moderados",
-        "dir_vento": "SE-W",
-        "icone": "44"
+        "dir_vento": "SE-E",
+        "icone": "39"
       },
       "tarde": {
-        "resumo": "Claro",
-        "temp_max": 29,
-        "temp_min": 19,
-        "vento": "Fracos",
+        "resumo": "Encoberto",
+        "temp_max": 30,
+        "temp_min": 17,
+        "vento": "Moderados",
         "dir_vento": "SE-E",
-        "icone": "28"
+        "icone": "44"
       },
       "noite": {
         "resumo": "Nublado",
@@ -189,7 +189,7 @@
     "temp_min": 20.6
   },
   "calculos": {
-    "eto_mm_dia": 2.32,
+    "eto_mm_dia": 2.31,
     "eto_metodo": "Hargreaves–Samani (Tmax/Tmin INMET + Ra astronômica)",
     "hidrologia": {
       "q_m3s": 0.72,
