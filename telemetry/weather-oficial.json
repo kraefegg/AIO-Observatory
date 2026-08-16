@@ -2,7 +2,7 @@
   "schema": "AIO.weather.oficial/v1",
   "site": "car01",
   "geocode": "2504074",
-  "ts": "2026-08-16T11:11:02+00:00",
+  "ts": "2026-08-16T11:42:02+00:00",
   "fonte": "INMET estação A387 (SANTA CRUZ DO CAPIBARIBE, 36 km) · INMET previsão oficial 15 dias · Open-Meteo precipitação real 7 dias",
   "estacao": {
     "codigo": "A387",
@@ -11,19 +11,19 @@
     "distancia_km": "36",
     "lat": "-7.95083333",
     "lon": "-36.22583332",
-    "medicao": "2026-08-16 1000",
+    "medicao": "2026-08-16 1100",
     "atual": {
-      "temperatura_c": 22.0,
-      "sensacao_c": 19.4,
-      "umidade_pct": 74.0,
-      "pressao_hpa": 966.1,
-      "vento_kmh": 12.2,
-      "rajada_kmh": 25.2,
-      "vento_dir_deg": 146.0,
+      "temperatura_c": 23.5,
+      "sensacao_c": 19.0,
+      "umidade_pct": 66.0,
+      "pressao_hpa": 966.5,
+      "vento_kmh": 17.6,
+      "rajada_kmh": 31.0,
+      "vento_dir_deg": 141.0,
       "chuva_mm": 0.0,
-      "radiacao_kjm2": 355.3,
-      "temp_max_c": 22.0,
-      "temp_min_c": 20.6
+      "radiacao_kjm2": 1070.8,
+      "temp_max_c": 23.6,
+      "temp_min_c": 22.0
     }
   },
   "previsao15d": [
@@ -57,12 +57,12 @@
     {
       "data": "17/08/2026",
       "manha": {
-        "resumo": "Nublado",
+        "resumo": "Muitas nuvens",
         "temp_max": 30,
         "temp_min": 17,
         "vento": "Moderados",
         "dir_vento": "SE-E",
-        "icone": "39"
+        "icone": "34"
       },
       "tarde": {
         "resumo": "Encoberto",
@@ -189,7 +189,7 @@
     "temp_min": 20.6
   },
   "calculos": {
-    "eto_mm_dia": 3.58,
+    "eto_mm_dia": 3.97,
     "eto_metodo": "Hargreaves–Samani (Tmax/Tmin INMET + Ra astronômica)",
     "hidrologia": {
       "q_m3s": 0.72,
@@ -211,7 +211,7 @@
       "raio_km": 3.0
     },
     "risco_fogo": {
-      "risco_pct": 29,
+      "risco_pct": 34,
       "dias_sem_chuva": 2
     }
   }
