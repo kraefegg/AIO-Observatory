@@ -2,7 +2,7 @@
   "schema": "AIO.weather.oficial/v1",
   "site": "car01",
   "geocode": "2504074",
-  "ts": "2026-08-18T10:52:31+00:00",
+  "ts": "2026-08-18T11:15:54+00:00",
   "fonte": "INMET estação A387 (SANTA CRUZ DO CAPIBARIBE, 36 km) · INMET previsão oficial 15 dias · Open-Meteo precipitação real 7 dias",
   "estacao": {
     "codigo": "A387",
@@ -57,12 +57,12 @@
     {
       "data": "19/08/2026",
       "manha": {
-        "resumo": "Nublado",
+        "resumo": "Muitas nuvens com chuva",
         "temp_max": 29,
         "temp_min": 19,
         "vento": "Moderados",
         "dir_vento": "SE-E",
-        "icone": "39"
+        "icone": "36"
       },
       "tarde": {
         "resumo": "Muitas nuvens",
