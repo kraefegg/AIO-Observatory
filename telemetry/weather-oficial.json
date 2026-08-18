@@ -2,7 +2,7 @@
   "schema": "AIO.weather.oficial/v1",
   "site": "car01",
   "geocode": "2504074",
-  "ts": "2026-08-18T11:47:52+00:00",
+  "ts": "2026-08-18T12:22:44+00:00",
   "fonte": "INMET estação A387 (SANTA CRUZ DO CAPIBARIBE, 36 km) · INMET previsão oficial 15 dias · Open-Meteo precipitação real 7 dias",
   "estacao": {
     "codigo": "A387",
@@ -11,19 +11,19 @@
     "distancia_km": "36",
     "lat": "-7.95083333",
     "lon": "-36.22583332",
-    "medicao": "2026-08-18 1100",
+    "medicao": "2026-08-18 1200",
     "atual": {
-      "temperatura_c": 20.9,
-      "sensacao_c": 18.2,
-      "umidade_pct": 90.0,
-      "pressao_hpa": 966.7,
-      "vento_kmh": 13.7,
-      "rajada_kmh": 23.0,
-      "vento_dir_deg": 181.0,
-      "chuva_mm": 0.4,
-      "radiacao_kjm2": 604.1,
-      "temp_max_c": 21.1,
-      "temp_min_c": 20.8
+      "temperatura_c": 20.7,
+      "sensacao_c": 20.0,
+      "umidade_pct": 95.0,
+      "pressao_hpa": 967.1,
+      "vento_kmh": 9.7,
+      "rajada_kmh": 20.5,
+      "vento_dir_deg": 198.0,
+      "chuva_mm": 3.8,
+      "radiacao_kjm2": 628.8,
+      "temp_max_c": 21.0,
+      "temp_min_c": 20.4
     }
   },
   "previsao15d": [
@@ -38,20 +38,20 @@
         "icone": "37"
       },
       "tarde": {
-        "resumo": "Muitas nuvens",
+        "resumo": "Muitas nuvens com pancadas de chuva isoladas",
         "temp_max": 29,
         "temp_min": 19,
         "vento": "Moderados",
         "dir_vento": "SE-W",
-        "icone": "34"
+        "icone": "37"
       },
       "noite": {
-        "resumo": "Muitas nuvens com possibilidade de chuva isolada",
+        "resumo": "Muitas nuvens com pancadas de chuva isoladas",
         "temp_max": 29,
         "temp_min": 19,
         "vento": "Moderados",
         "dir_vento": "SE-W",
-        "icone": "58"
+        "icone": "59"
       }
     },
     {
@@ -65,20 +65,20 @@
         "icone": "36"
       },
       "tarde": {
-        "resumo": "Poucas nuvens",
-        "temp_max": 29,
-        "temp_min": 19,
-        "vento": "Moderados",
-        "dir_vento": "SE-E",
-        "icone": "29"
-      },
-      "noite": {
         "resumo": "Muitas nuvens",
         "temp_max": 29,
         "temp_min": 19,
         "vento": "Moderados",
         "dir_vento": "SE-E",
-        "icone": "56"
+        "icone": "34"
+      },
+      "noite": {
+        "resumo": "Muitas nuvens com chuva isolada",
+        "temp_max": 29,
+        "temp_min": 19,
+        "vento": "Moderados",
+        "dir_vento": "SE-E",
+        "icone": "58"
       }
     },
     {
@@ -189,7 +189,7 @@
     "temp_min": 19.5
   },
   "calculos": {
-    "eto_mm_dia": 1.65,
+    "eto_mm_dia": 2.32,
     "eto_metodo": "Hargreaves–Samani (Tmax/Tmin INMET + Ra astronômica)",
     "hidrologia": {
       "q_m3s": 2.56,
