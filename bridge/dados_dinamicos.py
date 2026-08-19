@@ -309,7 +309,7 @@ def main():
     c = out.get("calculos") or {}
     h = c.get("hidrologia") or {}
     print(f"  ETo={c.get('eto_mm_dia')} mm/dia · Q={h.get('q_m3s')} m³/s ({h.get('classe')}) "
-          f"· árvores={c.get('arvores', {}).get('arvores')} · risco_fogo={c.get('risco_fogo', {}).get('risco_pct')}%")
+          f"· árvores={(c.get('arvores') or {}).get('arvores')} · risco_fogo={(c.get('risco_fogo') or {}).get('risco_pct')}%")
 
 
 if __name__ == "__main__":

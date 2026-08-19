@@ -6,6 +6,8 @@ AIO_Observatory_v2/
 # Segredos e configuração local
 .env
 firmware/config.py
+docs/oracle-cloud-connection.md.tmp
+.oci/
 
 # Runtime
 node_modules/

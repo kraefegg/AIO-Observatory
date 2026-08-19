@@ -21,3 +21,4 @@ Script load order in `index.html` matters: `data.js` → `pages.js` → `app.js`
 - ECharts instances are disposed and recreated on every render via the `ec()` helper (SVG renderer); Chart.js sparklines via `spark()`.
 - Reports are persisted in `localStorage` (delete/restore features exist).
 - Live sources (all fetched client-side): Open-Meteo forecast at `AIO.project` lat/lon; INPE BDQueimadas daily CSV for fire hotspots within 60 km; GitHub repo `kraefegg/AIO` for real Sentinel-2 NDVI CSVs + timelapse GIFs; Esri satellite tiles for the map. NDVI is real; NDWI/Moisture/BSI remain model series until numeric exports exist.
+- Oracle Cloud (OCI): connection verified, details in `docs/oracle-cloud-connection.md`. Secrets live in `~/.oci/oci_auth.env` (outside repo, never versioned). Auth works via Swift API; S3-compatível fails for federated IDCS user (slash breaks SigV4).

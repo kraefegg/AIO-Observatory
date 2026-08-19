@@ -106,23 +106,28 @@ const AIO = {
   // ---------- DADOS OFICIAIS · INMET (base de cálculos Python, bridge/dados_dinamicos.py) ----------
   // O bridge gera telemetry/weather-oficial.json a partir das fontes oficiais do INMET
   // (estação automática mais próxima + previsão) e Open-Meteo. O app usa como fonte
-  // preferencial com fallback para Open-Meteo direto quando o arquivo estiver ausente.
+  // preferencial o OCI Object Storage (URL pública, publicada pela ponte em
+  // .github/workflows/oci-publish.yml) com fallback para o raw do GitHub.
   oficial:{
-    source:"https://raw.githubusercontent.com/kraefegg/AIO-Observatory/main/telemetry/weather-oficial.json",
+    source:"https://objectstorage.sa-saopaulo-1.oraclecloud.com/n/gryamzqw4zsj/b/aio-telemetry/o/weather-oficial.json",
+    fallback:"https://raw.githubusercontent.com/kraefegg/AIO-Observatory/main/telemetry/weather-oficial.json",
     ttl_ms:600000,                       // 10 min de frescura do payload
   },
 
   // ---------- TELEMETRIA IoT · KIT ESTAÇÃO METEOROLÓGICA (PoC M1) ----------
   // Contrato JSON publicado pelo firmware (firmware/station_weather.py) — ver docs/telemetry-contract.md.
-  // A ponte MQTT→GitHub publica o último payload em telemetry/station-latest.json (raw do repo).
-  // Se a fonte remota falhar ou o dispositivo ainda não publicou, o app usa AIO.telemetry.sample
+  // A ponte MQTT→GitHub publica o último payload em telemetry/station-latest.json; a ponte OCI
+  // (workflow oci-publish.yml) o espelha no container público aio-telemetry. O app tenta o OCI
+  // primeiro e cai no raw do GitHub se o objeto não estiver disponível.
+  // Se tudo falhar ou o dispositivo ainda não publicou, o app usa AIO.telemetry.sample
   // (dado-modelo), na mesma filosofia dos índices espectrais.
   sites:[
     { id:"car01", nome:"Caraúbas-01", tipo:"Estação Meteorológica Agro-Ambiental",
       lat:-7.7283, lon:-36.4935, alt_m:455, borda:"ESP32-S3", protocolo:"MQTT", firmware:"station_weather", instalacao:"PoC" }
   ],
   telemetry:{
-    source:"https://raw.githubusercontent.com/kraefegg/AIO/main/telemetry/station-latest.json",
+    source:"https://objectstorage.sa-saopaulo-1.oraclecloud.com/n/gryamzqw4zsj/b/aio-telemetry/o/station-latest.json",
+    fallback:"https://raw.githubusercontent.com/kraefegg/AIO/main/telemetry/station-latest.json",
     ttl_ms:300000,                       // considera o payload fresco por 5 minutos
     sample:{                             // fallback offline / dispositivo inativo
       site:"car01", ts:"",

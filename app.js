@@ -139,7 +139,6 @@ const AIOApp = (() => {
     if(echartsInstances[elId]) echartsInstances[elId].dispose();
     const inst = echarts.init(el, null, {renderer:'svg'});
     echartsInstances[elId] = inst;
-    window.addEventListener('resize', ()=>inst.resize());
     return inst;
   }
   function spark(id, arr, color='#3fe0ff'){
@@ -190,18 +189,19 @@ const AIOApp = (() => {
   let oficialCache = null, oficialAt = 0;
   async function fetchOficial(){
     if(oficialCache && Date.now()-oficialAt < AIO.oficial.ttl_ms) return oficialCache;
-    try{
-      const res = await fetch(AIO.oficial.source + '?t=' + Date.now());
-      if(!res.ok) throw new Error('HTTP ' + res.status);
-      const data = await res.json();
-      if(!data || !data.calculos) throw new Error('schema inválido');
-      oficialCache = data; oficialAt = Date.now();
-      return data;
-    }catch(e){
-      const live = await fetchOficialINMET().catch(()=>null);
-      if(live){ oficialCache = live; oficialAt = Date.now(); }
-      return oficialCache || null;
+    for(const src of [AIO.oficial.source, AIO.oficial.fallback].filter(Boolean)){
+      try{
+        const res = await fetch(src + '?t=' + Date.now());
+        if(!res.ok) throw new Error('HTTP ' + res.status);
+        const data = await res.json();
+        if(!data || !data.calculos) throw new Error('schema inválido');
+        oficialCache = data; oficialAt = Date.now();
+        return data;
+      }catch(e){ /* tenta próxima fonte (OCI → GitHub) */ }
     }
+    const live = await fetchOficialINMET().catch(()=>null);
+    if(live){ oficialCache = live; oficialAt = Date.now(); }
+    return oficialCache || null;
   }
   async function fetchOficialINMET(){
     // Estação automática mais próxima (Caraúbas-PB geocode 2504074) — dados em tempo real.
@@ -258,13 +258,16 @@ const AIOApp = (() => {
   let telemetryCache = null, telemetryAt = 0;
   async function fetchStationTelemetry(){
     if(telemetryCache && Date.now()-telemetryAt < AIO.telemetry.ttl_ms) return telemetryCache;
-    try{
-      const res = await fetch(AIO.telemetry.source + '?t=' + Date.now());
-      if(!res.ok) throw new Error('HTTP ' + res.status);
-      const data = await res.json();
-      telemetryCache = data; telemetryAt = Date.now();
-      return data;
-    }catch(e){ return telemetryCache || null; }
+    for(const src of [AIO.telemetry.source, AIO.telemetry.fallback].filter(Boolean)){
+      try{
+        const res = await fetch(src + '?t=' + Date.now());
+        if(!res.ok) throw new Error('HTTP ' + res.status);
+        const data = await res.json();
+        telemetryCache = data; telemetryAt = Date.now();
+        return data;
+      }catch(e){ /* tenta próxima fonte (OCI → GitHub) */ }
+    }
+    return telemetryCache || null;
   }
   async function renderStationTelemetry(){
     if(!document.getElementById('telTemp')) return;
@@ -305,20 +308,20 @@ const AIOApp = (() => {
       ["Temperatura do Ar", c.temperature_2m.toFixed(1)+"°C", "fa-temperature-half"],
       ["Temp. Máxima (hoje)", daily.temperature_2m_max[0].toFixed(1)+"°C", "fa-arrow-up"],
       ["Temp. Mínima (hoje)", daily.temperature_2m_min[0].toFixed(1)+"°C", "fa-arrow-down"],
-      ["Temp. do Solo", ((d.hourly.soil_temperature_0cm[curHourIdx(d)]??'--')).toFixed?.(1)+"°C" || "—", "fa-mound"],
+      ["Temp. do Solo", (d.hourly.soil_temperature_0cm[curHourIdx(d)] != null ? d.hourly.soil_temperature_0cm[curHourIdx(d)].toFixed(1)+"°C" : "—"), "fa-mound"],
       ["Umidade Relativa", c.relative_humidity_2m+"%", "fa-droplet"],
       ["Pressão Atmosférica", c.pressure_msl.toFixed(0)+" hPa", "fa-gauge"],
       ["Velocidade do Vento", c.wind_speed_10m.toFixed(1)+" km/h", "fa-wind"],
       ["Rajadas", c.wind_gusts_10m.toFixed(1)+" km/h", "fa-tornado"],
       ["Direção do Vento", c.wind_direction_10m+"°", "fa-compass"],
-      ["Ponto de Orvalho", (d.hourly.dew_point_2m[curHourIdx(d)]).toFixed(1)+"°C", "fa-water"],
+      ["Ponto de Orvalho", (d.hourly.dew_point_2m[curHourIdx(d)] != null ? d.hourly.dew_point_2m[curHourIdx(d)].toFixed(1)+"°C" : "—"), "fa-water"],
       ["Precipitação (atual)", c.precipitation.toFixed(1)+" mm", "fa-cloud-rain"],
       ["Precip. Acumulada (hoje)", daily.precipitation_sum[0].toFixed(1)+" mm", "fa-cloud-showers-heavy"],
       ["Nebulosidade", c.cloud_cover+"%", "fa-cloud"],
       ["Índice UV", (daily.uv_index_max[0]).toFixed(1), "fa-sun"],
       ["Radiação Solar", (daily.shortwave_radiation_sum[0]).toFixed(1)+" MJ/m²", "fa-solar-panel"],
-      ["Evapotranspiração", (d.hourly.evapotranspiration[curHourIdx(d)]).toFixed(2)+" mm", "fa-tint-slash"],
-      ["Visibilidade", ((d.hourly.visibility[curHourIdx(d)])/1000).toFixed(1)+" km", "fa-eye"],
+      ["Evapotranspiração", (d.hourly.evapotranspiration[curHourIdx(d)] != null ? d.hourly.evapotranspiration[curHourIdx(d)].toFixed(2)+" mm" : "—"), "fa-tint-slash"],
+      ["Visibilidade", (d.hourly.visibility[curHourIdx(d)] != null ? (d.hourly.visibility[curHourIdx(d)]/1000).toFixed(1)+" km" : "—"), "fa-eye"],
       ["Sensação Térmica", c.apparent_temperature.toFixed(1)+"°C", "fa-person-rays"],
       ["Nascer do Sol", new Date(daily.sunrise[0]).toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'}), "fa-sun"],
       ["Pôr do Sol", new Date(daily.sunset[0]).toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'}), "fa-moon"],
@@ -1167,7 +1170,8 @@ const AIOApp = (() => {
     document.getElementById('themeToggle').addEventListener('click', toggleTheme);
     document.getElementById('alertBtn').addEventListener('click', ()=>{ go('dashboard'); });
     document.querySelectorAll('.nav-link').forEach(a=>a.addEventListener('click', ()=>go(a.dataset.page)));
-    document.addEventListener('click', e=>{ if(e.target.id==='refreshWeather'){ weatherCache=null; toast('Sincronizando com Open-Meteo...', 'fa-rotate'); fetchWeather().then(()=>{renderMeteorologia(); toast('Meteorologia atualizada','fa-check');}); } });
+    document.addEventListener('click', e=>{ if(e.target.closest('#refreshWeather')){ weatherCache=null; toast('Sincronizando com Open-Meteo...', 'fa-rotate'); fetchWeather().then(()=>{renderMeteorologia(); toast('Meteorologia atualizada','fa-check');}); } });
+    window.addEventListener('resize', ()=>{ Object.values(echartsInstances).forEach(i=>{ try{i.resize();}catch(e){} }); });
     fetchWeather().then(()=>{ updateFireCard(); }).catch(()=>{});
     fetchHydroPrecip().then(()=>{ if(document.getElementById('page-dashboard')) updateHydroCard(); }).catch(()=>{});
     go('dashboard');
