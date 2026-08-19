@@ -2,7 +2,7 @@
   "schema": "AIO.weather.oficial/v1",
   "site": "car01",
   "geocode": "2504074",
-  "ts": "2026-08-19T11:15:32+00:00",
+  "ts": "2026-08-19T11:46:55+00:00",
   "fonte": "INMET estação A387 (SANTA CRUZ DO CAPIBARIBE, 36 km) · INMET previsão oficial 15 dias · Open-Meteo precipitação real 7 dias",
   "estacao": {
     "codigo": "A387",
@@ -11,19 +11,19 @@
     "distancia_km": "36",
     "lat": "-7.95083333",
     "lon": "-36.22583332",
-    "medicao": "2026-08-19 1000",
+    "medicao": "2026-08-19 1100",
     "atual": {
-      "temperatura_c": 22.1,
-      "sensacao_c": 20.6,
-      "umidade_pct": 82.0,
-      "pressao_hpa": 967.2,
-      "vento_kmh": 10.8,
-      "rajada_kmh": 18.7,
-      "vento_dir_deg": 163.0,
+      "temperatura_c": 22.4,
+      "sensacao_c": 19.0,
+      "umidade_pct": 78.0,
+      "pressao_hpa": 967.7,
+      "vento_kmh": 15.1,
+      "rajada_kmh": 28.4,
+      "vento_dir_deg": 149.0,
       "chuva_mm": 0.0,
-      "radiacao_kjm2": 422.1,
-      "temp_max_c": 22.1,
-      "temp_min_c": 20.5
+      "radiacao_kjm2": 809.4,
+      "temp_max_c": 22.5,
+      "temp_min_c": 21.9
     }
   },
   "previsao15d": [
@@ -189,7 +189,7 @@
     "temp_min": 18.2
   },
   "calculos": {
-    "eto_mm_dia": 3.86,
+    "eto_mm_dia": 2.42,
     "eto_metodo": "Hargreaves–Samani (Tmax/Tmin INMET + Ra astronômica)",
     "hidrologia": {
       "q_m3s": 2.5,
@@ -211,7 +211,7 @@
       "raio_km": 3.0
     },
     "risco_fogo": {
-      "risco_pct": 41,
+      "risco_pct": 46,
       "dias_sem_chuva": 6
     }
   }
