@@ -2,7 +2,7 @@
   "schema": "AIO.weather.oficial/v1",
   "site": "car01",
   "geocode": "2504074",
-  "ts": "2026-08-20T19:10:01+00:00",
+  "ts": "2026-08-20T19:52:27+00:00",
   "fonte": "INMET previsão oficial 15 dias · Open-Meteo precipitação real 7 dias",
   "estacao": null,
   "previsao15d": [
