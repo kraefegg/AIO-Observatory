@@ -2,9 +2,30 @@
   "schema": "AIO.weather.oficial/v1",
   "site": "car01",
   "geocode": "2504074",
-  "ts": "2026-08-20T22:16:19+00:00",
-  "fonte": "INMET previsão oficial 15 dias · Open-Meteo precipitação real 7 dias",
-  "estacao": null,
+  "ts": "2026-08-20T22:51:32+00:00",
+  "fonte": "INMET estação A387 (SANTA CRUZ DO CAPIBARIBE, 36 km) · INMET previsão oficial 15 dias · Open-Meteo precipitação real 7 dias",
+  "estacao": {
+    "codigo": "A387",
+    "nome": "SANTA CRUZ DO CAPIBARIBE",
+    "uf": "PE",
+    "distancia_km": "36",
+    "lat": "-7.95083333",
+    "lon": "-36.22583332",
+    "medicao": "2026-08-20 2200",
+    "atual": {
+      "temperatura_c": 22.8,
+      "sensacao_c": 21.1,
+      "umidade_pct": 73.0,
+      "pressao_hpa": 965.0,
+      "vento_kmh": 10.4,
+      "rajada_kmh": 23.0,
+      "vento_dir_deg": 124.0,
+      "chuva_mm": 0.0,
+      "radiacao_kjm2": 0.0,
+      "temp_max_c": 24.4,
+      "temp_min_c": 22.8
+    }
+  },
   "previsao15d": [
     {
       "data": "20/08/2026",
@@ -168,8 +189,8 @@
     "temp_min": 17.7
   },
   "calculos": {
-    "eto_mm_dia": null,
-    "eto_metodo": null,
+    "eto_mm_dia": 4.1,
+    "eto_metodo": "Hargreaves–Samani (Tmax/Tmin INMET + Ra astronômica)",
     "hidrologia": {
       "q_m3s": 2.22,
       "v_ms": 0.309,
@@ -189,6 +210,9 @@
       "area_ha": 573,
       "raio_km": 3.0
     },
-    "risco_fogo": null
+    "risco_fogo": {
+      "risco_pct": 38,
+      "dias_sem_chuva": 5
+    }
   }
 }
