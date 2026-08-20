@@ -2,7 +2,7 @@
   "schema": "AIO.weather.oficial/v1",
   "site": "car01",
   "geocode": "2504074",
-  "ts": "2026-08-20T11:49:51+00:00",
+  "ts": "2026-08-20T12:25:04+00:00",
   "fonte": "INMET previsão oficial 15 dias · Open-Meteo precipitação real 7 dias",
   "estacao": null,
   "previsao15d": [
@@ -36,20 +36,20 @@
     {
       "data": "21/08/2026",
       "manha": {
-        "resumo": "Poucas nuvens",
+        "resumo": "Muitas nuvens",
         "temp_max": 31,
         "temp_min": 15,
         "vento": "Fracos",
         "dir_vento": "SE-E",
-        "icone": "29"
+        "icone": "34"
       },
       "tarde": {
-        "resumo": "Claro",
+        "resumo": "Poucas nuvens",
         "temp_max": 31,
         "temp_min": 15,
         "vento": "Fracos",
         "dir_vento": "E-NE",
-        "icone": "28"
+        "icone": "29"
       },
       "noite": {
         "resumo": "Nublado",
