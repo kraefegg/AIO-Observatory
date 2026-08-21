@@ -2,10 +2,167 @@
   "schema": "AIO.weather.oficial/v1",
   "site": "car01",
   "geocode": "2504074",
-  "ts": "2026-08-21T09:58:56+00:00",
-  "fonte": "Open-Meteo precipitação real 7 dias",
-  "estacao": null,
-  "previsao15d": null,
+  "ts": "2026-08-21T10:26:46+00:00",
+  "fonte": "INMET estação A387 (SANTA CRUZ DO CAPIBARIBE, 36 km) · INMET previsão oficial 15 dias · Open-Meteo precipitação real 7 dias",
+  "estacao": {
+    "codigo": "A387",
+    "nome": "SANTA CRUZ DO CAPIBARIBE",
+    "uf": "PE",
+    "distancia_km": "36",
+    "lat": "-7.95083333",
+    "lon": "-36.22583332",
+    "medicao": "2026-08-21 1000",
+    "atual": {
+      "temperatura_c": 19.0,
+      "sensacao_c": 20.8,
+      "umidade_pct": 88.0,
+      "pressao_hpa": 966.2,
+      "vento_kmh": 1.8,
+      "rajada_kmh": 5.8,
+      "vento_dir_deg": 249.0,
+      "chuva_mm": 0.0,
+      "radiacao_kjm2": 563.7,
+      "temp_max_c": 19.0,
+      "temp_min_c": 17.0
+    }
+  },
+  "previsao15d": [
+    {
+      "data": "21/08/2026",
+      "manha": {
+        "resumo": "Muitas nuvens",
+        "temp_max": 31,
+        "temp_min": 16,
+        "vento": "Fracos",
+        "dir_vento": "SE-E",
+        "icone": "34"
+      },
+      "tarde": {
+        "resumo": "Poucas nuvens",
+        "temp_max": 31,
+        "temp_min": 16,
+        "vento": "Fracos",
+        "dir_vento": "E-SE",
+        "icone": "29"
+      },
+      "noite": {
+        "resumo": "Poucas nuvens",
+        "temp_max": 31,
+        "temp_min": 16,
+        "vento": "Fracos",
+        "dir_vento": "E-SE",
+        "icone": "51"
+      }
+    },
+    {
+      "data": "22/08/2026",
+      "manha": {
+        "resumo": "Claro",
+        "temp_max": 32,
+        "temp_min": 16,
+        "vento": "Fracos",
+        "dir_vento": "SE-E",
+        "icone": "28"
+      },
+      "tarde": {
+        "resumo": "Claro",
+        "temp_max": 32,
+        "temp_min": 16,
+        "vento": "Fracos",
+        "dir_vento": "E-NE",
+        "icone": "28"
+      },
+      "noite": {
+        "resumo": "Claro",
+        "temp_max": 32,
+        "temp_min": 16,
+        "vento": "Fracos",
+        "dir_vento": "E-SE",
+        "icone": "12"
+      }
+    },
+    {
+      "data": "23/08/2026",
+      "manha": {
+        "resumo": null,
+        "temp_max": null,
+        "temp_min": null,
+        "vento": null,
+        "dir_vento": null,
+        "icone": null
+      },
+      "tarde": {
+        "resumo": null,
+        "temp_max": null,
+        "temp_min": null,
+        "vento": null,
+        "dir_vento": null,
+        "icone": null
+      },
+      "noite": {
+        "resumo": null,
+        "temp_max": null,
+        "temp_min": null,
+        "vento": null,
+        "dir_vento": null,
+        "icone": null
+      }
+    },
+    {
+      "data": "24/08/2026",
+      "manha": {
+        "resumo": null,
+        "temp_max": null,
+        "temp_min": null,
+        "vento": null,
+        "dir_vento": null,
+        "icone": null
+      },
+      "tarde": {
+        "resumo": null,
+        "temp_max": null,
+        "temp_min": null,
+        "vento": null,
+        "dir_vento": null,
+        "icone": null
+      },
+      "noite": {
+        "resumo": null,
+        "temp_max": null,
+        "temp_min": null,
+        "vento": null,
+        "dir_vento": null,
+        "icone": null
+      }
+    },
+    {
+      "data": "25/08/2026",
+      "manha": {
+        "resumo": null,
+        "temp_max": null,
+        "temp_min": null,
+        "vento": null,
+        "dir_vento": null,
+        "icone": null
+      },
+      "tarde": {
+        "resumo": null,
+        "temp_max": null,
+        "temp_min": null,
+        "vento": null,
+        "dir_vento": null,
+        "icone": null
+      },
+      "noite": {
+        "resumo": null,
+        "temp_max": null,
+        "temp_min": null,
+        "vento": null,
+        "dir_vento": null,
+        "icone": null
+      }
+    }
+  ],
   "openmeteo": {
     "time": [
       "2026-08-14",
@@ -32,8 +189,8 @@
     "temp_min": 17.7
   },
   "calculos": {
-    "eto_mm_dia": null,
-    "eto_metodo": null,
+    "eto_mm_dia": 3.98,
+    "eto_metodo": "Hargreaves–Samani (Tmax/Tmin INMET + Ra astronômica)",
     "hidrologia": {
       "q_m3s": 0.72,
       "v_ms": 0.1,
@@ -53,6 +210,9 @@
       "area_ha": 573,
       "raio_km": 3.0
     },
-    "risco_fogo": null
+    "risco_fogo": {
+      "risco_pct": 35,
+      "dias_sem_chuva": 4
+    }
   }
 }
