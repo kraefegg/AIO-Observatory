@@ -2,7 +2,7 @@
   "schema": "AIO.weather.oficial/v1",
   "site": "car01",
   "geocode": "2504074",
-  "ts": "2026-08-22T05:49:56+00:00",
+  "ts": "2026-08-22T06:21:14+00:00",
   "fonte": "INMET estação A387 (SANTA CRUZ DO CAPIBARIBE, 36 km) · INMET previsão oficial 15 dias · Open-Meteo precipitação real 7 dias",
   "estacao": {
     "codigo": "A387",
@@ -11,19 +11,19 @@
     "distancia_km": "36",
     "lat": "-7.95083333",
     "lon": "-36.22583332",
-    "medicao": "2026-08-22 0500",
+    "medicao": "2026-08-22 0600",
     "atual": {
       "temperatura_c": 18.3,
-      "sensacao_c": 19.6,
-      "umidade_pct": 90.0,
-      "pressao_hpa": 964.9,
-      "vento_kmh": 3.6,
-      "rajada_kmh": 7.2,
-      "vento_dir_deg": 159.0,
+      "sensacao_c": 19.9,
+      "umidade_pct": 91.0,
+      "pressao_hpa": 965.0,
+      "vento_kmh": 2.9,
+      "rajada_kmh": 8.3,
+      "vento_dir_deg": 124.0,
       "chuva_mm": 0.0,
       "radiacao_kjm2": 0.0,
-      "temp_max_c": 19.1,
-      "temp_min_c": 18.3
+      "temp_max_c": 18.6,
+      "temp_min_c": 18.2
     }
   },
   "previsao15d": [
@@ -65,12 +65,12 @@
         "icone": "28"
       },
       "tarde": {
-        "resumo": "Claro",
+        "resumo": "Muitas nuvens",
         "temp_max": 32,
         "temp_min": 18,
         "vento": "Moderados",
         "dir_vento": "SE-E",
-        "icone": "28"
+        "icone": "34"
       },
       "noite": {
         "resumo": "Muitas nuvens",
@@ -189,7 +189,7 @@
     "temp_min": 18.0
   },
   "calculos": {
-    "eto_mm_dia": 2.57,
+    "eto_mm_dia": 1.8,
     "eto_metodo": "Hargreaves–Samani (Tmax/Tmin INMET + Ra astronômica)",
     "hidrologia": {
       "q_m3s": 0.72,
