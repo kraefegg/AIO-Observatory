@@ -2,167 +2,10 @@
   "schema": "AIO.weather.oficial/v1",
   "site": "car01",
   "geocode": "2504074",
-  "ts": "2026-08-23T12:18:23+00:00",
-  "fonte": "INMET estação A387 (SANTA CRUZ DO CAPIBARIBE, 36 km) · INMET previsão oficial 15 dias · Open-Meteo precipitação real 7 dias",
-  "estacao": {
-    "codigo": "A387",
-    "nome": "SANTA CRUZ DO CAPIBARIBE",
-    "uf": "PE",
-    "distancia_km": "36",
-    "lat": "-7.95083333",
-    "lon": "-36.22583332",
-    "medicao": "2026-08-23 1100",
-    "atual": {
-      "temperatura_c": 23.8,
-      "sensacao_c": 23.2,
-      "umidade_pct": 76.0,
-      "pressao_hpa": 966.4,
-      "vento_kmh": 9.0,
-      "rajada_kmh": 19.1,
-      "vento_dir_deg": 126.0,
-      "chuva_mm": 0.0,
-      "radiacao_kjm2": 900.8,
-      "temp_max_c": 23.8,
-      "temp_min_c": 21.9
-    }
-  },
-  "previsao15d": [
-    {
-      "data": "23/08/2026",
-      "manha": {
-        "resumo": "Muitas nuvens",
-        "temp_max": 32,
-        "temp_min": 18,
-        "vento": "Moderados",
-        "dir_vento": "SE-E",
-        "icone": "34"
-      },
-      "tarde": {
-        "resumo": "Muitas nuvens",
-        "temp_max": 32,
-        "temp_min": 18,
-        "vento": "Moderados",
-        "dir_vento": "SE-W",
-        "icone": "34"
-      },
-      "noite": {
-        "resumo": "Muitas nuvens",
-        "temp_max": 32,
-        "temp_min": 18,
-        "vento": "Moderados",
-        "dir_vento": "SE-E",
-        "icone": "56"
-      }
-    },
-    {
-      "data": "24/08/2026",
-      "manha": {
-        "resumo": "Claro",
-        "temp_max": 31,
-        "temp_min": 17,
-        "vento": "Moderados",
-        "dir_vento": "SE-E",
-        "icone": "28"
-      },
-      "tarde": {
-        "resumo": "Claro",
-        "temp_max": 31,
-        "temp_min": 17,
-        "vento": "Moderados",
-        "dir_vento": "SE-W",
-        "icone": "28"
-      },
-      "noite": {
-        "resumo": "Claro",
-        "temp_max": 31,
-        "temp_min": 17,
-        "vento": "Moderados",
-        "dir_vento": "SE-W",
-        "icone": "12"
-      }
-    },
-    {
-      "data": "25/08/2026",
-      "manha": {
-        "resumo": null,
-        "temp_max": null,
-        "temp_min": null,
-        "vento": null,
-        "dir_vento": null,
-        "icone": null
-      },
-      "tarde": {
-        "resumo": null,
-        "temp_max": null,
-        "temp_min": null,
-        "vento": null,
-        "dir_vento": null,
-        "icone": null
-      },
-      "noite": {
-        "resumo": null,
-        "temp_max": null,
-        "temp_min": null,
-        "vento": null,
-        "dir_vento": null,
-        "icone": null
-      }
-    },
-    {
-      "data": "26/08/2026",
-      "manha": {
-        "resumo": null,
-        "temp_max": null,
-        "temp_min": null,
-        "vento": null,
-        "dir_vento": null,
-        "icone": null
-      },
-      "tarde": {
-        "resumo": null,
-        "temp_max": null,
-        "temp_min": null,
-        "vento": null,
-        "dir_vento": null,
-        "icone": null
-      },
-      "noite": {
-        "resumo": null,
-        "temp_max": null,
-        "temp_min": null,
-        "vento": null,
-        "dir_vento": null,
-        "icone": null
-      }
-    },
-    {
-      "data": "27/08/2026",
-      "manha": {
-        "resumo": null,
-        "temp_max": null,
-        "temp_min": null,
-        "vento": null,
-        "dir_vento": null,
-        "icone": null
-      },
-      "tarde": {
-        "resumo": null,
-        "temp_max": null,
-        "temp_min": null,
-        "vento": null,
-        "dir_vento": null,
-        "icone": null
-      },
-      "noite": {
-        "resumo": null,
-        "temp_max": null,
-        "temp_min": null,
-        "vento": null,
-        "dir_vento": null,
-        "icone": null
-      }
-    }
-  ],
+  "ts": "2026-08-23T13:09:08+00:00",
+  "fonte": "Open-Meteo precipitação real 7 dias",
+  "estacao": null,
+  "previsao15d": null,
   "openmeteo": {
     "time": [
       "2026-08-16",
@@ -182,24 +25,24 @@
       0.0,
       0.0,
       0.0,
-      0.2
+      0.0
     ],
     "uv_max": 8.4,
     "temp_max": 30.4,
     "temp_min": 18.7
   },
   "calculos": {
-    "eto_mm_dia": 4.43,
-    "eto_metodo": "Hargreaves–Samani (Tmax/Tmin INMET + Ra astronômica)",
+    "eto_mm_dia": null,
+    "eto_metodo": null,
     "hidrologia": {
-      "q_m3s": 0.86,
-      "v_ms": 0.12,
+      "q_m3s": 0.72,
+      "v_ms": 0.1,
       "area_m2": 7.2,
-      "precip_recente_mm": 0.1,
-      "precip_hoje_mm": 0.2,
+      "precip_recente_mm": 0.0,
+      "precip_hoje_mm": 0,
       "classe": "SECA",
       "rotulo": "Seca / estiagem",
-      "vol_diario_m3": 74304
+      "vol_diario_m3": 62208
     },
     "hidrologia_metodo": "Q = A × V · A = 7,2 m² · V por pluviosidade real 3 dias",
     "arvores": {
@@ -210,9 +53,6 @@
       "area_ha": 573,
       "raio_km": 3.0
     },
-    "risco_fogo": {
-      "risco_pct": 29,
-      "dias_sem_chuva": 2
-    }
+    "risco_fogo": null
   }
 }
