@@ -2,7 +2,7 @@
   "schema": "AIO.weather.oficial/v1",
   "site": "car01",
   "geocode": "2504074",
-  "ts": "2026-08-23T06:22:54+00:00",
+  "ts": "2026-08-23T07:09:05+00:00",
   "fonte": "INMET estação A387 (SANTA CRUZ DO CAPIBARIBE, 36 km) · INMET previsão oficial 15 dias · Open-Meteo precipitação real 7 dias",
   "estacao": {
     "codigo": "A387",
@@ -76,8 +76,8 @@
         "resumo": "Claro",
         "temp_max": 31,
         "temp_min": 17,
-        "vento": "Fracos",
-        "dir_vento": "SE-E",
+        "vento": "Moderados",
+        "dir_vento": "SE-W",
         "icone": "12"
       }
     },
@@ -182,7 +182,7 @@
       0.0,
       0.0,
       0.0,
-      0.0
+      0.2
     ],
     "uv_max": 8.4,
     "temp_max": 30.4,
@@ -192,14 +192,14 @@
     "eto_mm_dia": 2.37,
     "eto_metodo": "Hargreaves–Samani (Tmax/Tmin INMET + Ra astronômica)",
     "hidrologia": {
-      "q_m3s": 0.72,
-      "v_ms": 0.1,
+      "q_m3s": 0.86,
+      "v_ms": 0.12,
       "area_m2": 7.2,
-      "precip_recente_mm": 0.0,
-      "precip_hoje_mm": 0,
+      "precip_recente_mm": 0.1,
+      "precip_hoje_mm": 0.2,
       "classe": "SECA",
       "rotulo": "Seca / estiagem",
-      "vol_diario_m3": 62208
+      "vol_diario_m3": 74304
     },
     "hidrologia_metodo": "Q = A × V · A = 7,2 m² · V por pluviosidade real 3 dias",
     "arvores": {
