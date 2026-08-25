@@ -2,7 +2,7 @@
   "schema": "AIO.weather.oficial/v1",
   "site": "car01",
   "geocode": "2504074",
-  "ts": "2026-08-25T11:55:00+00:00",
+  "ts": "2026-08-25T12:26:20+00:00",
   "fonte": "INMET estação A387 (SANTA CRUZ DO CAPIBARIBE, 36 km) · INMET previsão oficial 15 dias · Open-Meteo precipitação real 7 dias",
   "estacao": {
     "codigo": "A387",
@@ -11,19 +11,19 @@
     "distancia_km": "36",
     "lat": "-7.95083333",
     "lon": "-36.22583332",
-    "medicao": "2026-08-25 1100",
+    "medicao": "2026-08-25 1200",
     "atual": {
-      "temperatura_c": 23.3,
-      "sensacao_c": 18.8,
-      "umidade_pct": 66.0,
-      "pressao_hpa": 966.1,
-      "vento_kmh": 17.3,
-      "rajada_kmh": 29.9,
-      "vento_dir_deg": 150.0,
+      "temperatura_c": 23.7,
+      "sensacao_c": 18.1,
+      "umidade_pct": 67.0,
+      "pressao_hpa": 966.7,
+      "vento_kmh": 22.7,
+      "rajada_kmh": 40.7,
+      "vento_dir_deg": 143.0,
       "chuva_mm": 0.0,
-      "radiacao_kjm2": 1329.9,
-      "temp_max_c": 23.5,
-      "temp_min_c": 21.9
+      "radiacao_kjm2": 1393.6,
+      "temp_max_c": 23.7,
+      "temp_min_c": 22.4
     }
   },
   "previsao15d": [
@@ -57,20 +57,20 @@
     {
       "data": "26/08/2026",
       "manha": {
-        "resumo": "Encoberto",
+        "resumo": "Poucas nuvens",
         "temp_max": 30,
         "temp_min": 17,
         "vento": "Fracos",
         "dir_vento": "SE-E",
-        "icone": "44"
+        "icone": "29"
       },
       "tarde": {
-        "resumo": "Encoberto",
+        "resumo": "Poucas nuvens",
         "temp_max": 30,
         "temp_min": 17,
         "vento": "Moderados",
         "dir_vento": "E-SE",
-        "icone": "44"
+        "icone": "29"
       },
       "noite": {
         "resumo": "Claro",
@@ -189,7 +189,7 @@
     "temp_min": 20.6
   },
   "calculos": {
-    "eto_mm_dia": 4.07,
+    "eto_mm_dia": 3.7,
     "eto_metodo": "Hargreaves–Samani (Tmax/Tmin INMET + Ra astronômica)",
     "hidrologia": {
       "q_m3s": 0.86,
