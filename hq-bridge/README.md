@@ -29,7 +29,17 @@ não pode guardar segredo nem falar com `localhost`. O bridge resolve os dois.
 
 ## Como rodar
 
-### 1. Suba o OmniRoute com um provider open-source
+### 0. Com um clique (recomendado)
+Na pasta `hq-bridge/`, duplo-clique em **`start-all.bat`** (ou rode `start-all.ps1`).
+O script:
+1. Sobe o OmniRoute local (`local:20128`) se não estiver de pé;
+2. Sobe o HQ Bridge (`local:4173`);
+3. Faz polling até o OmniRoute ficar `up`;
+4. Abre a `corporate-hq.html` no navegador.
+
+> Após reiniciar o PC, basta rodar o `start-all` de novo.
+
+### 1. Suba o OmniRoute com um provider open-source (manual)
 - Rode o servidor OmniRoute em `localhost:20128`:
   ```bash
   omniroute serve
