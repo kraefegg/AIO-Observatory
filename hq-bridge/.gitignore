@@ -1,0 +1,4 @@
+# HQ Bridge — env local nunca versionado (contém chaves)
+.env
+*.local
+node_modules/

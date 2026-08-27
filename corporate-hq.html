@@ -311,6 +311,47 @@ nav button.ativo::after{content:'';position:absolute;left:14px;right:14px;bottom
 <script>
 var EU = { nome: 'Railson Arruda', cargo: 'Diretor Técnico' };
 
+/* ===== HQ Bridge (OmniRoute) — orquestração real de agentes =====
+   Quando ativo, as novas demandas são enviadas ao backend (hq-bridge) que
+   roteia pelo OmniRoute para um agente open-source. Se o bridge estiver
+   desligado (ex.: página publicada no GitHub Pages), cai para o simulador
+   local — mantendo a demo funcional. */
+var HQ_OMNI = (function(){
+  var urlPadrao = 'http://localhost:4173';
+  var url = urlPadrao;
+  try {
+    var salv = localStorage.getItem('hq_omni_url');
+    if (salv) url = salv;
+    var q = new URLSearchParams(location.search).get('omni');
+    if (q) { url = q; localStorage.setItem('hq_omni_url', q); }
+  } catch (e) {}
+  var token = ''; try { token = localStorage.getItem('hq_omni_token') || ''; } catch (e) {}
+  var ativo = false;
+
+  function cab(){
+    var h = { 'Content-Type': 'application/json' };
+    if (token) h['X-HQ-Token'] = token;
+    return h;
+  }
+  function checar(){
+    return fetch(url + '/api/hq/health', { headers: cab() })
+      .then(function(r){ return r.json(); })
+      .then(function(d){ ativo = d && d.omniroute === 'up' && !d.erro; return d; })
+      .catch(function(){ ativo = false; return null; });
+  }
+  function enviarDemanda(p){
+    return fetch(url + '/api/hq/task', {
+      method: 'POST', headers: cab(),
+      body: JSON.stringify({ titulo: p.titulo, responsavel: p.resp, area: p.area, prompt: p.prompt || '' })
+    }).then(function(r){ if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); });
+  }
+  function poll(id){
+    return fetch(url + '/api/hq/task/' + id, { headers: cab() })
+      .then(function(r){ if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); });
+  }
+  return { url: url, ativo: ativo, checar: checar, enviarDemanda: enviarDemanda, poll: poll };
+})();
+
 var AREAS = [
   { id: 'dir',  nome: 'Direção & Estratégia',       cor: '#FFB44A' },
   { id: 'ops',  nome: 'Operações & Logística',       cor: '#22CCFF' },
@@ -540,6 +581,7 @@ function trocarSecao(botao, sec){
 
 function atualizarPainel(){
   montarDemandas();
+  montarDemandaResultado();
   var online = SUBAGENTES.filter(function(s){ return s.online; }).length;
   document.getElementById('st-online').textContent = online;
   document.getElementById('st-total').textContent = SUBAGENTES.length;
@@ -584,16 +626,93 @@ function modalNovaDemanda(){
 }
 function adicionarDemanda(ev){
   ev.preventDefault();
-  DEMANDAS.push({
-    titulo: document.getElementById('f-tit').value,
-    area: document.getElementById('f-area').value,
-    resp: document.getElementById('f-resp').value,
-    status: 'pend',
-    progresso: Math.max(0, Math.min(100, +document.getElementById('f-prog').value || 0))
-  });
+  var titulo = document.getElementById('f-tit').value;
+  var area = document.getElementById('f-area').value;
+  var resp = document.getElementById('f-resp').value;
+  var prog = Math.max(0, Math.min(100, +document.getElementById('f-prog').value || 0));
+  var nova = { titulo: titulo, area: area, resp: resp, status: 'pend', progresso: prog };
+  DEMANDAS.push(nova);
   atualizarPainel(); atualizarKpis();
-  logAtividade('<b>' + document.getElementById('f-resp').value + '</b> criou a demanda <b>“' + document.getElementById('f-tit').value + '”</b>', '#ffc857');
+  logAtividade('<b>' + resp + '</b> criou a demanda <b>“' + titulo + '”</b>', '#ffc857');
   fecharModal();
+
+  if (!HQ_OMNI.ativo) return; // sem bridge: comportamento simulado local
+  var dIdx = DEMANDAS.length - 1;
+  DEMANDAS[dIdx].status = 'anda';
+  DEMANDAS[dIdx].progresso = 12;
+  logAtividade('Demanda <b>“' + titulo + '”</b> encaminhada ao OmniRoute (' + HQ_OMNI.url + ')', '#22CCFF');
+  atualizarPainel();
+
+  HQ_OMNI.enviarDemanda({ titulo: titulo, resp: resp, area: area })
+    .then(function(d){
+      if (!d || !d.tarefa) return;
+      var tid = d.tarefa.id;
+      DEMANDAS[dIdx].omniId = tid;
+      DEMANDAS[dIdx].progresso = 35;
+      atualizarPainel();
+      logAtividade('Agente assumiu <b>“' + titulo + '”</b> (tarefa ' + tid + ' · ' + d.tarefa.responsavel + ')', '#B77BFF');
+      var tent = 0;
+      (function poll(){
+        if (tent > 30) { DEMANDAS[dIdx].status = 'bloq'; DEMANDAS[dIdx].progresso = 90; atualizarPainel(); return; }
+        tent++;
+        HQ_OMNI.poll(tid).then(function(r){
+          var t = r && r.tarefa;
+          if (!t) { DEMANDAS[dIdx].status = 'bloq'; atualizarPainel(); return; }
+          if (t.status === 'concluida') {
+            demandasPorId[tid] = t; // guarda resultado
+            DEMANDAS[dIdx].status = 'fim';
+            DEMANDAS[dIdx].progresso = 100;
+            DEMANDAS[dIdx].resultado = t.resultado || '';
+            atualizarPainel(); atualizarKpis();
+            logAtividade('Demanda <b>“' + titulo + '”</b> concluída pelo agente' +
+              (t.modelo ? ' (' + t.modelo + ')' : '') + ' — resultado no painel', '#2FE39B');
+            montarDemandaResultado();
+          } else if (t.status === 'erro') {
+            DEMANDAS[dIdx].status = 'bloq';
+            DEMANDAS[dIdx].progresso = 90;
+            atualizarPainel();
+            logAtividade('Agente falhou em <b>“' + titulo + '”</b>: ' + (t.error || 'erro'), '#FF6B6B');
+          } else {
+            DEMANDAS[dIdx].progresso = Math.min(85, 40 + tent);
+            atualizarPainel();
+            setTimeout(poll, 2500);
+          }
+        }).catch(function(){
+          DEMANDAS[dIdx].status = 'bloq'; atualizarPainel();
+        });
+      })();
+    })
+    .catch(function(){
+      DEMANDAS[dIdx].status = 'bloq'; atualizarPainel();
+      logAtividade('Falha ao conectar ao OmniRoute em <b>“' + titulo + '”</b>. Verifique o bridge.', '#FF6B6B');
+    });
+}
+
+var demandasPorId = {};
+
+function montarDemandaResultado(){
+  var sec = document.getElementById('sec-demandas');
+  var lista = document.getElementById('lista-demandas');
+  var cromos = sec.querySelector('.hq-resultado');
+  if (cromos) cromos.remove();
+  var concluidas = DEMANDAS.filter(function(d){ return d.status === 'fim' && d.resultado; });
+  if (!concluidas.length) return;
+  var h = '<div class="hq-resultado" style="margin-top:10px">' +
+    '<div class="p-hint">Resultados dos agentes (OmniRoute)</div>' +
+    concluidas.map(function(d){
+      var r = d.resultado;
+      var st = /STATUS:\s*(\w+)/i.exec(r);
+      var et = /ENTREGA:\s*([^\n]+)/i.exec(r);
+      return '<div class="dos-card" style="margin-bottom:8px">' +
+        '<div class="dos-top"><div class="iava" style="background:' + areaCor(d.area) + '">' + iniciais(d.resp) + '</div>' +
+        '<div><b>' + d.titulo + '</b><small>' + d.resp + ' · Agente OmniRoute</small></div>' +
+        '<span class="badge" style="border-color:rgba(47,227,155,.5);color:var(--verde)">' + (st ? st[1] : 'ok') + '</span></div>' +
+        '<div style="font-size:11px;color:var(--muted);white-space:pre-wrap;max-height:120px;overflow:auto">' +
+        r.replace(/&/g,'&amp;').replace(/</g,'&lt;') + '</div>' +
+        (et ? '<div style="font-size:11px;color:var(--cyan);margin-top:6px">Entregável: <b>' + et[1].slice(0, 140) + '</b></div>' : '') +
+        '</div>';
+    }).join('') + '</div>';
+  lista.innerHTML += h;
 }
 
 function modalNovoDossie(){
@@ -1090,6 +1209,17 @@ window.addEventListener('load', function(){
   logAtividade('<b>Núcleo KRAEFEGG M.O.</b> iniciado · ' + SUBAGENTES.length + ' agentes vinculados', '#ffc857');
   logAtividade('<b>Railson Arruda</b> assumiu o posto de comando', '#38e1ff');
   logAtividade('<b>' + DEMANDAS[0].resp + '</b> retomou a demanda <b>“' + DEMANDAS[0].titulo + '”</b>', '#6cffb0');
+  HQ_OMNI.checar().then(function(d){
+    if (d && d.omniroute === 'up') {
+      logAtividade('Hub OmniRoute <b>ONLINE</b> · ' + (d.modelos ? d.modelos.length : 0) + ' modelos · rota <b>' + (d.model || 'auto') + '</b>', '#2FE39B');
+      var st = document.getElementById('st-status');
+      if (st) st.textContent = 'Orquestração OmniRoute ativa.';
+    } else if (d) {
+      logAtividade('Hub OmniRoute <b>indisponível</b> — modo simulado do núcleo.', '#FFB44A');
+    } else {
+      logAtividade('Bridge HQ offline · ' + HQ_OMNI.url + ' (modo simulado)', '#FF6B6B');
+    }
+  });
   setInterval(simula, 3500);
 });
 </script>
