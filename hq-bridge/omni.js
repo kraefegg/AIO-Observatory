@@ -23,6 +23,7 @@ async function listarModelos() {
 async function gerar({ model, prompt, system }) {
   const body = {
     model: model || config.OMNI_MODEL,
+    stream: false,
     messages: []
   };
   if (system) body.messages.push({ role: 'system', content: system });
