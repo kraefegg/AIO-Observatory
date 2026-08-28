@@ -35,6 +35,19 @@ const OMNI_TIMEOUT_MS = parseInt(process.env.OMNI_TIMEOUT_MS || '120000', 10);
 // Tokens para proteger o front (envie via header X-HQ-TOKEN nos testes locais).
 const HQ_TOKEN = process.env.HQ_TOKEN || '';
 
+// MongoDB Atlas — persistência real dos projetos/relatórios/tarefas/agentes.
+// A conexão usa hosts diretos (non-SRV) porque a rede do cliente não resolve
+// consultas DNS TXT que o formato mongodb+srv:// exige. Define o primário
+// diretamente via directConnection=true.
+const MONGO_URI = process.env.MONGO_URI || '';                 // string completa opcional
+const MONGO_HOSTS =
+  process.env.MONGO_HOSTS ||
+  'ac-dv5oy5v-shard-00-00.wuuhi4h.mongodb.net:27017,ac-dv5oy5v-shard-00-01.wuuhi4h.mongodb.net:27017,ac-dv5oy5v-shard-00-02.wuuhi4h.mongodb.net:27017';
+const MONGO_USER = process.env.MONGO_USER || '';
+const MONGO_PASS = process.env.MONGO_PASS || '';
+const MONGO_DB = process.env.MONGO_DB || 'kraefeggmo';
+const MONGO_RS = process.env.MONGO_RS || 'atlas-dv5oy5v-shard-0';
+
 // Prefixo de agentes que a HQ usa como rótulos (responsável = "tipo" de agente).
 const AGENTS = {
   'Railson Arruda': 'orquestrador',
@@ -56,5 +69,11 @@ module.exports = {
   OMNI_CHAT_PATH,
   OMNI_TIMEOUT_MS,
   HQ_TOKEN,
-  AGENTS
+  AGENTS,
+  MONGO_URI,
+  MONGO_HOSTS,
+  MONGO_USER,
+  MONGO_PASS,
+  MONGO_DB,
+  MONGO_RS
 };

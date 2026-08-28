@@ -118,20 +118,29 @@ const server = http.createServer(async (req, res) => {
   if (caminho === '/api/hq/health') {
     try {
       const modelos = await omni.listarModelos();
+      // reporta o Mongo de forma precisa (tenta conectar se ainda não conectou)
+      let mongo = store.statusMongo();
+      try { await store.conectar(); mongo = { conectado: true, falhou: false, db: config.MONGO_DB }; }
+      catch (e) { mongo = store.statusMongo(); mongo.erro = (e && e.message) || 'sem conexão'; }
       return enviar(res, 200, {
         ok: true,
         bridge: 'up',
         omniroute: 'up',
         omniUrl: OMNI_URL,
+        mongo,
         modelos: modelos.slice(0, 30),
         model: config.OMNI_MODEL
       }, origem);
     } catch (e) {
+      let mongo = store.statusMongo();
+      try { await store.conectar(); mongo = { conectado: true, falhou: false, db: config.MONGO_DB }; }
+      catch (e2) { mongo = store.statusMongo(); mongo.erro = (e2 && e2.message) || 'sem conexão'; }
       return enviar(res, 200, {
         ok: true,
         bridge: 'up',
         omniroute: 'down',
         omniUrl: OMNI_URL,
+        mongo,
         erro: (e && e.message) || String(e)
       }, origem);
     }
@@ -164,6 +173,67 @@ const server = http.createServer(async (req, res) => {
     const t = store.obter(partes[3]);
     if (!t) return enviar(res, 404, { ok: false, erro: 'tarefa não encontrada' }, origem);
     return enviar(res, 200, { ok: true, tarefa: t }, origem);
+  }
+
+  // ---- Projetos (persistência de longo prazo) ----
+  // POST /api/hq/projetos  → cria/registra um projeto
+  if (caminho === '/api/hq/projetos' && req.method === 'POST') {
+    try {
+      await store.conectar();
+      const corpo = await lerCorpo(req);
+      const p = await store.criarProjeto(
+        String(corpo.nome || '').slice(0, 300),
+        String(corpo.dono || ''),
+        String(corpo.descricao || '').slice(0, 2000),
+        corpo.meta || {}
+      );
+      return enviar(res, 201, { ok: true, projeto: p }, origem);
+    } catch (e) {
+      return enviar(res, 500, { ok: false, erro: (e && e.message) || 'erro ao criar projeto', mongo: store.statusMongo() }, origem);
+    }
+  }
+
+  // GET /api/hq/projetos  → lista projetos
+  if (caminho === '/api/hq/projetos' && req.method === 'GET') {
+    try {
+      await store.conectar();
+      const lista = await store.listarProjetos();
+      return enviar(res, 200, { ok: true, projetos: lista }, origem);
+    } catch (e) {
+      return enviar(res, 500, { ok: false, erro: (e && e.message) || 'erro ao listar projetos', mongo: store.statusMongo() }, origem);
+    }
+  }
+
+  // ---- Relatórios ----
+  // POST /api/hq/relatorios
+  if (caminho === '/api/hq/relatorios' && req.method === 'POST') {
+    try {
+      await store.conectar();
+      const corpo = await lerCorpo(req);
+      const r = await store.criarRelatorio(
+        String(corpo.projetoId || '').slice(0, 64),
+        String(corpo.agente || '').slice(0, 120),
+        String(corpo.titulo || '').slice(0, 500),
+        String(corpo.conteudo || ''),
+        String(corpo.status || 'rascunho').slice(0, 40)
+      );
+      return enviar(res, 201, { ok: true, relatorio: r }, origem);
+    } catch (e) {
+      return enviar(res, 500, { ok: false, erro: (e && e.message) || 'erro ao criar relatório', mongo: store.statusMongo() }, origem);
+    }
+  }
+
+  // GET /api/hq/relatorios[?projetoId=...]
+  if (caminho === '/api/hq/relatorios' && req.method === 'GET') {
+    try {
+      await store.conectar();
+      const qs = new URL(req.url, 'http://x').searchParams;
+      const projetoId = qs.get('projetoId') || '';
+      const lista = await store.listarRelatorios(projetoId);
+      return enviar(res, 200, { ok: true, relatorios: lista }, origem);
+    } catch (e) {
+      return enviar(res, 500, { ok: false, erro: (e && e.message) || 'erro ao listar relatórios', mongo: store.statusMongo() }, origem);
+    }
   }
 
   return enviar(res, 404, { ok: false, erro: 'rota não encontrada' }, origem);
