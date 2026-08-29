@@ -15,6 +15,10 @@ Script load order in `index.html` matters: `data.js` → `pages.js` → `app.js`
 - `pages.js` — global `PAGES`: one template function per page (dashboard, meteorologia, climatologia, vegetacao, solo, hidrico, sensoriamento, mapas, csv, relatorios, ia, config). Pages are HTML template literals.
 - `app.js` — routing (`go()` injects `PAGES[id]()` into `#content` then calls the matching `renderXyz()`), live data fetch, charts, Leaflet map, CSV/report export.
 
+## HQ agents (hq-agents/)
+- `hq-agents/` holds PowerShell scripts that process HQ demandas (Supabase), produce real deliverables, and upload to Google Drive. Main: `hq-orquestrador.ps1` (team of synchronized subagents: PM → Analista → Especialista → QA → Entrega). See `hq-agents/README.md`.
+- Secrets (OpenRouter key, rclone OAuth token) stay outside the repo (`C:\hq-prod\rclone\`, env vars). Only the publishable Supabase key is in-script.
+
 ## Conventions & gotchas
 - All UI copy and code comments are pt-BR; keep new text in Portuguese.
 - Runtime mutates the global `AIO` object (e.g., real NDVI replaces `AIO.indices.ndvi`, sets `AIO._ndviIsReal`, `AIO._fire`). NDVI data is sniffed from repo CSV by column-name regex in `sniffDateMean`.
