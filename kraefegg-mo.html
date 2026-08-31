@@ -144,6 +144,7 @@ th{font-size:11px;font-weight:700;color:var(--cinza-400);text-transform:uppercas
 td{padding:11px 12px;border-bottom:1px solid var(--borda-suave);font-size:13px;color:var(--grafite-600);vertical-align:middle}
 tr:last-child td{border-bottom:0}
 tr:hover td{background:#f8fafb}
+tr.linha-ativa td{background:#e6f1f5;box-shadow:inset 3px 0 0 var(--azul-petroleo)}
 .cell-id{font-weight:700;color:var(--carvao-900)}
 .progresso{border-radius:20px;overflow:hidden;height:6px;background:#e5e9ec;width:100px;display:inline-block;vertical-align:middle}
 .progresso i{display:block;height:100%;background:var(--azul-petroleo)}
@@ -749,12 +750,93 @@ function montaEstrategia(alvo){
   ESTR_INTERVAL = setInterval(tick, 15000);
 }
 
+/* ============ página atual (fonte única de navegação) ============ */
+let CURRENT_PAG = 'equipe';
+function goPag(p){
+  CURRENT_PAG = p || 'equipe';
+  document.querySelectorAll('nav button').forEach(b=>b.classList.toggle('ativo', b.dataset.pag===CURRENT_PAG));
+  render(); montaMenu();
+}
+
+function paginaVisaoGeral(){
+  const emCurso = (DEMANDAS.length?DEMANDAS:DEMANDAS_FALLBACK).filter(d=>(d.prog||0)<100);
+  return `
+  <div class="banner-hero">
+    <img src="banner.png" alt="KRAEFEGG M.O. — Inteligência Operacional">
+    <div class="banner-overlay">
+      <div>
+        <h1>Visão Geral</h1>
+        <p>Painel executivo · plataforma corporativa de inteligência operacional KRAEFEGG M.O.</p>
+      </div>
+      <span class="banner-chip"><span class="dot ok"></span> ${KPIS.agentes} agentes ativos</span>
+    </div>
+  </div>
+  <div class="kpis">
+    <div class="kpi-card" style="--accent:var(--azul-petroleo)"><div class="kpi-label">Demandas</div><div class="kpi-val">${KPIS.demandas}</div><div class="kpi-sub"><span class="tend sobe">${KPIS.concluidas}</span> concluídas</div></div>
+    <div class="kpi-card" style="--accent:var(--verde-operacional)"><div class="kpi-label">Taxa de entrega</div><div class="kpi-val">${KPIS.taxa}%</div><div class="kpi-sub"><span class="tend sobe">▲</span> alta performance</div></div>
+    <div class="kpi-card" style="--accent:var(--ambar)"><div class="kpi-label">Agentes</div><div class="kpi-val">${KPIS.agentes}</div><div class="kpi-sub"><span class="tend">${KPIS.subagentes}</span> subagentes</div></div>
+    <div class="kpi-card" style="--accent:var(--vermelho)"><div class="kpi-label">Em curso</div><div class="kpi-val">${emCurso.length}</div><div class="kpi-sub tend desc">● ativo</div></div>
+  </div>
+  <div class="grid-2">
+    <div class="painel">
+      <div class="painel-titulo"><h2>Atividade operacional</h2><span>últimas ocorrências</span></div>
+      <div class="painel-corpo">
+        ${ATIVIDADE.slice(0,4).map(l=>`<div class="log-line">
+          <span class="log-time">${l.t}</span><span class="tag ${l.tag.toLowerCase()}">${l.tag}</span>
+          <div class="log-msg"><b>${l.ref}</b> — ${l.msg}</div></div>`).join('')}
+      </div>
+    </div>
+    <div class="painel">
+      <div class="painel-titulo"><h2>Demandas em destaque</h2><span>${emCurso.length} em andamento</span></div>
+      <div class="painel-corpo" style="padding:0">
+        <table>
+          <thead><tr><th>ID</th><th>Projeto</th><th>Progresso</th></tr></thead>
+          <tbody>${(DEMANDAS.length?DEMANDAS:DEMANDAS_FALLBACK).slice(0,5).map(d=>`<tr>
+            <td class="cell-id">${d.cod}</td>
+            <td><b>${d.projeto||d.cliente}</b></td>
+            <td><span class="progresso"><i style="width:${d.prog||0}%"></i></span><span class="pct">${d.prog||0}%</span></td>
+          </tr>`).join('')}</tbody>
+        </table>
+      </div>
+    </div>
+  </div>`;
+}
+
+function paginaDigitalTwin(sel){
+  return `
+  <div class="page-titulo"><div><h1>Digital Twin</h1><p>Escritório corporativo KRAEFEGG M.O. · clique em um departamento</p></div>
+    <div class="barra-status"><span class="dot ok"></span> Digital Twin em tempo real</div></div>
+  <div class="painel">
+    <div class="painel-titulo"><h2>Planta 3D — Departamentos</h2><span>${DEPARTAMENTOS.length} blocos</span></div>
+    <div id="cena-twin">${twinSvg(sel)}
+      <div class="twin-legenda">Blocos: A–G + central · departamentos da Diretoria Técnica</div>
+      <div class="twin-hud"><span>Departamento</span><b>${DEPARTAMENTOS.map(d=>d.sigla).join(' · ')}</b><span>Clique em um bloco para detalhar</span></div>
+    </div>
+  </div>
+  <div class="painel">
+    <div class="painel-titulo"><h2>Departamentos</h2><span>${DEPARTAMENTOS.length} ativos</span></div>
+    <div class="painel-corpo" style="padding:0">
+      <table>
+        <thead><tr><th>Sigla</th><th>Departamento</th><th>Local</th><th>Agentes</th></tr></thead>
+        <tbody>${DEPARTAMENTOS.map(d=>`<tr class="${d.id===sel?'linha-ativa':''}">
+          <td><span class="chip" style="background:${d.cor};color:#fff;border:0">${d.sigla}</span></td>
+          <td><b style="color:var(--carvao-900)">${d.nome}</b></td>
+          <td>${d.area}</td>
+          <td style="color:var(--cinza-400);font-size:12px">${d.agentes.join(', ')}</td>
+        </tr>`).join('')}</tbody>
+      </table>
+    </div>
+  </div>`;
+}
+
 function render(){
-  const pag = document.querySelector('nav button.ativo').dataset.pag;
+  const pag = CURRENT_PAG;
   const sel = document.querySelector('[data-dept].ativo')?.dataset.dept;
   const alvo = document.getElementById('conteudo');
   if(ESTR_INTERVAL){ clearInterval(ESTR_INTERVAL); ESTR_INTERVAL = null; }
   if(pag==='equipe') alvo.innerHTML = paginaEquipe(sel);
+  else if(pag==='visaogeral') alvo.innerHTML = paginaVisaoGeral();
+  else if(pag==='digitaltwin') alvo.innerHTML = paginaDigitalTwin(sel);
   else if(pag==='estrategia') { alvo.innerHTML = paginaEstrategia(); montaEstrategia(alvo); }
   else if(pag==='demandas') alvo.innerHTML = paginaDemandas();
   else if(pag==='atividade') alvo.innerHTML = paginaAtividade();
@@ -778,28 +860,27 @@ function render(){
 /* menu lateral */
 function montaMenu(){
   const itens = [
-    ['🏢','Visão Geral',null],['▦','Digital Twin',null],['◔','Atividade Operacional','atividade'],
+    ['🏢','Visão Geral','visaogeral'],['▦','Digital Twin','digitaltwin'],['◔','Atividade Operacional','atividade'],
     ['♜','Estratégia (CEO)','estrategia'],['▣','Demandas','demandas'],['≡','Projetos','projetos'],['◈','Agentes','agentes'],
     ['⁂','Subagentes','subagentes'],['▪','Clientes','clientes'],['▤','Relatórios','relatorios'],
     ['⚿','Credenciais','credenciais']];
   const nav = document.getElementById('menu-lateral');
   nav.innerHTML = `<div class="menu-titulo">Diretoria Técnica</div>` + itens.map(([ic,label,pag])=>
-    `<div class="menu-item ${(pag&&pag===document.querySelector('nav button.ativo').dataset.pag)?'ativo':''}" data-nav="${pag||''}">
+    `<div class="menu-item ${pag===CURRENT_PAG?'ativo':''}" data-nav="${pag}">
        <span class="mi-ico">${ic}</span>${label}</div>`).join('');
   nav.querySelectorAll('.menu-item').forEach(el=>{
     el.addEventListener('click', ()=>{
       const p = el.dataset.nav;
       if(!p) return;
-      document.querySelectorAll('nav button').forEach(b=>b.classList.toggle('ativo', b.dataset.pag===p));
-      render(); montaMenu();
+      goPag(p);
     });
   });
 }
 
 document.querySelectorAll('nav button').forEach(b=>{
+  if(!b.dataset.pag) return;
   b.addEventListener('click', ()=>{
-    document.querySelectorAll('nav button').forEach(x=>x.classList.remove('ativo'));
-    b.classList.add('ativo'); render(); montaMenu();
+    goPag(b.dataset.pag);
   });
 });
 
@@ -869,7 +950,7 @@ function salvarDemanda(ev){
       msg.className = 'hq-msg ok';
       return carregarDemandas();
     })
-    .then(function(){ if(document.querySelector('nav button.ativo').dataset.pag==='demandas') render(); })
+    .then(function(){ if(CURRENT_PAG==='demandas') render(); })
     .then(function(){ setTimeout(fecharModal, 1100); })
     .catch(function(e){ msg.textContent = 'Erro: '+e.message; msg.className='hq-msg err'; });
 }
@@ -888,7 +969,7 @@ function excluirDemanda(){
       msg.textContent='Demanda excluída.'; msg.className='hq-msg ok';
       return carregarDemandas();
     })
-    .then(function(){ if(document.querySelector('nav button.ativo').dataset.pag==='demandas') render(); })
+    .then(function(){ if(CURRENT_PAG==='demandas') render(); })
     .then(function(){ setTimeout(fecharModal, 1100); })
     .catch(function(e){ msg.textContent='Erro ao excluir: '+e.message; msg.className='hq-msg err'; });
 }

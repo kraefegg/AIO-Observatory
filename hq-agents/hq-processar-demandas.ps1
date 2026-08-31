@@ -33,6 +33,21 @@ $ENTREGAS = "C:\hq-prod\entregas"   # pasta durável de documentos reais
 $HDR   = @{ "apikey"=$API_KEY; "Authorization"="Bearer "+$API_KEY; "Content-Type"="application/json" }
 $OHDR  = @{ "Authorization"="Bearer "+$OR_KEY; "Content-Type"="application/json" }
 
+# ---------- Helper: extrai texto da resposta do OpenRouter (defensivo) ----------
+# Evita "Não é possível indexar em uma matriz nula" quando a API responde
+# sem choices[0].message (rate-limit 429, erro, ou formato inesperado).
+function Get-HQText {
+    param($Resposta)
+    if (-not $Resposta) { throw "Resposta vazia da API" }
+    if (-not $Resposta.choices -or $Resposta.choices.Count -eq 0) {
+        $erro = if ($Resposta.error) { ($Resposta.error | ConvertTo-Json -Compress) } else { "sem campo choices" }
+        throw ("Resposta sem choices: " + $erro)
+    }
+    $mensagem = $Resposta.choices[0].message
+    if (-not $mensagem) { throw "Resposta sem message em choices[0]" }
+    return [string]$mensagem.content
+}
+
 # ---------- Config Google Drive (upload dos documentos) ----------
 # Credencial OAuth (Web) da conta kraefegg.mos3@gmail.com; token de refresh
 # guardado em C:\hq-prod\rclone\ (FORA do repositório — nunca versionado).
@@ -90,7 +105,7 @@ Demanda: {codigo:"$($d.codigo)", titulo:"$($d.titulo)", fase:"$($d.fase)", prior
     try {
         $bodyA = @{ model=$MODEL; messages=@(@{role="user"; content=$prompt_analise}); max_tokens=220 } | ConvertTo-Json -Depth 5
         $rA = Invoke-RestMethod -Uri "https://openrouter.ai/api/v1/chat/completions" -Method Post -Headers $OHDR -Body $bodyA -TimeoutSec 60
-        $txtA = [string]$rA.choices[0].message.content
+        $txtA = Get-HQText -Resposta $rA
         $txtA = $txtA -replace '(?s)```json\s*', '' -replace '(?s)```', '' -replace '^\s+|\s+$', ''
         $jA = $txtA | ConvertFrom-Json
         $analise = [pscustomobject]@{
@@ -124,7 +139,7 @@ Demanda: codigo={codigo}, titulo={titulo}, fase={fase}, prioridade={prioridade},
     try {
         $bodyD = @{ model=$MODEL; messages=@(@{role="user"; content=$prompt_doc}); max_tokens=1500 } | ConvertTo-Json -Depth 5
         $rD = Invoke-RestMethod -Uri "https://openrouter.ai/api/v1/chat/completions" -Method Post -Headers $OHDR -Body $bodyD -TimeoutSec 90
-        $docText = [string]$rD.choices[0].message.content
+        $docText = Get-HQText -Resposta $rD
         $docText = $docText -replace '(?s)```(markdown|md|x)?\s*', '' -replace '(?s)```', ''
         $dir = Join-Path $ENTREGAS ("demanda-" + $d.codigo)
         if (-not (Test-Path $dir)) { New-Item -ItemType Directory -Path $dir -Force | Out-Null }

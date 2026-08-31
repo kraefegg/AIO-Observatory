@@ -37,7 +37,13 @@ function Invoke-AI {
     param([string]$Content, [int]$Tokens = 3000)
     $body = @{ model=$MODEL; messages=@(@{role="user"; content=$Content}); max_tokens=$Tokens } | ConvertTo-Json -Depth 5
     $r = Invoke-RestMethod -Uri "https://openrouter.ai/api/v1/chat/completions" -Method Post -Headers $OHDR -Body $body -TimeoutSec 180
-    return [string]$r.choices[0].message.content
+    if (-not $r -or -not $r.choices -or $r.choices.Count -eq 0) {
+        $erro = if ($r -and $r.error) { ($r.error | ConvertTo-Json -Compress) } else { "sem choices" }
+        throw ("Resposta OpenRouter sem choices: " + $erro)
+    }
+    $msg = $r.choices[0].message
+    if (-not $msg) { throw "Resposta OpenRouter sem message em choices[0]" }
+    return [string]$msg.content
 }
 
 function Push-ToDrive {

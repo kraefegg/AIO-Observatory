@@ -50,7 +50,13 @@ function Invoke-AI {
     for ($t = 0; $t -lt $MaxRetry; $t++) {
         try {
             $r = Invoke-RestMethod -Uri "https://openrouter.ai/api/v1/chat/completions" -Method Post -Headers $OHDR -Body $body -TimeoutSec 180
-            return [string]$r.choices[0].message.content
+            if (-not $r -or -not $r.choices -or $r.choices.Count -eq 0) {
+                $erro = if ($r -and $r.error) { ($r.error | ConvertTo-Json -Compress) } else { "sem choices" }
+                throw ("Resposta OpenRouter sem choices: " + $erro)
+            }
+            $msg = $r.choices[0].message
+            if (-not $msg) { throw "Resposta OpenRouter sem message em choices[0]" }
+            return [string]$msg.content
         } catch {
             $status = 0
             if ($_.Exception.Response) { $status = [int]$_.Exception.Response.StatusCode }
