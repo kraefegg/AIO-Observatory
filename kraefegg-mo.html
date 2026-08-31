@@ -23,13 +23,35 @@
   --fonte:'Segoe UI',system-ui,-apple-system,sans-serif;
 }
 html,body{height:100%}
-body{font-family:var(--fonte);color:var(--carvao-900);background:#eef1f4;font-size:14px;line-height:1.5}
+body{font-family:var(--fonte);color:var(--carvao-900);background:
+  radial-gradient(1200px 600px at 12% -10%, rgba(27,77,94,.10), transparent 60%),
+  radial-gradient(900px 500px at 100% 0%, rgba(20,58,72,.08), transparent 55%),
+  linear-gradient(180deg,#eef1f4,#e7ebef);
+  font-size:14px;line-height:1.5}
+body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;opacity:.5;
+  background:
+    linear-gradient(rgba(27,77,94,.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(27,77,94,.035) 1px, transparent 1px);
+  background-size:46px 46px,46px 46px;
+  -webkit-mask-image:radial-gradient(ellipse 80% 60% at 50% 20%, #000 20%, transparent 85%);
+          mask-image:radial-gradient(ellipse 80% 60% at 50% 20%, #000 20%, transparent 85%)}
+#topo,.painel,.kpi-card,.acoes-rapidas,#lateral aside,.barra-status{position:relative;z-index:1}
+
+/* ===== Banner + logo ===== */
+.banner-hero{position:relative;border-radius:12px;overflow:hidden;margin-bottom:18px;box-shadow:var(--sombra);border:1px solid var(--borda)}
+.banner-hero img{display:block;width:100%;height:auto;min-height:120px;object-fit:cover}
+.banner-overlay{position:absolute;inset:0;display:flex;align-items:flex-end;justify-content:space-between;padding:18px 22px;
+  background:linear-gradient(180deg,transparent 20%,rgba(11,17,22,.72) 100%)}
+.banner-overlay h1{color:#fff;font-size:26px;font-weight:700;letter-spacing:-.3px;text-shadow:0 2px 14px rgba(0,0,0,.5)}
+.banner-overlay p{color:rgba(255,255,255,.85);font-size:13px;margin-top:3px}
+.banner-chip{display:inline-flex;align-items:center;gap:7px;padding:7px 14px;border-radius:30px;background:rgba(20,24,28,.72);border:1px solid rgba(255,255,255,.18);color:#fff;font-size:12px;font-weight:600;backdrop-filter:blur(3px)}
+.banner-chip .dot{width:8px;height:8px}
 
 /* ===== Header ===== */
-#topo{position:sticky;top:0;z-index:40;background:#fff;border-bottom:1px solid var(--borda);box-shadow:0 2px 10px rgba(15,20,26,.05)}
+#topo{position:sticky;top:0;z-index:40;background:linear-gradient(180deg,#ffffff,#f9fbfc);border-bottom:1px solid var(--borda);box-shadow:0 2px 10px rgba(15,20,26,.05)}
 .topo-inner{max-width:1440px;margin:0 auto;display:flex;align-items:center;gap:24px;padding:0 20px;height:60px}
 .marca{display:flex;align-items:center;gap:12px;min-width:230px;border-right:1px solid var(--borda-suave);padding-right:20px}
-.logo{width:38px;height:38px;border-radius:7px;background:linear-gradient(135deg,var(--azul-profundo),var(--azul-petroleo));display:grid;place-items:center;color:#fff;font-weight:700;font-size:13px;letter-spacing:.5px}
+.logo-img{width:38px;height:38px;border-radius:7px;object-fit:cover;flex-shrink:0}
 .marca b{font-size:16px;font-weight:700;color:var(--carvao-900);letter-spacing:-.2px}
 .marca b span{color:var(--azul-petroleo)}
 .marca small{display:block;font-size:10px;color:var(--cinza-400);letter-spacing:1.2px;text-transform:uppercase;font-weight:600;margin-top:1px}
@@ -147,7 +169,7 @@ tr:hover td{background:#f8fafb}
 <header id="topo">
   <div class="topo-inner">
     <div class="marca">
-      <div class="logo">KM</div>
+      <img src="logo.png" alt="KRAEFEGG" class="logo-img">
       <div><b>KRAEFEGG <span>M.O.</span></b><small>Inteligência Operacional</small></div>
     </div>
     <nav>
@@ -272,6 +294,16 @@ function paginaEquipe(sel){
   const selDep = sel || DEPARTAMENTOS[0].id;
   const d = DEPARTAMENTOS.find(x=>x.id===selDep);
   return `
+  <div class="banner-hero">
+    <img src="banner.png" alt="KRAEFEGG M.O. — Inteligência Operacional">
+    <div class="banner-overlay">
+      <div>
+        <h1>KRAEFEGG M.O.</h1>
+        <p>Plataforma corporativa de inteligência operacional · Digital Twin da Diretoria Técnica</p>
+      </div>
+      <span class="banner-chip"><span class="dot ok"></span> 16 agentes ativos</span>
+    </div>
+  </div>
   <div class="page-titulo">
     <div><h1>Equipe — Diretoria Técnica</h1><p>Organograma KRAEFEGG M.O. · Digital Twin do escritório corporativo</p></div>
     <div class="barra-status"><span class="dot ok"></span> Sistemas operacionais · 16 agentes ativos</div>
