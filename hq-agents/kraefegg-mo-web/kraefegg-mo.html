@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>KRAEFEGG M.O. — Plataforma Corporativa de Inteligência Operacional</title>
+<style>
+/* ============================================================
+   KRAEFEGG M.O. — Plataforma Corporativa de Inteligência Operacional
+   Estética enterprise (sem game/HUD/neon). Digital Twin isométrico.
+   Paleta: grafite/carvão/cinza claro/branco + azul petróleo/azul profundo/
+   ciano discreto/verde operacional/âmbar.
+   ============================================================ */
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --carvao-950:#14181c; --carvao-900:#1b2025; --carvao-800:#232a31; --carvao-700:#2e363f;
+  --grafite-600:#3f4953; --grafite-500:#55606b; --cinza-400:#7b8792; --cinza-300:#9aa5af;
+  --cinza-200:#c4ccd3; --cinza-100:#e6eaee; --branco:#f7f9fb;
+  --azul-petroleo:#1b4d5e; --azul-profundo:#143a48; --ciano-discreto:#4f8ba0; --ciano-claro:#7fb4c4;
+  --verde-operacional:#3a7d5a; --verde-claro:#5d9c72; --ambar:#c98f3d; --amb-claro:#dfae63;
+  --vermelho:#b34a3d; --sombra:0 12px 30px rgba(15,20,26,.12);
+  --borda:#dde3e8; --borda-suave:#e9edf0;
+  --fonte:'Segoe UI',system-ui,-apple-system,sans-serif;
+}
+html,body{height:100%}
+body{font-family:var(--fonte);color:var(--carvao-900);background:#eef1f4;font-size:14px;line-height:1.5}
+
+/* ===== Header ===== */
+#topo{position:sticky;top:0;z-index:40;background:#fff;border-bottom:1px solid var(--borda);box-shadow:0 2px 10px rgba(15,20,26,.05)}
+.topo-inner{max-width:1440px;margin:0 auto;display:flex;align-items:center;gap:24px;padding:0 20px;height:60px}
+.marca{display:flex;align-items:center;gap:12px;min-width:230px;border-right:1px solid var(--borda-suave);padding-right:20px}
+.logo{width:38px;height:38px;border-radius:7px;background:linear-gradient(135deg,var(--azul-profundo),var(--azul-petroleo));display:grid;place-items:center;color:#fff;font-weight:700;font-size:13px;letter-spacing:.5px}
+.marca b{font-size:16px;font-weight:700;color:var(--carvao-900);letter-spacing:-.2px}
+.marca b span{color:var(--azul-petroleo)}
+.marca small{display:block;font-size:10px;color:var(--cinza-400);letter-spacing:1.2px;text-transform:uppercase;font-weight:600;margin-top:1px}
+nav{flex:1;display:flex;gap:2px;align-items:center}
+nav button{position:relative;border:0;background:transparent;color:var(--grafite-500);font-size:13px;font-weight:600;padding:8px 12px;border-radius:6px;cursor:pointer;transition:.15s;white-space:nowrap}
+nav button:hover{color:var(--azul-petroleo);background:#f2f5f7}
+nav button.ativo{color:var(--azul-petroleo);background:#eaf1f4}
+nav button.ativo::after{content:'';position:absolute;left:12px;right:12px;bottom:0;height:2px;background:var(--azul-petroleo);border-radius:2px}
+.topo-acoes{display:flex;align-items:center;gap:8px;min-width:200px;justify-content:flex-end}
+.icon-btn{width:34px;height:34px;border:1px solid var(--borda);background:#fff;border-radius:7px;display:grid;place-items:center;cursor:pointer;color:var(--grafite-500);transition:.15s;font-size:16px}
+.icon-btn:hover{background:#f2f5f7;color:var(--azul-petroleo)}
+.icon-btn .badge{position:absolute;top:-3px;right:-3px;width:16px;height:16px;border-radius:50%;background:var(--ambar);color:#fff;font-size:9px;display:grid;place-items:center;font-weight:700}
+#cta-perfil{display:flex;align-items:center;gap:9px;border:1px solid var(--borda);border-radius:8px;padding:4px 10px 4px 4px;background:#fff;cursor:pointer;transition:.15s}
+#cta-perfil:hover{border-color:var(--cinza-300)}
+.avatar{width:34px;height:34px;border-radius:7px;background:var(--azul-petroleo);color:#fff;display:grid;place-items:center;font-weight:700;font-size:13px}
+#cta-perfil b{font-size:12.5px;color:var(--carvao-900);font-weight:600}
+#cta-perfil small{display:block;font-size:10px;color:var(--cinza-400);text-transform:uppercase;letter-spacing:.5px}
+
+/* ===== Layout ===== */
+#layout{max-width:1440px;margin:0 auto;padding:20px;display:grid;grid-template-columns:230px 1fr;gap:20px}
+#lateral{min-width:230px}
+#conteudo{min-width:0}
+
+/* Barra lateral */
+#lateral aside{position:sticky;top:80px;background:#fff;border:1px solid var(--borda);border-radius:10px;overflow:hidden}
+.menu-titulo{padding:12px 16px;font-size:11px;font-weight:700;color:var(--cinza-400);text-transform:uppercase;letter-spacing:1.2px;border-bottom:1px solid var(--borda-suave)}
+.menu-item{display:flex;align-items:center;gap:10px;padding:11px 16px;font-size:13.5px;color:var(--grafite-500);font-weight:600;cursor:pointer;border-left:3px solid transparent;transition:.15s;background:#fff}
+.menu-item:hover{background:#f6f8fa;color:var(--carvao-900)}
+.menu-item.ativo{background:#eef3f6;color:var(--azul-petroleo);border-left-color:var(--azul-petroleo);font-weight:700}
+.mi-ico{width:18px;text-align:center;color:var(--grafite-500)}
+.menu-item.ativo .mi-ico{color:var(--azul-petroleo)}
+
+/* Ações rápidas */
+.acoes-rapidas{margin-top:16px;background:#fff;border:1px solid var(--borda);border-radius:10px;padding:14px}
+.acoes-rapidas h3{font-size:12px;color:var(--cinza-400);text-transform:uppercase;letter-spacing:1.2px;margin-bottom:10px;font-weight:700}
+.acoes-rapidas button{display:flex;align-items:center;gap:8px;width:100%;margin-bottom:6px;padding:8px 10px;border:1px solid var(--borda-suave);border-radius:7px;background:#f9fafb;font-size:12.5px;font-weight:600;color:var(--grafite-500);cursor:pointer;transition:.15s;text-align:left}
+.acoes-rapidas button:hover{background:#eef3f6;color:var(--azul-petroleo);border-color:var(--cinza-300)}
+
+/* ===== Painel executivo ===== */
+.page-titulo{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px}
+.page-titulo h1{font-size:22px;font-weight:700;color:var(--carvao-900);letter-spacing:-.3px}
+.page-titulo p{font-size:13px;color:var(--cinza-400);margin-top:2px}
+.barra-status{display:flex;gap:8px;align-items:center;background:#fff;border:1px solid var(--borda);border-radius:8px;padding:6px 12px;font-size:12px;color:var(--grafite-500)}
+.dot{width:8px;height:8px;border-radius:50%;display:inline-block}
+.dot.ok{background:var(--verde-operacional)}
+.dot.alerta{background:var(--ambar)}
+.chip{display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:600}
+.chip.verde{background:#e8f3ec;color:var(--verde-operacional)}
+.chip.azul{background:#e8f1f4;color:var(--azul-petroleo)}
+.chip.ambar{background:#fbf1e2;color:var(--ambar)}
+.chip.vermelho{background:#f9e7e4;color:var(--vermelho)}
+
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:20px}
+.kpi-card{background:#fff;border:1px solid var(--borda);border-radius:10px;padding:16px 18px;position:relative;overflow:hidden}
+.kpi-card::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--accent,var(--azul-petroleo))}
+.kpi-label{font-size:11px;font-weight:700;color:var(--cinza-400);text-transform:uppercase;letter-spacing:1.2px;margin-bottom:6px}
+.kpi-val{font-size:30px;font-weight:700;color:var(--carvao-900);letter-spacing:-.5px;line-height:1.1}
+.kpi-sub{font-size:12px;color:var(--grafite-500);margin-top:4px}
+.kpi-sub .tend{font-weight:700}
+.kpi-sub .tend.sobe{color:var(--verde-operacional)}
+.kpi-sub .tend.desc{color:var(--vermelho)}
+
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:20px}
+.painel{background:#fff;border:1px solid var(--borda);border-radius:10px;overflow:hidden}
+.painel-titulo{padding:14px 18px;border-bottom:1px solid var(--borda-suave);display:flex;align-items:center;justify-content:space-between}
+.painel-titulo h2{font-size:15px;font-weight:700;color:var(--carvao-900)}
+.painel-titulo span{font-size:12px;color:var(--cinza-400)}
+.painel-corpo{padding:16px 18px}
+
+/* ===== Digital Twin isométrico ===== */
+#cena-twin{background:linear-gradient(180deg,var(--carvao-800),var(--carvao-950));border-radius:10px;position:relative;overflow:hidden;min-height:380px}
+#cena-twin svg{display:block;width:100%;height:auto}
+.twin-legenda{position:absolute;left:14px;bottom:12px;color:var(--cinza-200);font-size:11px;letter-spacing:.5px;opacity:.7}
+.twin-hud{position:absolute;top:14px;right:14px;background:rgba(20,24,28,.72);border:1px solid rgba(255,255,255,.08);border-radius:8px;padding:10px 12px;color:var(--cinza-200);font-size:12px;backdrop-filter:blur(4px)}
+.twin-hud b{color:#fff;display:block;font-size:16px;font-weight:700}
+.twin-hud span{font-size:10px;text-transform:uppercase;letter-spacing:1px;color:var(--cinza-400)}
+.dept-hover{cursor:pointer}
+.dept-hover .dept-tag{opacity:0;fill:rgba(20,24,28,.78);stroke:#fff;stroke-width:0;transition:.15s}
+.dept-hover .lbl-txt{opacity:0;transition:.15s}
+.dept-hover:hover .dept-tag,.dept-hover.ativo .dept-tag,.dept-hover:hover .lbl-txt,.dept-hover.ativo .lbl-txt{opacity:1}
+
+/* ===== Tabelas ===== */
+table{width:100%;border-collapse:collapse}
+th{font-size:11px;font-weight:700;color:var(--cinza-400);text-transform:uppercase;letter-spacing:.8px;text-align:left;padding:10px 12px;border-bottom:1px solid var(--borda)}
+td{padding:11px 12px;border-bottom:1px solid var(--borda-suave);font-size:13px;color:var(--grafite-600);vertical-align:middle}
+tr:last-child td{border-bottom:0}
+tr:hover td{background:#f8fafb}
+.cell-id{font-weight:700;color:var(--carvao-900)}
+.progresso{border-radius:20px;overflow:hidden;height:6px;background:#e5e9ec;width:100px;display:inline-block;vertical-align:middle}
+.progresso i{display:block;height:100%;background:var(--azul-petroleo)}
+.pct{font-weight:700;color:var(--carvao-900);margin-left:8px}
+
+/* ===== Atividade operacional ===== */
+.log-line{display:flex;gap:12px;padding:9px 0;border-bottom:1px dashed var(--borda-suave);font-size:13px}
+.log-line:last-child{border-bottom:0}
+.log-time{color:var(--cinza-400);white-space:nowrap;font-size:11.5px;margin-top:1px;font-variant-numeric:tabular-nums}
+.log-msg{flex:1;color:var(--grafite-600)}
+.log-msg b{color:var(--carvao-900)}
+.tag{display:inline-block;padding:2px 8px;border-radius:4px;font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.3px}
+.tag.pm{background:#e8f1f4;color:var(--azul-petroleo)}
+.tag.an{background:#f2f4f6;color:var(--grafite-500)}
+.tag.es{background:#e8f3ec;color:var(--verde-operacional)}
+.tag.qa{background:#fbf1e2;color:var(--ambar)}
+.tag.ent{background:#e6ecfa;color:#34508c}
+
+.rodape{max-width:1440px;margin:24px auto 40px;padding:0 20px;color:var(--cinza-400);font-size:11.5px;text-align:center;letter-spacing:.6px}
+.rodape b{color:var(--grafite-500)}
+
+@media(max-width:1100px){#layout{grid-template-columns:1fr}.kpis{grid-template-columns:repeat(2,1fr)}.grid-2{grid-template-columns:1fr}#topo{overflow-x:auto}nav{overflow-x:auto}}
+@media(max-width:640px){.kpis{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+
+<header id="topo">
+  <div class="topo-inner">
+    <div class="marca">
+      <div class="logo">KM</div>
+      <div><b>KRAEFEGG <span>M.O.</span></b><small>Inteligência Operacional</small></div>
+    </div>
+    <nav>
+      <button class="ativo" data-pag="equipe">Equipe</button>
+      <button data-pag="demandas">Demandas</button>
+      <button data-pag="projetos">Projetos</button>
+      <button data-pag="dossies">Dossiês</button>
+      <button data-pag="agentes">Agentes</button>
+      <button data-pag="subagentes">Subagentes</button>
+      <button data-pag="clientes">Clientes</button>
+      <button data-pag="relatorios">Relatórios</button>
+      <button data-pag="credenciais">Credenciais</button>
+    </nav>
+    <div class="topo-acoes">
+      <button class="icon-btn" id="btn-pesquisa" title="Pesquisar">⌕</button>
+      <button class="icon-btn" id="btn-notif" title="Notificações" style="position:relative">◔<span class="badge">4</span></button>
+      <button class="icon-btn" id="btn-config" title="Configurações">⚙</button>
+      <button id="cta-perfil"><span class="avatar">RA</span><span><b>Railson Arruda</b><small>Diretoria Técnica</small></span></button>
+    </div>
+  </div>
+</header>
+
+<div id="layout">
+  <div id="lateral">
+    <aside id="menu-lateral"></aside>
+    <div class="acoes-rapidas">
+      <h3>Tarefas rápidas</h3>
+      <button>+ Nova Demanda</button>
+      <button>+ Novo Projeto</button>
+      <button>+ Novo Dossiê</button>
+      <button>+ Novo Cliente</button>
+      <button>+ Relatório</button>
+    </div>
+  </div>
+  <main id="conteudo"></main>
+</div>
+
+<footer class="rodape">KRAEFEGG M.O. — PLATAFORMA CORPORATIVA DE INTELIGÊNCIA OPERACIONAL · © 2026</footer>
+
+<script>
+/* ============================================================
+   Dados e renderização (vanilla JS)
+   ============================================================ */
+const DEPARTAMENTOS = [
+  { id:'engenharia', nome:'Engenharia & Dados', sigla:'ED', cor:'#1b4d5e', area:'bloco B · 1º andar', agentes:['Agente Eng. Dados','Agente Engenharia Civil'] },
+  { id:'ambiental', nome:'Ambiental & Segurança', sigla:'AS', cor:'#3a7d5a', area:'bloco C · térreo', agentes:['Agente Eng. Ambiental','Agente SST','Agente Monitoramento Ambiental'] },
+  { id:'mineracao', nome:'Mineração & Civil', sigla:'MC', cor:'#c98f3d', area:'bloco D · térreo', agentes:['Agente Mineração','Agente Geotecnia'] },
+  { id:'energia', nome:'Energia & Offshore', sigla:'EO', cor:'#143a48', area:'bloco A · 2º andar', agentes:['Agente Energia','Agente Offshore'] },
+  { id:'pesquisa', nome:'Pesquisa & Inovação', sigla:'PI', cor:'#4f8ba0', area:'bloco E · 3º andar', agentes:['Agente R&D','Agente Dados Científicos'] },
+  { id:'comercial', nome:'Comercial & Suporte', sigla:'CS', cor:'#34508c', area:'bloco F · térreo', agentes:['Agente Comercial','Agente Pré-venda'] },
+  { id:'orc', nome:'Orquestração', sigla:'OR', cor:'#55606b', area:'bloco central', agentes:['Orquestrador HQ','Agente Coordenação'] },
+  { id:'cyber', nome:'Cibersegurança & Consultoria', sigla:'CC', cor:'#b34a3d', area:'bloco G · 2º andar', agentes:['Agente Cibersegurança','Agente Consultoria'] },
+];
+
+const SUBAGENTES = {
+  ambiental:['GIS','Legislação Ambiental','Monitoramento de Campo','Relatórios Técnicos','Auditoria'],
+  engenharia:['Hidrologia','Geotécnica','Modelagem','Banco de Dados','Análise Geoespacial'],
+  comercial:['Propostas','Contratos','Precificação','CRM','Pós-venda'],
+  orc:['Planejamento','Despacho','QA','Entrega','GOV'],
+};
+
+const DEMANDAS = [
+  { cod:'D-16', cliente:'AIO', projeto:'Comercial multi-projeto', resp:'Railson Arruda', agente:'Agente Comercial', sub:'Propostas', prio:'alta', status:'Concluída', prazo:'2026-08-15', prog:100 },
+  { cod:'D-17', cliente:'M&V', projeto:'Página prospecção', resp:'Railson Arruda', agente:'Agente Comercial', sub:'Pré-venda', prio:'alta', status:'Em revisão', prazo:'2026-09-05', prog:80 },
+  { cod:'D-18', cliente:'Estação Meteo', projeto:'Kit BOM + manual', resp:'Railson Arruda', agente:'Agente Eng. Ambiental', sub:'GIS', prio:'baixa', status:'Concluída', prazo:'2026-08-20', prog:100 },
+  { cod:'D-19', cliente:'Kit Comercial', projeto:'Proposta + contrato', resp:'Railson Arruda', agente:'Agente Comercial', sub:'Contratos', prio:'baixa', status:'Concluída', prazo:'2026-08-22', prog:100 },
+  { cod:'D-21', cliente:'Eng. Ambiental', projeto:'Sistema ambiental', resp:'Railson Arruda', agente:'Agente Eng. Ambiental', sub:'Relatórios', prio:'baixa', status:'Concluída', prazo:'2026-08-28', prog:100 },
+];
+
+const ATIVIDADE = [
+  { t:'00:00', tag:'ENT', ref:'D-21', msg:'Entrega publicada no Drive — Sistema de engenharia ambiental (link registrado).' },
+  { t:'00:00', tag:'QA', ref:'D-18', msg:'Parecer aprovado após revisão de consistência (rev 2).' },
+  { t:'00:00', tag:'ENT', ref:'D-19', msg:'Kit Comercial Digital entregue — proposta, contrato e precificação.' },
+  { t:'00:00', tag:'PM', ref:'D-16', msg:'Equipe despachada — AIO Comercial multi-projeto e assinatura.' },
+  { t:'00:00', tag:'AN', ref:'D-17', msg:'Escopo definido pelo analista — página de prospecção M&V.' },
+  { t:'00:00', tag:'ES', ref:'D-21', msg:'Especialista gerou index.html e README.md (arquivos reais).' },
+];
+
+const KPIS = {
+  demandas:5, concluidas:4, emCurso:1, taxa:80, agentes:16, subagentes:38, projetos:5, entregasDrive:4,
+};
+
+const PAG_TITULOS = {
+  equipe:'Equipe — Diretoria Técnica', demandas:'Demandas Ativas', projetos:'Projetos',
+  dossies:'Dossiês Técnicos', agentes:'Agentes Inteligentes', subagentes:'Subagentes Especializados',
+  clientes:'Clientes & Parceiros', relatorios:'Relatórios', credenciais:'Credenciais & Acesso',
+};
+
+/* ================= Digital Twin (SVG isométrico) ================= */
+function twinSvg(dep) {
+  const base = 300, altura = 140;
+  const points = (x,y,w,h) => `${x},${y} ${x+w},${y} ${x+w-h*0.0},${y} ...`;
+  // faces isométricas simples por bloco
+  let blocos = '';
+  DEPARTAMENTOS.forEach((d,i)=>{
+    const col = i % 4, row = Math.floor(i/4);
+    const x = 60 + col*150, y = 40 + row*120;
+    const w=110, h=110, prof=40, cor=d.cor, ativo = dep===d.id;
+    const op = ativo ? '1' : '0.82';
+    blocos += `
+      <g class="dept-hover ${ativo?'ativo':''}" data-dept="${d.id}">
+        <polygon points="${x},${y} ${x+w},${y} ${x+w},${y+h} ${x},${y+h}" fill="${cor}" opacity="${op}" stroke="#fff" stroke-width="1.5"/>
+        <polygon points="${x},${y} ${x+w},${y} ${x+w-prof*0.7},${y-prof*0.6} ${x-prof*0.7},${y-prof*0.6}" fill="${cor}" opacity="${Number(op)*0.75}" stroke="#fff" stroke-width="1.2"/>
+        <polygon points="${x},${y} ${x-prof*0.7},${y-prof*0.6} ${x-prof*0.7},${y+h-prof*0.6} ${x},${y+h}" fill="${cor}" opacity="${Number(op)*0.6}" stroke="#fff" stroke-width="1.2"/>
+        <rect class="dept-tag" x="${x-8}" y="${y+52}" width="${w+16}" height="26" rx="5" fill="rgba(20,24,28,.82)" stroke="#fff"/>
+        <text class="lbl-txt" x="${x+w/2}" y="${y+69}" text-anchor="middle" fill="#fff" font-size="11" font-weight="700" font-family="Segoe UI">${d.sigla}</text>
+      </g>`;
+  });
+  return `<svg viewBox="0 0 640 300" role="img" aria-label="Digital Twin do escritório KRAEFEGG M.O.">
+    <defs><linearGradient id="chao" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2a323a"/><stop offset="1" stop-color="#171b20"/></linearGradient></defs>
+    <rect x="0" y="0" width="640" height="300" fill="url(#chao)"/>
+    <text x="24" y="30" fill="#9aa5af" font-size="13" font-family="Segoe UI" font-weight="600">Digital Twin — Escritório Corporativo KRAEFEGG M.O.</text>
+    <text x="24" y="48" fill="#55606b" font-size="11" font-family="Segoe UI">Clique em um departamento para inspecionar o Digital Twin</text>
+    ${blocos}
+  </svg>`;
+}
+
+/* ================= render ================= */
+function fmtPrio(p){return p==='alta'?'Ambar': p==='media'?'Azul':'Cinza';}
+
+function paginaEquipe(sel){
+  const selDep = sel || DEPARTAMENTOS[0].id;
+  const d = DEPARTAMENTOS.find(x=>x.id===selDep);
+  return `
+  <div class="page-titulo">
+    <div><h1>Equipe — Diretoria Técnica</h1><p>Organograma KRAEFEGG M.O. · Digital Twin do escritório corporativo</p></div>
+    <div class="barra-status"><span class="dot ok"></span> Sistemas operacionais · 16 agentes ativos</div>
+  </div>
+  <div class="kpis">
+    <div class="kpi-card" style="--accent:var(--azul-petroleo)"><div class="kpi-label">Demandas</div><div class="kpi-val">${KPIS.demandas}</div><div class="kpi-sub"><span class="tend sobe">${KPIS.concluidas}</span> concluídas</div></div>
+    <div class="kpi-card" style="--accent:var(--verde-operacional)"><div class="kpi-label">Taxa de entrega</div><div class="kpi-val">${KPIS.taxa}%</div><div class="kpi-sub"><span class="tend sobe">▲</span> alta performance</div></div>
+    <div class="kpi-card" style="--accent:var(--ambar)"><div class="kpi-label">Agentes</div><div class="kpi-val">${KPIS.agentes}</div><div class="kpi-sub"><span class="tend">${KPIS.subagentes}</span> subagentes</div></div>
+    <div class="kpi-card" style="--accent:var(--vermelho)"><div class="kpi-label">Em curso</div><div class="kpi-val">${KPIS.emCurso}</div><div class="kpi-sub tend desc">● ativo</div></div>
+  </div>
+  <div class="grid-2">
+    <div class="painel">
+      <div class="painel-titulo"><h2>Digital Twin — Escritório</h2><span>${d.nome}</span></div>
+      <div id="cena-twin">${twinSvg(selDep)}
+        <div class="twin-legenda">Blocos: A–G + central · departamentos da Diretoria Técnica</div>
+        <div class="twin-hud"><span>Departamento</span><b>${d.sigla} · ${d.nome}</b><span>${d.area}</span></div>
+      </div>
+    </div>
+    <div class="painel">
+      <div class="painel-titulo"><h2>Organograma</h2><span>Diretoria → Agentes → Subagentes</span></div>
+      <div class="painel-corpo">
+        <div style="padding:12px;background:#f7f9fb;border:1px solid var(--borda-suave);border-radius:8px;margin-bottom:14px;border-left:4px solid var(--azul-petroleo)">
+          <b style="font-size:15px;color:var(--carvao-900)">KRAEFEGG M.O.</b>
+          <div style="color:var(--grafite-500);font-size:13px">Diretoria Técnica — <b>Railson Arruda</b> · <span class="chip azul">Diretor Técnico</span></div>
+        </div>
+        <div style="font-size:12px;font-weight:700;color:var(--cinza-400);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">${d.nome} · Agentes</div>
+        ${d.agentes.map(a=>`
+        <div style="display:flex;align-items:center;gap:10px;padding:9px 2px;border-bottom:1px solid var(--borda-suave)">
+          <span style="width:26px;height:26px;border-radius:6px;background:${d.cor};color:#fff;display:grid;place-items:center;font-size:11px;font-weight:700">${d.sigla}</span>
+          <b style="flex:1;font-size:13.5px;color:var(--carvao-900)">${a}</b>
+          <span class="dot ok"></span>
+        </div>`).join('')}
+        <div style="font-size:12px;font-weight:700;color:var(--cinza-400);text-transform:uppercase;letter-spacing:1px;margin:12px 0 8px">Subagentes</div>
+        <div style="display:flex;flex-wrap:wrap;gap:6px">
+          ${(SUBAGENTES[d.id]||[]).map(s=>`<span class="chip azul">${s}</span>`).join('')}
+        </div>
+      </div>
+    </div>
+  </div>`;
+}
+
+function paginaDemandas(){
+  return `
+  <div class="page-titulo"><div><h1>Demandas Ativas</h1><p>Pipeline da Diretoria Técnica · processamento pela equipe de agentes</p></div>
+    <div class="barra-status"><span class="dot alerta"></span> ${KPIS.emCurso} em andamento</div></div>
+  <div class="painel"><div class="painel-corpo" style="padding:0">
+    <table>
+      <thead><tr><th>ID</th><th>Cliente / Projeto</th><th>Responsável</th><th>Agente / Subagente</th><th>Prioridade</th><th>Status</th><th>Prazo</th><th>Progresso</th></tr></thead>
+      <tbody>
+      ${DEMANDAS.map(d=>`<tr>
+        <td class="cell-id">${d.cod}</td>
+        <td><b>${d.cliente}</b><br><span style="color:var(--cinza-400);font-size:12px">${d.projeto}</span></td>
+        <td>${d.resp}</td>
+        <td>${d.agente}<br><span style="color:var(--cinza-400);font-size:12px">${d.sub}</span></td>
+        <td><span class="chip ${d.prio==='alta'?'ambar':d.prio==='media'?'azul':'verde'}">${d.prio}</span></td>
+        <td><span class="chip ${d.status==='Concluída'?'verde':'ambar'}">${d.status}</span></td>
+        <td>${d.prazo}</td>
+        <td><span class="progresso"><i style="width:${d.prog}%"></i></span><span class="pct">${d.prog}%</span></td>
+      </tr>`).join('')}
+      </tbody>
+    </table></div></div>`;
+}
+
+function paginaGenerica(t){
+  return `
+  <div class="page-titulo"><div><h1>${PAG_TITULOS[t]||t}</h1><p>Módulo em operação · dados da Diretoria Técnica</p></div>
+    <div class="barra-status"><span class="dot ok"></span> Disponível</div></div>
+  <div class="painel"><div class="painel-corpo" style="min-height:260px;display:grid;place-items:center;color:var(--cinza-400);font-size:14px">
+    Seção <b>${t}</b> — estruturas de dados e visualização em preparação para este módulo.
+  </div></div>`;
+}
+
+function paginaAtividade(){
+  return `
+  <div class="page-titulo"><div><h1>Atividade Operacional</h1><p>Log corporativo · execução da equipe de agentes</p></div></div>
+  <div class="painel"><div class="painel-corpo">
+    ${ATIVIDADE.map(l=>`<div class="log-line">
+      <span class="log-time">${l.t}</span><span class="tag ${l.tag.toLowerCase()}">${l.tag}</span>
+      <div class="log-msg"><b>${l.ref}</b> — ${l.msg}</div></div>`).join('')}
+  </div></div>`;
+}
+
+function render(){
+  const pag = document.querySelector('nav button.ativo').dataset.pag;
+  const sel = document.querySelector('[data-dept].ativo')?.dataset.dept;
+  const alvo = document.getElementById('conteudo');
+  if(pag==='equipe') alvo.innerHTML = paginaEquipe(sel);
+  else if(pag==='demandas') alvo.innerHTML = paginaDemandas();
+  else if(pag==='atividade') alvo.innerHTML = paginaAtividade();
+  else alvo.innerHTML = paginaGenerica(pag);
+
+  alvo.querySelectorAll('.dept-hover').forEach(g=>{
+    g.addEventListener('click', ()=>{
+      alvo.querySelectorAll('.dept-hover').forEach(x=>x.classList.remove('ativo'));
+      g.classList.add('ativo');
+      render();
+    });
+  });
+}
+
+/* menu lateral */
+function montaMenu(){
+  const itens = [
+    ['🏢','Visão Geral',null],['▦','Digital Twin',null],['◔','Atividade Operacional','atividade'],
+    ['▣','Demandas','demandas'],['≡','Projetos','projetos'],['◈','Agentes','agentes'],
+    ['⁂','Subagentes','subagentes'],['▪','Clientes','clientes'],['▤','Relatórios','relatorios'],
+    ['⚿','Credenciais','credenciais']];
+  const nav = document.getElementById('menu-lateral');
+  nav.innerHTML = `<div class="menu-titulo">Diretoria Técnica</div>` + itens.map(([ic,label,pag])=>
+    `<div class="menu-item ${(pag&&pag===document.querySelector('nav button.ativo').dataset.pag)?'ativo':''}" data-nav="${pag||''}">
+       <span class="mi-ico">${ic}</span>${label}</div>`).join('');
+  nav.querySelectorAll('.menu-item').forEach(el=>{
+    el.addEventListener('click', ()=>{
+      const p = el.dataset.nav;
+      if(!p) return;
+      document.querySelectorAll('nav button').forEach(b=>b.classList.toggle('ativo', b.dataset.pag===p));
+      render(); montaMenu();
+    });
+  });
+}
+
+document.querySelectorAll('nav button').forEach(b=>{
+  b.addEventListener('click', ()=>{
+    document.querySelectorAll('nav button').forEach(x=>x.classList.remove('ativo'));
+    b.classList.add('ativo'); render(); montaMenu();
+  });
+});
+
+montaMenu();
+render();
+</script>
+</body>
+</html>
