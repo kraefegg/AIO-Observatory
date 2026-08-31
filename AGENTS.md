@@ -16,8 +16,11 @@ Script load order in `index.html` matters: `data.js` → `pages.js` → `app.js`
 - `app.js` — routing (`go()` injects `PAGES[id]()` into `#content` then calls the matching `renderXyz()`), live data fetch, charts, Leaflet map, CSV/report export.
 
 ## HQ agents (hq-agents/)
-- `hq-agents/` holds PowerShell scripts that process HQ demandas (Supabase), produce real deliverables, and upload to Google Drive. Main: `hq-orquestrador.ps1` (team of synchronized subagents: PM → Analista → Especialista → QA → Entrega). See `hq-agents/README.md`.
-- Secrets (OpenRouter key, rclone OAuth token) stay outside the repo (`C:\hq-prod\rclone\`, env vars). Only the publishable Supabase key is in-script.
+- `hq-agents/` holds the HQ demand-processing team (Supabase), producing real deliverables and uploading to Google Drive. Two runtimes:
+  - **PowerShell** (legacy/local, Task Scheduler): `hq-orquestrador.ps1` (synchronized subagents PM → Analista → Especialista → QA → Entrega). See `hq-agents/README.md`.
+  - **Node.js + LangGraph (Code Engine job)**: `hq-agents/ce-orchestrator/` — `index.mjs` is the production orchestrator, re-implemented over `@langchain/langgraph` `StateGraph`. The flow is modeled as a graph: `START → pm → analista → especialista → qa → (condicional: voltar a especialista se qa `corrigindo`, senão entrega) → END`, with state via `Annotation.Root` (codigo, titulo, fase, plan, escopo, dir, qaLoop, qaParecer, qaAprovado, corrigindo, link, completo). QA loop capped at `MAX_REVISOES = 3`. Deploy: job `hq-orquestrador` no projeto Code Engine `hq-agent-team` (br-sao), rebuilt via `job update --build-source`.
+- Deps resolved via `package.json`/`package-lock.json`; Dockerfile runs `npm ci --omit=dev`. Rebuild image + submit a test run: `ibmcloud ce jobrun submit --job hq-orquestrador [--env CODIGO=D-XX]`.
+- Secrets (OpenRouter key, rclone OAuth token) stay outside the repo (`C:\hq-prod\rclone\`, env vars / Code Engine Secrets). Only the publishable Supabase key is in-script.
 
 ## Conventions & gotchas
 - All UI copy and code comments are pt-BR; keep new text in Portuguese.
