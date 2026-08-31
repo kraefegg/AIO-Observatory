@@ -1,0 +1,19 @@
+{
+  "name": "KRAEFEGG M.O. — Plataforma de Inteligência Operacional e Estratégia",
+  "short_name": "KRAEFEGG M.O.",
+  "description": "Plataforma corporativa de inteligência operacional e estratégia (CEO-agente + conselho de especialistas)",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#0f2f3d",
+  "theme_color": "#0f2f3d",
+  "lang": "pt-BR",
+  "icons": [
+    {
+      "src": "icon.svg",
+      "sizes": "192x192 512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

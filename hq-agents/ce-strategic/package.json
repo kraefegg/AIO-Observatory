@@ -1,0 +1,16 @@
+{
+  "name": "ce-strategic",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "CEO KRAEFEGG M.O. - App Estrategico na nuvem: Diretor -> CEO-agente -> Conselho(5) -> Decisao -> Orquestradores setoriais -> Resultado real (pesquisa web multi-fonte)",
+  "engines": { "node": ">=18" },
+  "scripts": {
+    "start": "node index.mjs"
+  },
+  "dependencies": {
+    "@langchain/langgraph": "^1.4.13",
+    "@langchain/core": "^1.1.48",
+    "zod": "^3.25.32"
+  }
+}
