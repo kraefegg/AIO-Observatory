@@ -71,28 +71,41 @@ const PASTA_SETORES = {
 };
 
 // ---------- IA (chat) com retry/backoff ----------
-async function ai(content, { model = MODEL, tokens = 4000, maxRetry = 4 } = {}) {
-  const body = JSON.stringify({ model, messages: [{ role: 'user', content }], max_tokens: tokens });
+// Modelos reserva (fallback) caso o modelo principal retorne 402 (quota free esgotada)
+const MODEL_BACKUP = ['deepseek/deepseek-chat-v3-0324:free', 'meta-llama/llama-3.3-70b-instruct:free', 'qwen/qwen-2.5-72b-instruct:free'];
+
+async function ai(content, { model = MODEL, tokens = 4000, maxRetry = 5 } = {}) {
+  let m = model;
+  let pay402 = 0;
   for (let t = 0; t < maxRetry; t++) {
+    const body = JSON.stringify({ model: m, messages: [{ role: 'user', content }], max_tokens: tokens });
     try {
       const r = await fetch('https://openrouter.ai/api/v1/chat/completions', { method: 'POST', headers: oHdrs, body, signal: AbortSignal.timeout(300000) });
-      if (r.status === 429 || r.status === 403 || r.status === 500 || r.status === 503) {
-        const back = Math.min(30, 5 * Math.pow(2, t));
+      if (r.status === 429 || r.status === 402 || r.status === 403 || r.status === 500 || r.status === 503) {
+        if (r.status === 402 && ++pay402 >= 2 && MODEL_BACKUP.length) {
+          m = MODEL_BACKUP.shift();
+          pay402 = 0;
+          await new Promise(res => setTimeout(res, 4000));
+          continue;
+        }
+        const back = Math.min(40, 6 * Math.pow(2, t));
         await new Promise(res => setTimeout(res, back * 1000));
         continue;
       }
       if (!r.ok) throw new Error(`OpenRouter HTTP ${r.status}`);
       const j = await r.json();
+      if (!j.choices || !j.choices[0] || !j.choices[0].message) throw new Error('sem choices (resposta malformada)');
       return String(j.choices[0].message.content || '');
     } catch (e) {
-      if (e.name === 'TimeoutError' || /fetch failed/i.test(String(e.message))) {
-        await new Promise(res => setTimeout(res, 8000 * (t + 1)));
+      if (e.name === 'TimeoutError' || /fetch failed|sem choices|malformada|HTTP 402/i.test(String(e.message))) {
+        const back = Math.min(40, 8 * Math.pow(2, t));
+        await new Promise(res => setTimeout(res, back * 1000));
         continue;
       }
       throw e;
     }
   }
-  throw new Error('Falha apos retries (rate-limit persistente)');
+  throw new Error('Falha apos retries (modelos indisponiveis)');
 }
 
 // ---------- Pesquisa web real (multi-fontes) ----------
