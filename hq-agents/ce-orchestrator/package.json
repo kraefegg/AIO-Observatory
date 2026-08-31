@@ -1,0 +1,13 @@
+{
+  "name": "hq-orquestrador",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Orquestrador da Equipe de Agentes HQ KRAEFEGG M.O. (Code Engine job) com LangGraph",
+  "engines": { "node": ">=18" },
+  "dependencies": {
+    "@langchain/langgraph": "^1.4.13",
+    "@langchain/core": "^1.1.48",
+    "zod": "^3.25.32"
+  }
+}
