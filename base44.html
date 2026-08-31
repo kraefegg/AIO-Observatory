@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Base44 · Leitura de Projetos</title>
+<style>
+  :root{
+    --bg:#0b0f1a; --panel:#111827; --panel2:#0f172a; --line:#1e293b;
+    --txt:#e2e8f0; --mut:#94a3b8; --acc:#22d3ee; --ok:#34d399; --err:#f87171;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--txt);font:15px/1.5 ui-monospace,Consolas,'JetBrains Mono',monospace}
+  header{padding:20px 24px;border-bottom:1px solid var(--line);background:linear-gradient(180deg,#0f172a,#0b0f1a)}
+  header h1{margin:0;font-size:18px;letter-spacing:.12em}
+  header p{margin:6px 0 0;color:var(--mut);font-size:12px}
+  main{max-width:1100px;margin:0 auto;padding:24px}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:16px;margin-bottom:16px}
+  .row{display:flex;gap:16px;flex-wrap:wrap;align-items:center;margin-bottom:12px}
+  .badge{font-size:12px;padding:3px 10px;border-radius:99px;border:1px solid var(--line)}
+  .badge.ok{color:var(--ok);border-color:var(--ok)}
+  .badge.wait{color:var(--acc);border-color:var(--acc)}
+  .badge.err{color:var(--err);border-color:var(--err)}
+  button{background:#0ea5b7;color:#04131a;border:0;border-radius:8px;padding:10px 18px;font:600 13px ui-monospace,monospace;letter-spacing:.08em;cursor:pointer}
+  button:hover{filter:brightness(1.1)}
+  button:disabled{opacity:.45;cursor:not-allowed}
+  table{width:100%;border-collapse:collapse;font-size:13px}
+  th,td{text-align:left;padding:8px 10px;border-bottom:1px solid var(--line);vertical-align:top;word-break:break-word}
+  th{color:var(--acc);font-size:11px;letter-spacing:.1em;text-transform:uppercase;background:var(--panel2)}
+  tr:hover td{background:#131c2e}
+  .count{color:var(--mut);font-size:12px}
+  .json{white-space:pre-wrap;background:#0a0f1c;border:1px solid var(--line);border-radius:8px;padding:12px;font-size:12px;max-height:420px;overflow:auto;display:none}
+  .empty,.error{color:var(--mut);padding:12px 0}
+  .error{color:var(--err)}
+  details{margin-top:12px}
+  summary{cursor:pointer;color:var(--acc);font-size:12px}
+  .field-note{font-size:11px;color:var(--mut);margin-top:8px}
+</style>
+</head>
+<body>
+<header>
+  <h1>BASE44 · LEITURA DE PROJETOS</h1>
+  <p>App <span id="appIdLabel">6a34230e91178b7199996779</span> · Entidade <span id="entityLabel">SMARTPORTOS BRASIL</span> · acesso anônimo (sem chave de API)</p>
+</header>
+
+<main>
+  <div class="card">
+    <div class="row">
+      <span class="badge wait" id="statusBadge">AGUARDANDO</span>
+      <span class="count" id="statusText">Pronto. Clique em carregar.</span>
+    </div>
+    <button id="btnCarregar">CARREGAR PROJETOS</button>
+  </div>
+
+  <div class="card">
+    <div id="output"></div>
+  </div>
+
+  <div class="card field-note">
+    Ajuste <code>APP_ID</code> e <code>ENTITY</code> no topo do script deste arquivo se precisar apontar para outra app/entidade.
+    A leitura é anônima: só funciona para dados públicos da app. Se a entidade exigir autenticação, o erro será exibido abaixo.
+  </div>
+</main>
+
+<script type="module">
+import { createClient } from 'https://cdn.jsdelivr.net/npm/@base44/sdk@0.8.41/+esm';
+
+const APP_ID = '6a34230e91178b7199996779';
+const ENTITY = 'SMARTPORTOS BRASIL';
+
+const $ = id => document.getElementById(id);
+const badge = $('statusBadge'), stxt = $('statusText'), out = $('output'), btn = $('btnCarregar');
+
+const base44 = createClient({
+  appId: APP_ID,
+  options: { onError: e => console.error('[Base44 SDK]', e) }
+});
+
+function setStatus(kind, msg){
+  badge.className = 'badge ' + kind;
+  stxt.textContent = msg;
+}
+
+function esc(v){
+  if(v === null || v === undefined) return '';
+  if(typeof v === 'object') return '<pre class="json" style="display:block;max-height:none;margin:0">' + esc(JSON.stringify(v, null, 1)) + '</pre>';
+  return String(v);
+}
+
+function renderTable(rows){
+  const keys = [...new Set(rows.flatMap(r => Object.keys(r || {})))];
+  if(!keys.length){ out.innerHTML = '<div class="empty">A entidade retornou registros vazios.</div>'; return; }
+  let html = `<div class="count">${rows.length} registro(s) · ${keys.length} campo(s)</div>
+  <table><thead><tr>${keys.map(k=>`<th>${esc(k)}</th>`).join('')}</tr></thead><tbody>`;
+  html += rows.map(r => `<tr>${keys.map(k=>`<td>${esc(r ? r[k] : '')}</td>`).join('')}</tr>`).join('');
+  html += '</tbody></table>';
+  html += `<details><summary>Ver JSON bruto</summary><div class="json">${esc(JSON.stringify(rows, null, 2))}</div></details>`;
+  out.innerHTML = html;
+}
+
+async function carregar(){
+  btn.disabled = true;
+  setStatus('wait', 'Consultando entidade "' + ENTITY + '"…');
+  out.innerHTML = '<div class="empty">Aguardando resposta do Base44…</div>';
+  try{
+    const rows = await base44.entities[ENTITY].list();
+    if(!Array.isArray(rows)) throw new Error('Resposta inesperada (não é uma lista): ' + typeof rows);
+    if(!rows.length){ setStatus('ok', 'Conectado. A entidade está vazia (0 registros).'); out.innerHTML = '<div class="empty">Nenhum projeto encontrado nesta entidade.</div>'; }
+    else { setStatus('ok', 'Conectado. ' + rows.length + ' projeto(s) lido(s) com sucesso.'); renderTable(rows); }
+  }catch(e){
+    const info = e && e.status ? 'HTTP ' + e.status + ' · ' + (e.code || '') : (e && e.message ? e.message : String(e));
+    setStatus('err', 'Falha ao ler a entidade.');
+    out.innerHTML = `<div class="error">Base44: ${esc(info)}</div>
+      <div class="field-note">Causas comuns: a entidade não é de leitura pública (permite apenas usuários autenticados), o nome da entidade está incorreto, ou o app não existe.</div>`;
+    console.error('[Base44] Falha ao listar "' + ENTITY + '":', e);
+  }finally{
+    btn.disabled = false;
+  }
+}
+
+btn.addEventListener('click', carregar);
+</script>
+</body>
+</html>

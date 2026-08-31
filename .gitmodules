@@ -1,0 +1,3 @@
+[submodule "smartportos"]
+	path = smartportos
+	url = https://github.com/kraefegg/smartportos-brasil.git

@@ -1,0 +1,59 @@
+# ============ AIO OBSERVATORY — PONTE OCI (Swift Object Storage) ============
+# Publica telemetry/*.json no container aio-telemetry do OCI Object Storage
+# (Free Tier, região sa-saopaulo-1). O app lê esses arquivos via URL pública
+# (AIO.telemetry.source / AIO.oficial.source) com fallback para o raw do GitHub.
+# Detalhes e testes manuais: docs/oracle-cloud-connection.md.
+#
+# Disparos:
+#   · schedule: a cada 30 min (offset de 5 min em relação ao dados-dinamicos,
+#     que roda aos 0 e 30 min e commita o weather-oficial.json)
+#   · push: ao alterar telemetry/*.json (ex.: ponte MQTT commitando o station-latest)
+#   · workflow_dispatch: manual (botão "Run workflow")
+#
+# Secrets exigidos no repositório (ver docs/oracle-cloud-connection.md):
+#   OCI_SWIFT_USER       → usuário OCI (ex.: railsonarrd@gmail.com)
+#   OCI_SWIFT_TOKEN      → auth token (mesmo de ~/.oci/oci_auth.env)
+#   OCI_SWIFT_NAMESPACE  → namespace do Object Storage (ex.: gryamzqw4zsj)
+#   OCI_SWIFT_REGION     → região (sa-saopaulo-1)
+
+name: Ponte OCI (telemetria)
+
+on:
+  schedule:
+    - cron: "5,35 * * * *"
+  workflow_dispatch:
+  push:
+    paths:
+      - "telemetry/*.json"
+      - ".github/workflows/oci-publish.yml"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: oci-publish
+  cancel-in-progress: false
+
+jobs:
+  publicar:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Subir JSONs para o container aio-telemetry (Swift)
+        env:
+          OCI_USER: ${{ secrets.OCI_SWIFT_USER }}
+          OCI_TOKEN: ${{ secrets.OCI_SWIFT_TOKEN }}
+          OCI_NAMESPACE: ${{ secrets.OCI_SWIFT_NAMESPACE }}
+          OCI_REGION: ${{ secrets.OCI_SWIFT_REGION }}
+        run: |
+          set -euo pipefail
+          endpoint="https://swiftobjectstorage.${OCI_REGION}.oraclecloud.com/v1/${OCI_NAMESPACE}/aio-telemetry"
+          for f in telemetry/station-latest.json telemetry/weather-oficial.json; do
+            [ -f "$f" ] || { echo "ignorado (não existe): $f"; continue; }
+            curl -sS -f -u "${OCI_USER}:${OCI_TOKEN}" -X PUT \
+              -H "Content-Type: application/json" \
+              -T "$f" "${endpoint}/$(basename "$f")"
+            echo "publicado: $f"
+          done

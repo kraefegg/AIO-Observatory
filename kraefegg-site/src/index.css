@@ -1,0 +1,114 @@
+@import "tailwindcss";
+
+@theme {
+  /* KRAEFEGG Official Design System — Premium Corporate */
+  --color-k-black: #000000;
+  --color-k-deep: #0B0D0F;
+  --color-k-graphite: #1A1D20;
+  --color-k-steel: #30343B;
+  --color-k-steel-light: #3A3E46;
+  --color-k-silver: #C8CDD2;
+  --color-k-silver-light: #E5E8EB;
+
+  --color-k-blue: #009FE3;
+  --color-k-deep-blue: #005B96;
+  --color-k-green: #45B82A;
+  --color-k-deep-green: #176B2A;
+  --color-k-gold: #F5C400;
+  --color-k-red: #E52521;
+
+  --color-k-bg: #000000;
+  --color-k-surface: #111114;
+  --color-k-surface-elevated: #1a1a1e;
+  --color-k-border: #2a2a2e;
+  --color-k-text-primary: #ffffff;
+  --color-k-text-secondary: #a1a1a6;
+  --color-k-text-muted: #71717a;
+  --color-k-text-dim: #52525b;
+
+  --font-sans: 'Inter', ui-sans-serif, system-ui, -apple-system, sans-serif;
+  --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
+}
+
+@layer base {
+  html { scroll-behavior: smooth; }
+  body {
+    background: #000000;
+    color: #a1a1a6;
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+  }
+  ::selection { background: rgba(0,159,227,0.25); color: white; }
+  ::-webkit-scrollbar { width: 5px; }
+  ::-webkit-scrollbar-track { background: #000; }
+  ::-webkit-scrollbar-thumb { background: #2a2a2e; border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: #3a3a3e; }
+}
+
+@layer utilities {
+  .kraefegg-gradient {
+    background: linear-gradient(90deg, #009FE3 0%, #00A896 25%, #45B82A 50%, #F5C400 75%, #E52521 100%);
+  }
+  .kraefegg-gradient-text {
+    background: linear-gradient(90deg, #009FE3 0%, #00A896 25%, #45B82A 50%, #F5C400 75%, #E52521 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .k-glass {
+    background: rgba(17,17,20,0.8);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(42,42,46,0.6);
+    border-radius: 20px;
+  }
+  .k-glass-subtle {
+    background: rgba(17,17,20,0.5);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(42,42,46,0.35);
+    border-radius: 12px;
+  }
+  .k-grid-bg {
+    background-image:
+      linear-gradient(rgba(0,159,227,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,159,227,0.03) 1px, transparent 1px);
+    background-size: 64px 64px;
+  }
+  .k-hero-glow {
+    background: radial-gradient(ellipse 70% 60% at 50% 40%, rgba(0,159,227,0.18) 0%, rgba(0,159,227,0.06) 40%, transparent 70%);
+  }
+  .k-glow-blue { box-shadow: 0 0 60px rgba(0,159,227,0.08); }
+  .k-glow-green { box-shadow: 0 0 60px rgba(69,184,42,0.08); }
+  .k-glow-gold { box-shadow: 0 0 60px rgba(245,196,0,0.08); }
+  .k-glow-red { box-shadow: 0 0 60px rgba(229,37,33,0.08); }
+
+  /* Metallic blue-white shine */
+  .k-metallic-text {
+    background: linear-gradient(
+      135deg,
+      #ffffff 0%,
+      #b0dff5 15%,
+      #009FE3 30%,
+      #ffffff 45%,
+      #009FE3 60%,
+      #b0dff5 75%,
+      #ffffff 100%
+    );
+    background-size: 200% 200%;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    animation: metallic-shine 6s ease-in-out infinite;
+  }
+
+  @keyframes metallic-shine {
+    0%, 100% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
