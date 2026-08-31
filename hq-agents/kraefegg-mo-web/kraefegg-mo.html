@@ -728,18 +728,49 @@ async function estrCarregarLog(codigo){
   }catch(e){ alert('Falha ao consultar log: ' + e.message); }
 }
 
+/* Despacha/reativa uma demanda existente no fluxo CEO/Conselho (backend estratégico).
+   O POST /demanda com codigo existente NÃO recria: apenas dispara executar(codigo). */
+async function estrAtivar(codigo, titulo){
+  const c = STRAT_CFG();
+  const box = document.getElementById('estr-status'); if(!box) return;
+  if(!c.url || !c.token){ alert('Configure URL e token na página Estratégia (campo "Salvar conexão").'); return; }
+  if(!confirm('Despachar a demanda ' + codigo + ' para o CEO/Conselho agora? (execução em nuvem leva alguns minutos)')) return;
+  const btn = event && event.target; if(btn){ btn.disabled = true; btn.textContent = 'Despachando…'; }
+  try{
+    const r = await fetch(c.url + '/demanda', { method:'POST', headers:{ 'Content-Type':'application/json','X-HQ-Token': c.token },
+      body: JSON.stringify({ ideia:'Reativar demanda '+codigo+': '+(titulo||codigo), codigo, titulo: titulo||codigo }), signal: AbortSignal.timeout(30000) });
+    const j = await r.json().catch(()=>({}));
+    if(!r.ok){ alert('Erro: ' + (j.erro||r.status)); if(btn){ btn.disabled=false; btn.textContent='▶ Ativar'; } return; }
+    if(btn){ btn.disabled=false; btn.textContent='✓ Despachada'; }
+    estrCarregarStatus();
+  }catch(e){ alert('Falha de conexão: ' + e.message); if(btn){ btn.disabled=false; btn.textContent='▶ Ativar'; } }
+}
+
 function renderEstrategiaStatus(box, um){
   const lista = um ? [um] : ESTR_DEMANDAS;
   if(!lista || !lista.length){ box.innerHTML = '<div style="color:var(--cinza-400);font-size:13px">Nenhuma demanda estratégica ainda.</div>'; return; }
   box.innerHTML = lista.map(d=>{
     const pr = d.progresso || 0;
+    const concluida = pr >= 100 || d.fase === 'concluida';
+    const falha = d.fase === 'falha';
+    const tit = String(d.titulo||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/'/g,'&#39;');
     const log = (um && d.log) ? d.log : (d.log || d.descricao || '');
-    return `<div class="estr-status-item">
-      <div class="l1"><b>${d.codigo} · ${d.titulo}</b>
-        <span><span class="chip fase">${STRAT_FASE[d.fase]||d.fase}</span> <b style="color:var(--azul-petroleo)">${pr}%</b></span></div>
-      <div class="barra"><i style="width:${pr}%"></i></div>
-      ${um ? `<button onclick="estrCarregarLog('${d.codigo}')" style="background:#eef3f6;border:1px solid var(--borda);border-radius:6px;padding:4px 10px;font-size:11.5px;font-weight:700;cursor:pointer;margin-bottom:6px">↻ Atualizar log</button>` : ''}
-      <pre>${log.replace(/</g,'&lt;')}</pre></div>`;
+    const estado = concluida ? '<span style="color:#2e7d32;font-weight:700">✓ Concluída</span>'
+                 : falha    ? '<span style="color:#b34a3d;font-weight:700">✕ Falha — pode reativar</span>'
+                 : '<span style="color:#1565c0;font-weight:700">🔄 Em produção</span>';
+    let botoes = '';
+    if(um) botoes += '<button onclick="estrCarregarLog(\'' + d.codigo + '\')" style="background:#eef3f6;border:1px solid var(--borda);border-radius:6px;padding:4px 10px;font-size:11.5px;font-weight:700;cursor:pointer;margin-bottom:6px">↻ Atualizar log</button>';
+    if(!concluida){
+      const corB = falha ? '#fdebeb' : '#e8f3ee';
+      const corT = falha ? '#b34a3d' : '#2e7d32';
+      const rot  = falha ? '↻ Reativar' : '▶ Ativar/Despachar';
+      botoes += '<button onclick="estrAtivar(\'' + d.codigo + '\',\'' + tit + '\')" style="background:' + corB + ';color:' + corT + ';border:1px solid ' + (falha?'#e5b8b2':'#bfe3d2') + ';border-radius:6px;padding:4px 10px;font-size:11.5px;font-weight:700;cursor:pointer;margin-bottom:6px">' + rot + '</button>';
+    }
+    return '<div class="estr-status-item"><div class="l1"><b>' + d.codigo + ' · ' + tit + '</b>'
+      + '<span>' + estado + ' <span class="chip fase">' + (STRAT_FASE[d.fase]||d.fase) + '</span> <b style="color:var(--azul-petroleo)">' + pr + '%</b></span></div>'
+      + '<div class="barra"><i style="width:' + pr + '%"></i></div>'
+      + botoes
+      + '<pre>' + (''+log).replace(/</g,'&lt;') + '</pre></div>';
   }).join('');
 }
 

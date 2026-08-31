@@ -22,6 +22,10 @@
 //   SUPABASE_URL / SUPABASE_KEY
 // ============================================================
 import { createServer } from 'node:http';
+import { execFile } from 'node:child_process';
+import { promisify } from 'node:util';
+import { mkdirSync, writeFileSync } from 'node:fs';
+import { dirname, join } from 'node:path';
 import { Annotation, StateGraph, START, END } from '@langchain/langgraph';
 
 const PORT = process.env.PORT || 8080;
@@ -38,6 +42,33 @@ if (!OR_KEY) { console.error('OPENROUTER_API_KEY nao definida'); process.exit(1)
 
 const hdrs = { 'apikey': API_KEY, 'Authorization': `Bearer ${API_KEY}`, 'Content-Type': 'application/json' };
 const oHdrs = { 'Authorization': `Bearer ${OR_KEY}`, 'Content-Type': 'application/json' };
+
+// ---------- Google Drive via rclone (secret hq-rclone) ----------
+// O secret generic "hq-rclone" e montado no Code Engine como arquivo
+// (chave rclone.conf) em /etc/config/. O rclone cria pastas e faz upload.
+const RCLONE_BIN = process.env.RCLONE_BIN || 'rclone';
+const RCLONE_CONF = process.env.RCLONE_CONF || '/etc/config/rclone.conf';
+const DRIVE_REMOTE = 'drive-hq';
+const exec = promisify(execFile);
+
+function driveRun(args) {
+  return exec(RCLONE_BIN, ['--config', RCLONE_CONF, ...args], { timeout: 90000, maxBuffer: 16 * 1024 * 1024 })
+    .then(r => r.stdout.trim())
+    .catch(e => { throw new Error('rclone: ' + ((e && e.message) || e)); });
+}
+async function driveMkdir(remotePath) { await driveRun(['mkdir', `${DRIVE_REMOTE}:${remotePath}`]); }
+async function driveUpload(localFile, remotePath) { await driveRun(['copyto', localFile, `${DRIVE_REMOTE}:${remotePath}`]); }
+async function driveLink(remotePath) { try { return await driveRun(['link', `${DRIVE_REMOTE}:${remotePath}`]); } catch { return ''; } }
+
+// Subpastas padrao (reports por setor) dentro da pasta da demanda
+const PASTA_SETORES = {
+  '01-Mercado': 'Mercado & Inteligencia',
+  '02-P&D': 'Pesquisa & Desenvolvimento',
+  '03-Comercial': 'Prospeccao & Marketing',
+  '04-Engenharia': 'Engenharias',
+  '05-Ambiental': 'Ambiental & Seguranca',
+  '06-Entregas': 'Entregas e resultado',
+};
 
 // ---------- IA (chat) com retry/backoff ----------
 async function ai(content, { model = MODEL, tokens = 4000, maxRetry = 4 } = {}) {
@@ -134,10 +165,12 @@ const CONSELHO = [
 
 // ---------- Orquestradores setoriais + subagentes ----------
 const SETORES = [
-  { id: 'o1', nome: 'Prospeccao & Marketing', subagentes: ['Pesquisa de mercado', 'Branding', 'Vendas B2B', 'Proposta comercial'] },
-  { id: 'o2', nome: 'Gestao Empresarial & Governanca', subagentes: ['Gestao ambiental', 'Gestao juridica/legal', 'Gestao tecnologica', 'Gestao de P&D'] },
-  { id: 'o3', nome: 'Engenharias', subagentes: ['Engenharia civil', 'Engenharia ambiental', 'Engenharia de minas', 'Engenharia naval/aeroespacial'] },
-  { id: 'o4', nome: 'IoT, Edge AI & Embedded', subagentes: ['Sensoriamento IoT', 'Edge AI', 'Embedded Systems', 'Data Science & Information'] },
+  { id: 's1', nome: 'Mercado & Inteligencia', subagentes: ['Analise de mercado', 'Inteligencia competitiva', 'Pesquisa de clientes', 'Tendencias de mercado'] },
+  { id: 's2', nome: 'Pesquisa & Desenvolvimento', subagentes: ['Gestao de P&D', 'Gestao tecnologica', 'Prospeccao tecnologica', 'Inovacao'] },
+  { id: 's3', nome: 'Prospeccao & Marketing', subagentes: ['Branding', 'Vendas B2B', 'Proposta comercial', 'Marketing digital'] },
+  { id: 's4', nome: 'Engenharias', subagentes: ['Engenharia civil', 'Engenharia ambiental', 'Engenharia de minas', 'Engenharia naval/aeroespacial'] },
+  { id: 's5', nome: 'Ambiental & Seguranca', subagentes: ['Gestao ambiental', 'Seguranca operacional', 'Licenciamento', 'Gestao de riscos'] },
+  { id: 's6', nome: 'Entregas e resultado', subagentes: ['Gestao de entregas', 'Governanca', 'Gestao juridica/legal', 'Plano de acao'] },
 ];
 
 // ---------- Estado do grafo ----------
@@ -197,23 +230,68 @@ e necessidade do mercado. Se MELHORAR/REPROPOR, inclua a correcao/proposta na de
   return { decisao: JSON.stringify(d) };
 }
 
-// Orquestradores setoriais produzem produto/servico real
-async function nodeDespacho(s) {
-  await setFase(s.codigo, 'execucao', 65, 'Orquestradores setoriais desenvolvendo produto/servico...');
-  const d = JSON.parse(s.decisao || '{}');
-  const blocos = [];
-  for (const st of SETORES) {
-    await setFase(s.codigo, 'execucao', 65 + SETORES.indexOf(st) * 5, `Orquestrador ${st.nome} trabalhando...`);
-    const bloco = await ai(`
-Voce e o orquestrador setorial "${st.nome}" da consultoria KRAEFEGG.
-Questao: ${s.questao}
-Decisao do CEO: ${d.decisao || s.decisao}
-Seus subagentes: ${st.subagentes.join(', ')}
-Produza um PRODUTO/SERVICO REAL e acionavel para este setor (pt-BR ASCII): proposta concreta,
-escopo, entregaveis, recursos necessarios, timeline resumida e como gera resultado para a
-firma e para o cliente. 6-12 frases objetivas.`, 2500);
-    blocos.push(`[${st.nome}] ${bloco}`);
+const sanitize = s => String(s || '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+
+// Produz o report de um setor com seus subagentes atuando em TIME: cada
+// subagente recebe o contexto produzido pelo anterior e o enriquece.
+async function gerarReportSetorEmTime(s, st, d) {
+  const titulo = `# Report de Setor - ${st.nome}\n\nDemanda: ${s.codigo} - ${s.titulo}\nDecisao CEO: ${d.decisao || ''}\n\n`;
+  let contexto = `Questao estrategica: ${s.questao}\n\n`;
+  const secoes = [];
+  for (let i = 0; i < st.subagentes.length; i++) {
+    const sub = st.subagentes[i];
+    const secao = await ai(`
+Voce e o subagente "${sub}" do setor "${st.nome}" da consultoria KRAEFEGG. A firma opera em
+TIME: os subagentes colaboram em sequencia, cada um construindo sobre o trabalho do anterior.
+Contexto ja produzido pelo time (leia e use):
+${contexto}
+Sua contribuicao: produza a secao "${sub}" do report deste setor (pt-BR, ASCII, Markdown):
+- Analise objetiva e acionavel, com dados/propostas concretas.
+- Como se conecta com o que ja foi escrito acima (nao repita, avance).
+- 4-8 frases.`, 2000);
+    secoes.push(`## ${sub}\n\n${secao}\n`);
+    contexto += `\n[Secao ${sub}]\n${secao}\n`;
   }
+  return titulo + secoes.join('\n');
+}
+
+// Orquestradores setoriais produzem produto/servico real em TIME, gerando
+// reports .md por setor e publicando no Google Drive (via rclone).
+async function nodeDespacho(s) {
+  await setFase(s.codigo, 'execucao', 65, 'Orquestradores setoriais em time, produzindo reports e publicando no Drive...');
+  const d = JSON.parse(s.decisao || '{}');
+  const raizPasta = `CEO - Demandas HQ/Demanda-${s.codigo}`;
+  const dirBase = join('/app/out', s.codigo);
+  mkdirSync(dirBase, { recursive: true });
+
+  // 1) Cria a estrutura de pastas no Drive (1x) e registra o link
+  let linkPasta = '';
+  for (const sub of Object.keys(PASTA_SETORES)) {
+    try { await driveMkdir(`${raizPasta}/${sub}`); } catch {}
+  }
+  try { linkPasta = await driveLink(raizPasta); } catch {}
+  await appendLog(s.codigo, `DRIVE: ${linkPasta || raizPasta}`);
+
+  // 2) Produz e publica o report de cada setor (subagentes em sequencia coordenada)
+  const blocos = [];
+  let setorIdx = 0;
+  for (const st of SETORES) {
+    await setFase(s.codigo, 'execucao', 65 + setorIdx * 6, `Setor ${st.nome}: subagentes em time produzindo report...`);
+    setorIdx++;
+    const sub = Object.keys(PASTA_SETORES).find(k => PASTA_SETORES[k] === st.nome) || '';
+    const nomeArq = `report-${st.id}-${sanitize(st.nome)}.md`;
+    const relDir = sub ? `${raizPasta}/${sub}` : raizPasta;
+    const md = await gerarReportSetorEmTime(s, st, d);
+    blocos.push(`[${st.nome}]\n${md}`);
+    const local = join(dirBase, nomeArq);
+    writeFileSync(local, md, 'utf8');
+    try {
+      await driveUpload(local, `${relDir}/${nomeArq}`);
+    } catch (e) {
+      await appendLog(s.codigo, `Upload Drive falhou (${st.nome}): ${e.message}`);
+    }
+  }
+  await setFase(s.codigo, 'execucao', 92, 'Reports por setor publicados no Drive');
   return { despacho: blocos.join('\n\n') };
 }
 
@@ -229,6 +307,7 @@ ${s.despacho}
 Retorne (pt-BR ASCII) um RESUMO EXECUTIVO final em bullets: recomendacao, produto/servico,
 proximos passos, e como o Diretor pode ajustar. 5-8 bullets.`, 2500);
   await setFase(s.codigo, 'concluida', 100, `RESULTADO ESTRATEGICO | CEO: ${d.decisao || 'aprovado'}`);
+  await appendLog(s.codigo, `REPORTS POR SETOR no Drive: CEO - Demandas HQ/Demanda-${s.codigo}/`);
   return { resultado, finalizado: true };
 }
 
@@ -251,6 +330,15 @@ async function executar(codigo) {
   const d = await getDemanda(codigo);
   if (!d) throw new Error('demanda nao encontrada');
   const ideia = String(d.descricao || d.titulo || '').replace(/^\[IDEIA DIRETOR\]\s*/i, '').trim();
+  // Política: toda demanda (backlog/análise) ganha pasta no Drive, mesmo em revisão
+  const raizPasta = `CEO - Demandas HQ/Demanda-${d.codigo}`;
+  try {
+    await driveMkdir(raizPasta);
+    const link = await driveLink(raizPasta);
+    await appendLog(d.codigo, `PASTA DRIVE: ${link || raizPasta}`);
+  } catch (e) {
+    await appendLog(d.codigo, `AVISO Drive: ${e.message}`);
+  }
   const st = await grafo.invoke({ codigo: d.codigo, titulo: d.titulo, ideia: ideia || d.titulo });
   return st;
 }
