@@ -1,0 +1,14 @@
+﻿# TOOLS - ENV-ESG-001
+
+## Ferramentas autorizadas
+- Excel
+- web dashboard
+
+## Ferramentas de plataforma
+- Supabase (demandas e registros)
+- Google Drive (entrega de artefatos)
+- IBM Code Engine (estrategico/backend)
+
+## Regras de uso
+- Usar fontes verificaveis nas analises.
+- Registrar entregas e links de evidencias.
