@@ -147,6 +147,10 @@ tr.linha-ativa td{background:#e6f1f5;box-shadow:inset 3px 0 0 var(--azul-petrole
 .cell-id{font-weight:700;color:var(--carvao-900)}
 .progresso{border-radius:20px;overflow:hidden;height:6px;background:#e5e9ec;width:100px;display:inline-block;vertical-align:middle}
 .progresso i{display:block;height:100%;background:var(--azul-petroleo)}
+.spin{display:inline-block;width:11px;height:11px;border:2px solid rgba(21,101,192,.25);border-top-color:var(--azul-petroleo);border-radius:50%;animation:rot 1s linear infinite;vertical-align:-1px;margin-right:5px}
+@keyframes rot{to{transform:rotate(360deg)}}
+.cell-acoes button{margin-left:5px}
+.btn-despacho{background:#eef3f6;border:1px solid var(--borda);border-radius:7px;padding:6px 9px;font-weight:700;cursor:pointer;color:var(--azul-petroleo)}
 .pct{font-weight:700;color:var(--carvao-900);margin-left:8px}
 
 /* ===== Atividade operacional ===== */
@@ -206,9 +210,64 @@ tr.linha-ativa td{background:#e6f1f5;box-shadow:inset 3px 0 0 var(--azul-petrole
 
 @media(max-width:1100px){#layout{grid-template-columns:1fr}.kpis{grid-template-columns:repeat(2,1fr)}.grid-2{grid-template-columns:1fr}#topo{overflow-x:auto}nav{overflow-x:auto}}
 @media(max-width:640px){.kpis{grid-template-columns:1fr}}
+/* ===== Portal de acesso (seguranca/privacidade) ===== */
+.gate-overlay{position:fixed;inset:0;z-index:900;display:flex;align-items:center;justify-content:center;background:radial-gradient(1000px 500px at 50% 0%, rgba(27,77,94,.18), transparent 60%),linear-gradient(180deg,#14181c,#0d0f11)}
+.gate-overlay.oculto{display:none}
+.gate-box{width:min(440px,92vw);background:#fff;border:1px solid var(--borda);border-radius:14px;box-shadow:0 24px 60px rgba(0,0,0,.5);padding:34px 30px;text-align:center}
+.gate-logo{width:56px;height:56px;margin:0 auto 14px;border-radius:12px;background:var(--carvao-900);display:grid;place-items:center;color:#fff;font-weight:800;font-size:22px}
+.gate-box h2{color:var(--carvao-900);font-size:19px;margin-bottom:4px}
+.gate-box p{color:var(--cinza-400);font-size:12.5px;margin-bottom:18px}
+.gate-box input{width:100%;padding:12px 14px;border:1px solid var(--borda);border-radius:8px;font-size:13px;margin-bottom:12px}
+.gate-box button{width:100%;padding:12px;border:0;border-radius:8px;background:var(--azul-petroleo);color:#fff;font-weight:700;font-size:13.5px;cursor:pointer}
+.gate-box button:hover{background:var(--azul-profundo)}
+#gate-msg{font-size:12px;margin-top:10px;min-height:14px;color:#b34a3d}
+/* ===== Ciberseguranca: painel de ataques/bloqueios ===== */
+.sec-banner{display:flex;align-items:center;gap:12px;padding:14px 18px;border-radius:12px;margin:0 0 16px;font-weight:700;font-size:14px;border:1px solid}
+.sec-banner.ok{background:linear-gradient(180deg,#f2fbef,#e7f6e2);border-color:#bfe5b2;color:#2e7d32}
+.sec-banner.atk{background:linear-gradient(180deg,#fff3f0,#ffe3de);border-color:#f2b8a8;color:#b23a1d}
+.sec-banner .sd{width:12px;height:12px;border-radius:50%;flex:none}
+.sec-banner.ok .sd{background:#43a047;box-shadow:0 0 0 5px rgba(67,160,71,.18);animation:pulso 3s infinite}
+.sec-banner.atk .sd{background:#d32f2f;box-shadow:0 0 0 5px rgba(211,47,47,.2);animation:pulso 1.2s infinite}
+@keyframes pulso{0%,100%{transform:scale(1);opacity:1}50%{transform:scale(1.35);opacity:.75}}
+.sec-kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-bottom:16px}
+.sec-kpi{background:#fff;border:1px solid var(--borda);border-radius:12px;padding:14px 16px}
+.sec-kpi b{display:block;font-size:24px;color:var(--carvao-900)}
+.sec-kpi span{font-size:11.5px;color:var(--cinza-400);text-transform:uppercase;letter-spacing:.6px}
+.sec-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+@media(max-width:960px){.sec-grid{grid-template-columns:1fr}}
+.sec-card{background:#fff;border:1px solid var(--borda);border-radius:12px;padding:16px}
+.sec-card h3{font-size:13.5px;color:var(--carvao-900);margin:0 0 12px;display:flex;align-items:center;gap:8px}
+.sec-vazio{color:var(--cinza-400);font-size:12.5px;padding:10px 2px}
+.sec-ban{display:flex;align-items:center;justify-content:space-between;gap:10px;border:1px solid #f2b8a8;background:#fff8f6;border-radius:9px;padding:9px 12px;margin-bottom:8px}
+.sec-ban b{color:#b23a1d;font-family:ui-monospace,Consolas,monospace;font-size:12.5px}
+.sec-ban span{font-size:11px;color:var(--cinza-400)}
+.sec-ban button{border:0;background:#d32f2f;color:#fff;border-radius:6px;padding:5px 10px;font-size:11px;cursor:pointer;font-weight:700}
+.sec-ban button:hover{background:#b23a1d}
+.sec-evento{display:flex;gap:10px;align-items:baseline;border-bottom:1px dashed var(--borda);padding:7px 2px;font-size:12px}
+.sec-evento .te{flex:none;width:110px;color:var(--cinza-400);font-family:ui-monospace,Consolas,monospace;font-size:11px}
+.sec-evento .ip{flex:none;min-width:118px;font-family:ui-monospace,Consolas,monospace;color:var(--carvao-900);font-weight:600}
+.sec-evento .dt{color:var(--cinza-500)}
+.sec-evento.atk{background:#fff0ec;border-radius:7px;padding:6px 8px}
+.sec-tag{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.5px;padding:2px 7px;border-radius:20px}
+.sec-tag.ban{background:#d32f2f;color:#fff}
+.sec-tag.ataque{background:#f57c00;color:#fff}
+.sec-tag.info{background:#e3f2fd;color:#1565c0}
+#btn-sec-refresh{border:0;background:var(--azul-petroleo);color:#fff;font-weight:700;font-size:12px;border-radius:8px;padding:8px 14px;margin-left:auto;cursor:pointer}
+#btn-sec-refresh:hover{background:var(--azul-profundo)}
 </style>
 </head>
 <body>
+
+<div class="gate-overlay oculto" id="gate">
+  <div class="gate-box">
+    <div class="gate-logo">M</div>
+    <h2>Acesso protegido</h2>
+    <p>Kraefegg M.O. — conteúdo restrito. Informe o token de acesso HQ para entrar.</p>
+    <input id="gate-token" type="password" placeholder="Token de acesso HQ" autocomplete="off" />
+    <button onclick="entrarHQ()">Entrar</button>
+    <div id="gate-msg"></div>
+  </div>
+</div>
 
 <header id="topo">
   <div class="topo-inner">
@@ -229,6 +288,7 @@ tr.linha-ativa td{background:#e6f1f5;box-shadow:inset 3px 0 0 var(--azul-petrole
       <button data-pag="credenciais">Credenciais</button>
     </nav>
     <div class="topo-acoes">
+      <button class="icon-btn" id="btn-lock" title="Bloquear acesso" onclick="sairHQ()">🔒</button>
       <button class="icon-btn" id="btn-pesquisa" title="Pesquisar">⌕</button>
       <button class="icon-btn" id="btn-notif" title="Notificações" style="position:relative">◔<span class="badge">4</span></button>
       <button class="icon-btn" id="btn-config" title="Configurações">⚙</button>
@@ -314,22 +374,103 @@ const SUBAGENTES = {
 
 var DEMANDAS = [];
 function carregarDemandas(){
-  const API = 'https://mrqjmdfulmnggozwjxlq.supabase.co/rest/v1';
-  const KEY = 'sb_publishable_PGW_hFT4bnzA_bIS8EPx6g_LvxWNP4Y';
-  return fetch(API + '/demandas?select=codigo,titulo,descricao,responsavel,fase,prioridade,progresso&order=id.asc', { headers:{ 'apikey':KEY, 'Authorization':'Bearer '+KEY } })
-    .then(function(r){ if(!r.ok) throw new Error('HTTP '+r.status); return r.json(); })
+  return fetch(ESTRATEGIA_URL + '/demandas?select=codigo,titulo,descricao,responsavel,fase,prioridade,progresso,criado_em,atualizado_em,projeto_id&order=id.asc', { headers: hqHdr(), signal: AbortSignal.timeout(30000) })
+    .then(function(r){ if(r.status===401||r.status===403){ var e=new Error('acesso'); e.status=r.status; throw e; } if(!r.ok) throw new Error('HTTP '+r.status); return r.json(); })
     .then(function(rows){
       DEMANDAS = (Array.isArray(rows)?rows:[]).map(function(x){
         return { cod:x.codigo, cliente:x.projeto_id||'', prompt:x.descricao||x.titulo, projeto:x.titulo,
                  resp:x.responsavel||'Railson Arruda', agente:'Orquestrador HQ', sub:x.fase||'backlog',
                  prio:x.prioridade||'media', status:faseLabel(x.fase), prazo:'—', prog:x.progresso||0,
-                 id:x.id, fase:x.fase||'backlog' };
+                 id:x.id, fase:x.fase||'backlog', criado_em:x.criado_em, atualizado_em:x.atualizado_em };
       });
       return DEMANDAS;
     })
-    .catch(function(){ DEMANDAS = DEMANDAS_FALLBACK; return DEMANDAS; });
+    .catch(function(e){ if(e&&e.status){ expulsarSessao(); } DEMANDAS = DEMANDAS_FALLBACK; return DEMANDAS; });
 }
 function faseLabel(f){ return f==='analise'?((f||'').toUpperCase()):(f||'backlog'); }
+
+/* Tempo de processamento (origem->destino) e link da pasta no Drive (teste da porta de demandas). */
+function tempoProc(d){
+  const ini = new Date(d.criado_em||null);
+  if(isNaN(ini)) return '—';
+  const fim = d.fase==='concluida' ? (new Date(d.atualizado_em||null)) : new Date();
+  const s = Math.max(0,(isNaN(fim)?new Date():fim)-ini)/1000;
+  if(!isFinite(s)) return '—';
+  const m = Math.floor(s/60), seg = String(Math.round(s%60));
+  return m + ':' + (seg.length<2?'0'+seg:seg);
+}
+function linkDrive(d){
+  const partes = String(d.descricao||'').split('PASTA DRIVE:');
+  if(partes.length<2) return '';
+  const m = partes.slice(1).join('PASTA DRIVE:').match(/https?:\/\/[^\s|]+/);
+  return m ? m[0] : '';
+}
+
+/* Estado da demanda para sinal "Loading & porcentagem" (fluxo autonomo na nuvem).
+   prog>0 -> agentes trabalhando (Loading). prog>=100/fase=concluida -> Concluida. */
+function estadoDemanda(d){
+  const pr = (d&&d.prog)||0, f = (d&&d.fase)||'';
+  if(pr>=100 || f==='concluida') return { cls:'verde', txt:'Concluída', load:false };
+  if(f==='falha') return { cls:'vermelho', txt:'Falha', load:false };
+  if(pr>0) return { cls:'ambar', txt:'Agentes trabalhando', load:true };
+  if(f==='backlog') return { cls:'azul', txt:'Na fila · backlog', load:true };
+  return { cls:'ambar', txt:'Na fila', load:true };
+}
+function statusCell(d){ const e = estadoDemanda(d); return `<span class="chip ${e.cls}">${e.load?'<span class="spin"></span>':''}${e.txt}</span>`; }
+function pctCell(d){ const e = estadoDemanda(d); return `<span class="progresso"><i style="width:${(d&&d.prog)||0}%"></i></span>${e.load?'<span class="spin"></span>':''}<span class="pct">${(d&&d.prog)||0}%</span>`; }
+
+/* Despacha uma demanda para a equipe de agentes NA NUVEM (ce-strategic/OpenRouter),
+   sem depender de acao do opencode. Reutiliza URL/token da pagina Estrategia. */
+let NUVEM_CONECTADA = null;
+function fetchComRetry(url, opts, tentativas){
+  tentativas = tentativas||3;
+  function tentar(n){
+    return fetch(url, opts)
+      .catch(function(e){
+        if(n < tentativas) return new Promise(function(r){ setTimeout(r, 1200 * n); }).then(function(){ return tentar(n+1); });
+        throw e;
+      });
+  }
+  return tentar(1);
+}
+function checarNuvem(){
+  const c = STRAT_CFG();
+  if(!c.url || !c.token){ NUVEM_CONECTADA = false; return; }
+  return fetchComRetry(c.url + '/health?token=' + encodeURIComponent(c.token), { method:'GET', signal: AbortSignal.timeout(12000) }, 2)
+    .then(function(r){ return r.json().catch(function(){ return {}; }); })
+    .then(function(j){ NUVEM_CONECTADA = !!(j && j.ok); return NUVEM_CONECTADA; })
+    .catch(function(){ NUVEM_CONECTADA = false; return false; });
+}
+function despacharAgentes(cod, titulo, ideia){
+  const c = STRAT_CFG();
+  if(!c.url || !c.token) return Promise.reject(new Error('configure URL/token na página Estratégia'));
+  return fetchComRetry(c.url + '/demanda', { method:'POST', headers:{ 'Content-Type':'application/json','X-HQ-Token':c.token },
+      body: JSON.stringify({ ideia: ideia||titulo, codigo: cod, titulo: titulo||cod }), signal: AbortSignal.timeout(30000) }, 3)
+    .then(function(r){ return r.json().catch(function(){ return {}; }).then(function(j){ if(!r.ok) throw new Error(j.erro||('HTTP '+r.status)); return j; }); });
+}
+function despacharLinha(cod, titulo){
+  const d = DEMANDAS.find(function(x){ return x.cod===cod; });
+  despacharAgentes(cod, titulo, (d&&d.prompt)||titulo)
+    .then(function(j){ alert('✓ ' + ((j&&j.msg)||'Agentes despachados na nuvem')); return carregarDemandas(); })
+    .then(function(){ if(CURRENT_PAG==='demandas') render(); })
+    .catch(function(e){ alert('Erro ao despachar: ' + e.message); });
+}
+function despacharTodas(){
+  const c = STRAT_CFG();
+  if(!c.url || !c.token){ alert('Configure URL/token na página Estratégia.'); return; }
+  fetchComRetry(c.url + '/processar', { method:'POST', headers:{ 'X-HQ-Token':c.token }, signal: AbortSignal.timeout(30000) }, 3)
+    .then(function(r){ return r.json().catch(function(){ return {}; }).then(function(j){ if(!r.ok) throw new Error(j.erro||('HTTP '+r.status)); return j; }); })
+    .then(function(j){ alert(((j.msg)||'Feito') + (j.despachadas&&j.despachadas.length?(' · ' + j.despachadas.join(', ')):'')); return carregarDemandas(); })
+    .then(function(){ if(CURRENT_PAG==='demandas') render(); })
+    .catch(function(e){ alert('Erro: ' + e.message); });
+}
+function chipNuvem(){
+  const c = STRAT_CFG();
+  if(!c.url || !c.token) return `<span class="chip vermelho" title="Configure URL/token na página Estratégia">Nuvem: não configurada</span>`;
+  if(NUVEM_CONECTADA===null) return `<span class="chip ambar"><span class="spin"></span>Nuvem: conectando…</span>`;
+  if(NUVEM_CONECTADA) return `<span class="chip verde">Nuvem: conectada</span>`;
+  return `<span class="chip vermelho">Nuvem: offline</span>`;
+}
 
 const DEMANDAS_FALLBACK = [
   { cod:'D-16', cliente:'AIO', projeto:'Comercial multi-projeto', resp:'Railson Arruda', agente:'Agente Comercial', sub:'Propostas', prio:'alta', status:'Concluída', prazo:'2026-08-15', prog:100 },
@@ -453,10 +594,10 @@ function paginaEquipe(sel){
 function paginaDemandas(){
   return `
   <div class="page-titulo"><div><h1>Demandas Ativas</h1><p>Pipeline da Diretoria Técnica · processamento pela equipe de agentes</p></div>
-    <div class="barra-status"><span class="dot alerta"></span> ${DEMANDAS.length} no pipeline<button class="btn-novo" onclick="abrirNovaDemanda()">+ Nova Demanda</button></div></div>
+    <div class="barra-status"><span class="dot alerta"></span> ${DEMANDAS.length} no pipeline ${chipNuvem()}<button class="btn-novo" onclick="abrirNovaDemanda()">+ Nova Demanda</button><button class="btn-novo" style="margin-left:8px" onclick="despacharTodas()">▶ Despachar todas</button></div></div>
   <div class="painel"><div class="painel-corpo" style="padding:0">
     <table>
-      <thead><tr><th>ID</th><th>Cliente / Projeto</th><th>Responsável</th><th>Agente / Subagente</th><th>Prioridade</th><th>Status</th><th>Prazo</th><th>Progresso</th><th></th></tr></thead>
+      <thead><tr><th>ID</th><th>Cliente / Projeto</th><th>Responsável</th><th>Agente / Subagente</th><th>Prioridade</th><th>Status</th><th>Prazo</th><th>Progresso</th><th>Tempo</th><th></th></tr></thead>
       <tbody>
       ${DEMANDAS.map((d,idx)=>`<tr>
         <td class="cell-id">${d.cod}</td>
@@ -464,10 +605,11 @@ function paginaDemandas(){
         <td>${d.resp}</td>
         <td>${d.agente}<br><span style="color:var(--cinza-400);font-size:12px">${d.sub}</span></td>
         <td><span class="chip ${(d.prio||'media')==='alta'?'ambar':(d.prio||'media')==='media'?'azul':'verde'}">${d.prio||'media'}</span></td>
-        <td><span class="chip ${(d.status||'').toLowerCase()==='concluída'?'verde':'ambar'}">${d.status||'backlog'}</span></td>
+        <td>${statusCell(d)}</td>
         <td>${d.prazo||'—'}</td>
-        <td><span class="progresso"><i style="width:${d.prog||0}%"></i></span><span class="pct">${d.prog||0}%</span></td>
-        <td class="cell-acoes"><button onclick="abrirEdicao(${idx})">✎ Abrir</button></td>
+        <td>${pctCell(d)}</td>
+        <td style="white-space:nowrap">${tempoProc(d)}</td>
+        <td class="cell-acoes">${(function(){const l=linkDrive(d); return l?`<a class="btn-despacho" style="text-decoration:none" target="_blank" href="${l}" title="Pasta no Drive">🖿</a>`:'';})()}<button onclick="abrirEdicao(${idx})">✎ Abrir</button><button class="btn-despacho" onclick="despacharLinha('${d.cod.replace(/'/g,"")}','${String(d.projeto||d.cod).replace(/&/g,'&amp;').replace(/'/g,"&#39;")}')" title="Despachar agentes na nuvem">▶</button></td>
       </tr>`).join('')}
       </tbody>
     </table></div></div>`;
@@ -500,8 +642,8 @@ function paginaProjetos(){
           <td class="cell-id">${d.cod}</td>
           <td><b>${d.projeto||d.cliente}</b></td>
           <td>${d.resp||'Railson Arruda'}</td>
-          <td><span class="chip ${(d.status||'').toLowerCase()==='concluída'?'verde':'ambar'}">${d.status||'backlog'}</span></td>
-          <td><span class="progresso"><i style="width:${d.prog||0}%"></i></span><span class="pct">${d.prog||0}%</span></td>
+          <td>${statusCell(d)}</td>
+          <td>${pctCell(d)}</td>
         </tr>`).join('')}</tbody>
       </table>
     </div>
@@ -654,13 +796,55 @@ function paginaAtividade(){
   </div></div>`;
 }
 
+/* ============ SEGURANCA/PRIVACIDADE: portal de acesso + gateway ============ */
+const ESTRATEGIA_URL = 'https://ce-strategic.2e4s1hfdcw14.br-sao.codeengine.appdomain.cloud';
+function tokenHQ(){ return sessionStorage.getItem('hqToken') || localStorage.getItem('estr_token') || ''; }
+function hqHdr(extra){ const h = Object.assign({}, extra||{}); const t = tokenHQ(); if(t) h['X-HQ-Token'] = t; return h; }
+function entrarHQ(){
+  const inp = document.getElementById('gate-token'), msg = document.getElementById('gate-msg');
+  const tk = inp.value.trim(); msg.textContent=''; inp.value='';
+  if(!tk){ msg.textContent='Informe o token de acesso.'; return; }
+  fetch(ESTRATEGIA_URL + '/demandas?select=codigo&limit=1', { headers:{ 'X-HQ-Token': tk }, signal: AbortSignal.timeout(20000) })
+    .then(function(r){
+      if(r.status===401||r.status===403) throw new Error('Token incorreto ou revogado');
+      if(!r.ok) throw new Error('HTTP '+r.status);
+      sessionStorage.setItem('hqToken', tk);
+      localStorage.setItem('estr_token', tk);
+      document.getElementById('gate').classList.add('oculto');
+      return carregarDemandas().then(function(){ render(); });
+    })
+    .then(function(){ checarNuvem(); })
+    .catch(function(e){ msg.textContent='Acesso negado: ' + e.message; });
+}
+function sairHQ(){
+  sessionStorage.removeItem('hqToken');
+  localStorage.removeItem('estr_token');
+  location.reload();
+}
+function bloquearAcesso(){
+  const g = document.getElementById('gate');
+  if(g && !tokenHQ()) g.classList.remove('oculto');
+  else if(g && sessionStorage.getItem('hqToken')) g.classList.add('oculto');
+}
+/* Token recusado/revogado (401/403): descarta a sessao e reabre o portal de acesso. */
+function expulsarSessao(){
+  sessionStorage.removeItem('hqToken');
+  localStorage.removeItem('estr_token');
+  const g = document.getElementById('gate');
+  if(g) g.classList.remove('oculto');
+  const msg = document.getElementById('gate-msg');
+  if(msg) msg.textContent = 'Acesso recusado: o token foi rotacionado/revogado. Informe o token vigente.';
+  const inp = document.getElementById('gate-token');
+  if(inp) inp.focus();
+}
+
 /* ============ ESTRATEGIA (CEO-agente + conselho) ============ */
 let ESTR_DEMANDAS = [];
 let ESTR_INTERVAL = null;
 
 const STRAT_CFG = () => ({
-  url: localStorage.getItem('estr_url') || 'https://ce-strategic.2e4s1hfdcw14.br-sao.codeengine.appdomain.cloud',
-  token: localStorage.getItem('estr_token') || ''
+  url: localStorage.getItem('estr_url') || ESTRATEGIA_URL,
+  token: tokenHQ()
 });
 const STRAT_FASE = { analise:'Andamento', revisao:'Revisão', execucao:'Execução', concluida:'Concluída', falha:'Falha' };
 
@@ -837,7 +1021,7 @@ function paginaVisaoGeral(){
           <tbody>${(DEMANDAS.length?DEMANDAS:DEMANDAS_FALLBACK).slice(0,5).map(d=>`<tr>
             <td class="cell-id">${d.cod}</td>
             <td><b>${d.projeto||d.cliente}</b></td>
-            <td><span class="progresso"><i style="width:${d.prog||0}%"></i></span><span class="pct">${d.prog||0}%</span></td>
+            <td>${pctCell(d)}</td>
           </tr>`).join('')}</tbody>
         </table>
       </div>
@@ -888,7 +1072,8 @@ function render(){
   else if(pag==='subagentes') alvo.innerHTML = paginaSubagentes();
   else if(pag==='clientes') alvo.innerHTML = paginaClientes();
   else if(pag==='relatorios') alvo.innerHTML = paginaRelatorios();
-  else if(pag==='credenciais') alvo.innerHTML = paginaCredenciais();
+  else if(pag==='credendenciais' || pag==='credenciais') alvo.innerHTML = paginaCredenciais();
+  else if(pag==='seguranca'){ alvo.innerHTML = paginaSeguranca(); montaSeguranca(); }
   else alvo.innerHTML = paginaGenerica(pag);
 
   alvo.querySelectorAll('.dept-hover').forEach(g=>{
@@ -900,13 +1085,79 @@ function render(){
   });
 }
 
+/* ============ CIBERSEGURANCA: painel de deteccao/bloqueio ============ */
+let SEC_DADOS = null;
+function escHN(x){ return String(x==null?'':x).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/'/g,'&#39;').replace(/"/g,'&quot;'); }
+function secsH(s){ if(s==null) return '—'; const m=Math.floor(s/60), r=s%60; return m+'min '+r+'s'; }
+function paginaSeguranca(){
+  return `<div class="page-titulo"><div><h1>Cibersegurança &amp; Privacidade</h1>
+    <p>Defesa ativa na fronteira: detecção de sondas/força bruta/payloads maliciosos, bloqueio automático (ban por IP) e liberação — em tempo real pelo gateway ce-strategic.</p></div>
+    <button id="btn-sec-refresh" onclick="montaSeguranca()">↻ RECARREGAR</button></div>
+    <div id="sec-painel"><div class="sec-vazio">Consultando status de segurança...</div></div>`;
+}
+function montaSeguranca(){
+  const el = document.getElementById('sec-painel');
+  if(!el) return;
+  el.innerHTML = '<div class="sec-vazio">Consultando status de segurança...</div>';
+  return fetch(ESTRATEGIA_URL + '/security', { headers: hqHdr(), signal: AbortSignal.timeout(20000) })
+    .then(r => { if(r.status===401||r.status===403){ var e=new Error('acesso'); e.status=r.status; throw e; } if(!r.ok) throw new Error('HTTP '+r.status); return r.json(); })
+    .then(d => { SEC_DADOS = d; el.innerHTML = htmlSeguranca(d); })
+    .catch(e => {
+      if(e && e.status) expulsarSessao();
+      el.innerHTML = '<div class="sec-banner atk"><span class="sd"></span>Falha ao consultar a Cibersegurança ('+escHN(e.message)+') — confirme o token de acesso.</div>';
+    });
+}
+function htmlSeguranca(d){
+  const bans = Array.isArray(d.bans) ? d.bans : [];
+  const evs = Array.isArray(d.eventos) ? d.eventos : [];
+  const alertas = (d.alertas && d.alertas.falhas_60s) || 0;
+  const varredura = (d.alertas && d.alertas.varredura_60s) || 0;
+  const temAlerta = bans.length > 0 || alertas > 0 || varredura > 0 || evs.some(e => ['ban','ataque','bloqueado'].includes(e.tipo));
+  const hora = d.agora ? ' · '+escHN(d.agora.slice(11,19)) : '';
+  const banner = temAlerta
+    ? '<div class="sec-banner atk"><span class="sd"></span>🚨 ATIVIDADE SUSPEITA DETECTADA — '+bans.length+' bloqueio(s) ativo(s)'+hora+'</div>'
+    : '<div class="sec-banner ok"><span class="sd"></span>🛡️ Nenhuma ameaça detectada no momento.'+hora+'</div>';
+  const banCards = bans.length
+    ? bans.map(b => '<div class="sec-ban"><div><b>'+escHN(b.ip)+'</b> · '+escHN(b.motivo)+'<br><span>#'+escHN(b.n)+' — expira em '+secsH(b.resta_s)+' ('+escHN(b.expira_em)+')</span></div><button onclick="liberarIP(\''+String(b.ip).replace(/'/g,'')+'\')">LIBERAR</button></div>').join('')
+    : '<div class="sec-vazio">Nenhum IP bloqueado no momento.</div>';
+  const evHtml = evs.length
+    ? evs.slice(0, 40).map(e => {
+        const atk = ['ban','ataque','bloqueado'].includes(e.tipo);
+        const tag = e.tipo==='ban' ? '<span class="sec-tag ban">ban</span>'
+          : (e.tipo==='ataque' ? '<span class="sec-tag ataque">ataque</span>'
+          : (e.tipo==='bloqueado' ? '<span class="sec-tag ataque">bloqueado</span>' : '<span class="sec-tag info">'+escHN(e.tipo)+'</span>'));
+        return '<div class="sec-evento'+(atk?' atk':'')+'"><span class="te">'+escHN((e.at||'').slice(11,19))+'</span>'+tag+'<span class="ip">'+escHN(e.ip)+'</span><span class="dt">'+escHN(e.detalhe)+'</span></div>';
+      }).join('')
+    : '<div class="sec-vazio">Sem eventos registrados ainda.</div>';
+  return banner
+    + '<div class="sec-kpis">'
+    + '<div class="sec-kpi"><b>'+bans.length+'</b><span>IPs bloqueados</span></div>'
+    + '<div class="sec-kpi"><b>'+alertas+'</b><span>falhas/60s</span></div>'
+    + '<div class="sec-kpi"><b>'+varredura+'</b><span>rotas/60s</span></div>'
+    + '<div class="sec-kpi"><b>'+evs.length+'</b><span>eventos (memória)</span></div>'
+    + '</div>'
+    + '<div class="sec-grid">'
+    + '<div class="sec-card"><h3>⛔ Bloqueios ativos (ban)</h3>'+banCards+'</div>'
+    + '<div class="sec-card"><h3>📡 Detecções registradas</h3>'+evHtml+'</div>'
+    + '</div>';
+}
+function liberarIP(ip){
+  if(!ip) return;
+  const msg = confirm('Liberar o IP '+ip+' (remover o bloqueio)?');
+  if(!msg) return;
+  fetch(ESTRATEGIA_URL + '/security/unban', { method:'POST', headers: hqHdr({ 'Content-Type':'application/json' }), body: JSON.stringify({ ip: ip }), signal: AbortSignal.timeout(20000) })
+    .then(r => r.json().catch(() => ({})))
+    .then(j => { if(j && j.erro) throw new Error(j.erro); montaSeguranca(); })
+    .catch(e => alert('Erro ao liberar: ' + e.message));
+}
+
 /* menu lateral */
 function montaMenu(){
   const itens = [
     ['🏢','Visão Geral','visaogeral'],['▦','Digital Twin','digitaltwin'],['◔','Atividade Operacional','atividade'],
     ['♜','Estratégia (CEO)','estrategia'],['▣','Demandas','demandas'],['≡','Projetos','projetos'],['◈','Agentes','agentes'],
     ['⁂','Subagentes','subagentes'],['▪','Clientes','clientes'],['▤','Relatórios','relatorios'],
-    ['⚿','Credenciais','credenciais']];
+    ['🛡️','Cibersegurança','seguranca'],['⚿','Credenciais','credenciais']];
   const nav = document.getElementById('menu-lateral');
   nav.innerHTML = `<div class="menu-titulo">Divisões Corporativas</div>` + itens.map(([ic,label,pag])=>
     `<div class="menu-item ${pag===CURRENT_PAG?'ativo':''}" data-nav="${pag}">
@@ -975,9 +1226,7 @@ function proximoCodigo(){
 }
 
 function reservarCodigo(){
-  const API = 'https://mrqjmdfulmnggozwjxlq.supabase.co/rest/v1';
-  const KEY = 'sb_publishable_PGW_hFT4bnzA_bIS8EPx6g_LvxWNP4Y';
-  return fetch(API + '/demandas?select=codigo&limit=1000', { headers:{ 'apikey':KEY, 'Authorization':'Bearer '+KEY } })
+  return fetch(ESTRATEGIA_URL + '/demandas?select=codigo&limit=500', { headers: hqHdr(), signal: AbortSignal.timeout(30000) })
     .then(function(r){ if(!r.ok) throw new Error('HTTP '+r.status); return r.json(); })
     .then(function(rows){
       const usados = DEMANDAS.concat(Array.isArray(rows)?rows:[]).map(function(d){ return String(d.cod||d.codigo||''); });
@@ -1003,24 +1252,29 @@ function salvarDemanda(ev){
   const prog = Math.max(0, Math.min(100, +document.getElementById('nd-prog').value || 0));
   const resp = document.getElementById('nd-resp').value.trim();
   if(!codigo || !titulo || codigo==='calculando…') return;
-  const API = 'https://mrqjmdfulmnggozwjxlq.supabase.co/rest/v1';
-  const KEY = 'sb_publishable_PGW_hFT4bnzA_bIS8EPx6g_LvxWNP4Y';
   function tenta(cod){
     const payload = { codigo:cod, titulo:titulo, descricao:prompt||titulo, fase:fase, prioridade:prio, progresso:prog, responsavel:resp||null };
-    const url = id ? (API + '/demandas?id=eq.' + id) : (API + '/demandas');
+    const url = id ? (ESTRATEGIA_URL + '/demandas/' + encodeURIComponent(cod)) : (ESTRATEGIA_URL + '/demandas');
     const method = id ? 'PATCH' : 'POST';
-    return fetch(url, { method:method, headers:{ 'apikey':KEY, 'Authorization':'Bearer '+KEY, 'Content-Type':'application/json' }, body: JSON.stringify(payload) })
+    return fetch(url, { method:method, headers: hqHdr({ 'Content-Type':'application/json' }), body: JSON.stringify(payload), signal: AbortSignal.timeout(30000) })
       .then(function(r){
         if(r.status===409 && !id) return reservarCodigo().then(function(c2){ return tenta(c2); });
-        if(!r.ok) throw new Error('HTTP '+r.status);
-        return;
+        if(!r.ok) return r.json().catch(function(){ return {}; }).then(function(j){ throw new Error((j&&j.erro)||('HTTP '+r.status)); });
+        return cod;
       });
   }
   tenta(codigo)
-    .then(function(){
+    .then(function(cod){
       msg.textContent = (id?'Demanda atualizada':'Demanda criada') + ' com sucesso.';
       msg.className = 'hq-msg ok';
-      return carregarDemandas();
+      return carregarDemandas().then(function(){
+        /* Fluxo autonomo: ao criar (analise/backlog), despacha os agentes NA NUVEM
+           (ce-strategic/OpenRouter) — cria pasta no Google Drive km3 e produz a entrega. */
+        if(!id && cod) despacharAgentes(cod, titulo, prompt||titulo)
+          .then(function(j){ msg.textContent += ' · agentes na nuvem: ' + ((j&&j.msg)||'em processamento'); })
+          .catch(function(e){ msg.textContent += ' · configure URL/token (Estratégia) para despachar: ' + e.message; msg.className='hq-msg ok'; });
+        return;
+      });
     })
     .then(function(){ if(CURRENT_PAG==='demandas') render(); })
     .then(function(){ setTimeout(fecharModal, 1100); })
@@ -1032,13 +1286,12 @@ function excluirDemanda(){
   const id = document.getElementById('nd-id').value;
   msg.textContent=''; msg.className='hq-msg';
   if(!id){ msg.textContent='Nada a excluir.'; msg.className='hq-msg err'; return; }
-  if(!confirm('Excluir a demanda ' + document.getElementById('nd-cod').value + '?')) return;
-  const API = 'https://mrqjmdfulmnggozwjxlq.supabase.co/rest/v1';
-  const KEY = 'sb_publishable_PGW_hFT4bnzA_bIS8EPx6g_LvxWNP4Y';
-  fetch(API + '/demandas?id=eq.' + id, { method:'DELETE', headers:{ 'apikey':KEY, 'Authorization':'Bearer '+KEY } })
-    .then(function(r){ if(!r.ok) throw new Error('HTTP '+r.status); })
+  const codigo = document.getElementById('nd-cod').value.trim();
+  if(!confirm('Excluir a demanda ' + codigo + '?')) return;
+  fetch(ESTRATEGIA_URL + '/demandas/' + encodeURIComponent(codigo), { method:'DELETE', headers: hqHdr(), signal: AbortSignal.timeout(30000) })
+    .then(function(r){ if(!r.ok) return r.json().catch(function(){ return {}; }).then(function(j){ throw new Error((j&&j.erro)||('HTTP '+r.status)); }); })
     .then(function(){
-      msg.textContent='Demanda excluída.'; msg.className='hq-msg ok';
+      msg.textContent='Demanda excluida.'; msg.className='hq-msg ok';
       return carregarDemandas();
     })
     .then(function(){ if(CURRENT_PAG==='demandas') render(); })
@@ -1048,7 +1301,25 @@ function excluirDemanda(){
 
 montaMenu();
 render();
-carregarDemandas().then(function(){ render(); });
+if(tokenHQ()){
+  carregarDemandas().then(function(){ render(); });
+  checarNuvem();
+}else{
+  document.getElementById('gate').classList.remove('oculto');
+  const inp = document.getElementById('gate-token'); if(inp) inp.focus();
+}
+
+/* Polling: reflete ao vivo o Loading/percentual dos agentes em nuvem + conectividade (a cada 20s). */
+setInterval(function(){
+  if(!tokenHQ()) return;
+  const mod = document.getElementById('modal-demanda');
+  if(mod && mod.classList.contains('aberto')) return;
+  carregarDemandas()
+    .then(function(){ render(); })
+    .catch(function(){});
+  if(CURRENT_PAG==='seguranca') montaSeguranca();
+  checarNuvem();
+}, 20000);
 
 /* PWA: registro do service worker (rede-first; offline degrada para cache) */
 if('serviceWorker' in navigator && location.protocol.startsWith('http')){

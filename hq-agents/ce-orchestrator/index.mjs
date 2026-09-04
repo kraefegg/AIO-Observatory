@@ -26,7 +26,8 @@ import { Annotation, StateGraph, START, END } from '@langchain/langgraph';
 
 const OR_KEY = process.env.OPENROUTER_API_KEY || '';
 const API_BASE = process.env.SUPABASE_URL || 'https://mrqjmdfulmnggozwjxlq.supabase.co/rest/v1';
-const API_KEY = process.env.SUPABASE_KEY || 'sb_publishable_PGW_hFT4bnzA_bIS8EPx6g_LvxWNP4Y';
+const API_KEY = process.env.SUPABASE_KEY || '';
+if (!API_KEY) { console.error('SUPABASE_KEY nao definida (seguranca) — abortando'); process.exit(1); }
 const RCLONE_CONF = process.env.RCLONE_CONF || '/app/rclone/rclone.conf';
 const DRIVE_ROOT = process.env.DRIVE_ROOT || 'drive-hq:CEO - Demandas HQ/Entregas';
 const CODIGO = process.env.CODIGO || '';
@@ -105,24 +106,47 @@ async function pushToDrive(localDir) {
   if (!existsSync(localDir)) return null;
   const name = basename(localDir);
   const remote = `${DRIVE_ROOT}/${name}`;
-  try {
-    const mk = spawnSync('rclone', ['mkdir', remote, '--config', RCLONE_CONF], { stdio: 'ignore' });
-    const cp = spawnSync('rclone', ['copy', localDir, remote, '--config', RCLONE_CONF, '--transfers', '4'], { stdio: 'ignore' });
-    if (mk.status !== 0 && cp.status !== 0) return null;
-    const ls = spawnSync('rclone', ['lsjson', remote, '--config', RCLONE_CONF], { encoding: 'utf8', stdio: ['ignore','pipe','pipe'] });
-    let arr = [];
-    try { arr = JSON.parse(ls.stdout); } catch {}
-    if (Array.isArray(arr) && arr.length > 0 && arr[0].ID) {
-      const id = String(arr[0].ID).split(/\s+/)[0].trim();
-      if (/^[\w-]+$/.test(id)) return `https://drive.google.com/open?id=${id}`;
-    }
-    const pls = spawnSync('rclone', ['lsjson', DRIVE_ROOT, '--config', RCLONE_CONF], { encoding: 'utf8', stdio: ['ignore','pipe','pipe'] });
-    let parr = [];
-    try { parr = JSON.parse(pls.stdout); } catch {}
-    const folder = (parr || []).find(f => f.IsDir && f.Name === name);
-    if (folder && folder.ID) { const fid = String(folder.ID).split(/\s+/)[0].trim(); return `https://drive.google.com/open?id=${fid}`; }
-  } catch (e) { log(`erro upload Drive: ${e.message}`, true); }
+  let lastErr = '';
+  for (let t = 0; t < 3; t++) {
+    try {
+      const mk = spawnSync('rclone', ['mkdir', remote, '--config', RCLONE_CONF], { stdio: 'ignore' });
+      const cp = spawnSync('rclone', ['copy', localDir, remote, '--config', RCLONE_CONF, '--transfers', '4'], { stdio: 'ignore' });
+      if (mk.status !== 0 && cp.status !== 0) { lastErr = `mkdir/copy rc ${mk.status}/${cp.status}`; await new Promise(r => setTimeout(r, 4000 * (t + 1))); continue; }
+      const ls = spawnSync('rclone', ['lsjson', remote, '--config', RCLONE_CONF], { encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe'] });
+      let arr = [];
+      try { arr = JSON.parse(ls.stdout); } catch {}
+      if (Array.isArray(arr) && arr.length > 0 && arr[0].ID) {
+        const id = String(arr[0].ID).split(/\s+/)[0].trim();
+        if (/^[\w-]+$/.test(id)) return `https://drive.google.com/open?id=${id}`;
+      }
+      if (ls.status !== 0) { lastErr = `ls rc ${ls.status}`; await new Promise(r => setTimeout(r, 4000 * (t + 1))); continue; }
+      const pls = spawnSync('rclone', ['lsjson', DRIVE_ROOT, '--config', RCLONE_CONF], { encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe'] });
+      let parr = [];
+      try { parr = JSON.parse(pls.stdout); } catch {}
+      const folder = (parr || []).find(f => f.IsDir && f.Name === name);
+      if (folder && folder.ID) { const fid = String(folder.ID).split(/\s+/)[0].trim(); return `https://drive.google.com/open?id=${fid}`; }
+      let pdirs = [];
+      const pld = spawnSync('rclone', ['lsd', DRIVE_ROOT, '--config', RCLONE_CONF], { encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe'] });
+      try { pdirs = pld.stdout.split(/\r?\n/).map(l => l.split(/\s+/).pop()).filter(Boolean); } catch {}
+      if (pdirs.includes(name)) lastErr = 'pasta criada (pai)';
+      return null;
+    } catch (e) { lastErr = e.message; await new Promise(r => setTimeout(r, 4000 * (t + 1))); }
+  }
+  log(`upload Drive com falha persistente: ${lastErr}`, true);
   return null;
+}
+
+// Garante a pasta da demanda (CEO - Demandas HQ/Demanda-<codigo>) no Drive,
+// como registro obrigatorio para demandas analise/backlog processadas pelo time.
+function garantirPastaDemanda(codigo) {
+  const raiz = `CEO - Demandas HQ/Demanda-${codigo}`;
+  try {
+    const mk = spawnSync('rclone', ['mkdir', `drive-hq:${raiz}`, '--config', RCLONE_CONF], { stdio: 'ignore' });
+    if (mk.status !== 0) return '';
+    const lk = spawnSync('rclone', ['link', `drive-hq:${raiz}`, '--config', RCLONE_CONF], { encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe'] });
+    if (lk.status === 0) { const link = String(lk.stdout || '').trim(); return /^https?:\/\//.test(link) ? link : `/perma/${raiz}`; }
+    return '';
+  } catch (e) { log(`erro pasta Drive ${codigo}: ${e.message}`, true); return ''; }
 }
 
 // ---------- Plano do Especialista ----------
@@ -161,6 +185,32 @@ Crie dentro de {dir}:
 - README.md : arquitetura, modulos planejados e proximos passos de evolucao.
 Cada arquivo comeca com '###FILE: <nome.ext>' e o conteudo completo, sem blocos de codigo. pt-BR, ASCII puro.` }
 };
+
+// ---------- Plano generico (qualquer demanda, via IA) ----------
+async function planoPara(d) {
+  const hard = PLANOS[d.codigo];
+  if (hard) return hard;
+  const nome = 'demanda-' + d.codigo;
+  const promptGenerico = (files, extra) => `
+Voce e o ESPECIALISTA tecnico. Produza a ENTREGA REAL para a demanda '${d.codigo} ${d.titulo}'.
+${extra || ''}
+Crie dentro de {dir} os arquivos: ${(files || []).join(', ')}
+Cada arquivo comeca com a linha '###FILE: <nome.ext>' seguido do conteudo COMPLETO (sem blocos de codigo markdown). Conteudo em pt-BR, ASCII puro.`;
+  try {
+    const raw = await ai(`
+Voce e o PM (gerente de projetos) da equipe. Para a demanda abaixo defina a ENTREGA REAL que uma equipe tecnica deve produzir.
+Demanda: codigo=${d.codigo}, titulo=${d.titulo}, fase=${d.fase}
+Responda SOMENTE com JSON valido (sem texto extra): {"files":["arquivo.ext", ...]} — 1 a 5 arquivos com extensoes apropriadas (.md, .csv, .html, .json).`, 600);
+    const j = JSON.parse(raw.replace(/```json\s*/gi, '').replace(/```/g, '').trim());
+    const files = (Array.isArray(j.files) ? j.files : [])
+      .filter(f => typeof f === 'string' && /^[\w.\-\u00C0-\u017F ]+$/.test(f.trim()) && f.includes('.'))
+      .map(f => f.trim()).slice(0, 8);
+    if (!files.length) throw new Error('sem arquivos validos');
+    return { nome, files, prompt: promptGenerico(files) };
+  } catch {
+    return { nome, files: ['relatorio-' + String(d.codigo).toLowerCase() + '.md'], prompt: promptGenerico(['relatorio-' + String(d.codigo).toLowerCase() + '.md'], 'Seja um relatorio completo e objetivo sobre o tema da demanda.') };
+  }
+}
 
 // ---------- parse ###FILE ----------
 function parseFiles(out, dir) {
@@ -213,7 +263,8 @@ async function nodePM(s) {
   mkdirSync(dir, { recursive: true });
   for (const f of plan.files) { try { writeFileSync(join(dir, f), ''); } catch {} }
   log(`=== [PM] Despachando ${s.codigo}: ${s.titulo} ===`);
-  await setEstado(s.codigo, s.fase, 5, `Equipe iniciada (PM): plano ${plan.nome}`);
+  const linkPasta = garantirPastaDemanda(s.codigo);
+  await setEstado(s.codigo, s.fase, 5, `Equipe iniciada (PM): plano ${plan.nome}${linkPasta ? ` | PASTA DRIVE: ${linkPasta}` : ''}`);
   return { dir };
 }
 
@@ -300,7 +351,7 @@ async function nodeEntrega(s) {
   let link = '';
   if ((aprovado || SKIP_QA) && completo) {
     link = await pushToDrive(s.dir) || `${DRIVE_ROOT}/${plan.nome}`;
-    await setEstado(s.codigo, s.fase, 100, `ENTREGA REAL ${new Date().toISOString().slice(0,16)} | DOC: ${link}`);
+    await setEstado(s.codigo, 'concluida', 100, `ENTREGA REAL ${new Date().toISOString().slice(0,16)} | DOC: ${link}`);
     log(`  [ENTREGA] ${link}`);
   } else {
     await setEstado(s.codigo, s.fase, 85, `Entrega RETIDA pelo QA (${faltantes.length}/${plan.files.length} pendentes)`);
@@ -334,10 +385,11 @@ async function main() {
     .compile();
 
   for (const d of demandas) {
-    const plan = PLANOS[d.codigo];
-    if (!plan) { log(`Sem plano para ${d.codigo} - pulando.`); continue; }
+    const desc = String(d.descricao || '');
+    if (desc.includes('[ESTRATEGICO]')) { log(`[${d.codigo}] conduzida pela equipe estrategica na nuvem - pulando.`); continue; }
     const titulo = (d.codigo + ' ' + d.titulo).trim();
     try {
+      const plan = await planoPara(d);
       const res = await grafo.invoke({
         codigo: d.codigo,
         titulo: d.titulo,

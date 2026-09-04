@@ -30,7 +30,7 @@ $ErrorActionPreference = "Stop"
 
 # ---------- Config ----------
 $API_BASE = "https://mrqjmdfulmnggozwjxlq.supabase.co/rest/v1"
-$API_KEY  = "sb_publishable_PGW_hFT4bnzA_bIS8EPx6g_LvxWNP4Y"
+
 $OR_KEY   = if ($env:OPENROUTER_API_KEY) { $env:OPENROUTER_API_KEY } else { $null }
 if (-not $OR_KEY) { Write-Error "Defina OPENROUTER_API_KEY"; exit 1 }
 $MODEL    = "minimax/minimax-m3:free"
@@ -347,3 +347,14 @@ Corrija/crie TODOS os arquivos esperados dentro de {dir}. Cada arquivo comeca co
 }
 
 Write-Host "`nOrquestrador da equipe concluido." -ForegroundColor Cyan
+
+# Chave Supabase: SOMENTE via env var ou arquivo fora do git (~/.hq-secrets/supabase.env).
+$API_KEY = $null
+if ($env:SUPABASE_KEY) { $API_KEY = $env:SUPABASE_KEY }
+elseif (Test-Path (Join-Path $HOME ".hq-secrets\supabase.env")) {
+  $linhas = Get-Content (Join-Path $HOME ".hq-secrets\supabase.env") -ErrorAction SilentlyContinue
+  $k = ($linhas | Where-Object { $_ -match '^SUPABASE_KEY=' }) -replace '^SUPABASE_KEY=',''
+  if ($k) { $API_KEY = $k.Trim() }
+}
+if (-not $API_KEY) { Write-Error "Defina SUPABASE_KEY (env) ou ~/.hq-secrets/supabase.env (NUNCA no codigo)."; exit 1 }
+

@@ -308,7 +308,7 @@ const SUBAGENTES = {
 var DEMANDAS = [];
 function carregarDemandas(){
   const API = 'https://mrqjmdfulmnggozwjxlq.supabase.co/rest/v1';
-  const KEY = 'sb_publishable_PGW_hFT4bnzA_bIS8EPx6g_LvxWNP4Y';
+  const KEY = 'PURGADA-20260904-rotacionar-no-painel';
   return fetch(API + '/demandas?select=codigo,titulo,descricao,responsavel,fase,prioridade,progresso&order=id.asc')
     .then(function(r){ if(!r.ok) throw new Error('HTTP '+r.status); return r.json(); })
     .then(function(rows){
@@ -970,7 +970,7 @@ function salvarDemanda(ev){
   const resp = document.getElementById('nd-resp').value.trim();
   if(!codigo || !titulo) return;
   const API = 'https://mrqjmdfulmnggozwjxlq.supabase.co/rest/v1';
-  const KEY = 'sb_publishable_PGW_hFT4bnzA_bIS8EPx6g_LvxWNP4Y';
+  const KEY = 'PURGADA-20260904-rotacionar-no-painel';
   const payload = { codigo:codigo, titulo:titulo, descricao:prompt||titulo, fase:fase, prioridade:prio, progresso:prog, responsavel:resp||null };
   const url = id ? (API + '/demandas?id=eq.' + id) : (API + '/demandas');
   const method = id ? 'PATCH' : 'POST';
@@ -993,7 +993,7 @@ function excluirDemanda(){
   if(!id){ msg.textContent='Nada a excluir.'; msg.className='hq-msg err'; return; }
   if(!confirm('Excluir a demanda ' + document.getElementById('nd-cod').value + '?')) return;
   const API = 'https://mrqjmdfulmnggozwjxlq.supabase.co/rest/v1';
-  const KEY = 'sb_publishable_PGW_hFT4bnzA_bIS8EPx6g_LvxWNP4Y';
+  const KEY = 'PURGADA-20260904-rotacionar-no-painel';
   fetch(API + '/demandas?id=eq.' + id, { method:'DELETE', headers:{ 'apikey':KEY, 'Authorization':'Bearer '+KEY } })
     .then(function(r){ if(!r.ok) throw new Error('HTTP '+r.status); })
     .then(function(){
@@ -1018,3 +1018,4 @@ if('serviceWorker' in navigator && location.protocol.startsWith('http')){
 </script>
 </body>
 </html>
+

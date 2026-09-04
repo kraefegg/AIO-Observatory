@@ -1,0 +1,46 @@
+{
+  "teste": "porta-de-demandas",
+  "data_execucao": "2026-09-04T17:12:38Z",
+  "demanda": { "codigo": "D-24", "id": 28, "titulo": "Teste porta: compliance portuario SST+ambiental (NE)", "prioridade": "alta", "responsavel": "Railson Arruda" },
+  "origem_destino": {
+    "origem": "Supabase POST (portal kraefegg-mo) -> id 28, criado_em 2026-09-04T17:12:38Z",
+    "disparo": "POST /processar ce-strategic -> 'agentes acionados na nuvem', despachadas=[D-24]",
+    "processamento": "ce-strategic (grafo CEO KraefeggM.O.) -> OpenRouter (auto/best-reasoning)",
+    "destino": "Google Drive kraefegg.mos3@gmail.com: 'CEO - Demandas HQ/Demanda-D-24'"
+  },
+  "metricas_tempo_segundos": {
+    "criacao_ate_disparo": 0,
+    "analise_estrutura_conselho_decisao": 358,
+    "execucao_10_setores_paralelos": 357,
+    "conclusao_resultado_exportables": 434,
+    "total_criacao_ate_conclusao": 818
+  },
+  "cadeia_progresso": [
+    { "fase": "analise", "min_prog": 10, "max_prog": 46 },
+    { "fase": "execucao", "min_prog": 65, "max_prog": 95 },
+    { "fase": "concluida", "min_prog": 98, "max_prog": 100 }
+  ],
+  "modelo": "OpenRouter via OmniRoute (auto/best-reasoning), guardrails por etapa",
+  "artefatos_drive": {
+    "total_arquivos": 13,
+    "reports_setoriais": [
+      { "pasta": "01-Mercado", "arquivo": "report-s1-mercado-inteligencia.md", "bytes": 12427 },
+      { "pasta": "02-P&D", "arquivo": "report-s2-pesquisa-desenvolvimento.md", "bytes": 9676 },
+      { "pasta": "03-Comercial", "arquivo": "report-s3-prospeccao-marketing.md", "bytes": 10306 },
+      { "pasta": "04-Engenharia", "arquivo": "report-s4-engenharias.md", "bytes": 14433 },
+      { "pasta": "05-Ambiental", "arquivo": "report-s5-ambiental-seguranca.md", "bytes": 9844 },
+      { "pasta": "06-Entregas", "arquivo": "report-s6-entregas-e-resultado.md", "bytes": 8644 }
+    ],
+    "exportables_multiformato": [
+      { "formato": "PDF", "arquivo": "resumo.pdf", "bytes": 7277 },
+      { "formato": "JSON", "arquivo": "resumo.json", "bytes": 14251 },
+      { "formato": "CSV", "arquivo": "resumo.csv", "bytes": 14138 },
+      { "formato": "XML", "arquivo": "resumo.xml", "bytes": 14504 },
+      { "formato": "Markdown", "arquivo": "resumo.md", "bytes": 13338 },
+      { "formato": "TXT", "arquivo": "resumo.txt", "bytes": 13338 },
+      { "formato": "RTF (Word)", "arquivo": "resumo.rtf", "bytes": 4498 }
+    ]
+  },
+  "resultado_estrategico": "CEO: Viabilidade tecnico-comercial confirmada como negocio de nicho defensavel e escalavel regionalmente. Apro...",
+  "status": "D-24 CONCLUIDA 100% | EXPORTABLES publicados (7/7)"
+}

@@ -24,25 +24,58 @@
 import { createServer } from 'node:http';
 import { execFile } from 'node:child_process';
 import { promisify } from 'node:util';
-import { mkdirSync, writeFileSync } from 'node:fs';
+import { mkdirSync, writeFileSync, readdirSync, statSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { Annotation, StateGraph, START, END } from '@langchain/langgraph';
 import { Guardrails, aiComGuardrail, checkNoSecrets, parseJSON } from './guardrails.mjs';
 
 const PORT = process.env.PORT || 8080;
-const ACCESS = process.env.HQ_ACCESS_TOKEN || 'kraefegg-mo-2026';
+// Seguranca: token de acesso SOMENTE via ambiente; sem fallback hardcoded (fail-safe).
+const ACCESS = process.env.HQ_ACCESS_TOKEN || '';
+const CORS_ALLOWED = (process.env.CORS_ALLOW || 'https://kraefegg-mo.2e4s1hfdcw14.br-sao.codeengine.appdomain.cloud')
+  .split(';').map(s => s.trim()).filter(Boolean);
+const RATE = { janela: 600000, limiteGeral: 180, limiteMutacao: 60, limiteProcessar: 6 };
+const DEMANDA_CAMPOS = new Set(['codigo', 'titulo', 'descricao', 'responsavel', 'fase', 'prioridade', 'progresso', 'criado_em', 'atualizado_em', 'area', 'status']);
 const OR_KEY = process.env.OPENROUTER_API_KEY || '';
 const API_BASE = process.env.SUPABASE_URL || 'https://mrqjmdfulmnggozwjxlq.supabase.co/rest/v1';
-const API_KEY = process.env.SUPABASE_KEY || 'sb_publishable_PGW_hFT4bnzA_bIS8EPx6g_LvxWNP4Y';
+const API_KEY = process.env.SUPABASE_KEY || '';
 const MODEL = process.env.MODEL || 'minimax/minimax-m3:free';
 const SEARCH_MODEL = process.env.SEARCH_MODEL || 'openrouter/auto';
 const MAX_REVISOES = 2;
+
+// Demandas em execucao na nuvem (evita disparo duplicado de /demanda e /processar)
+const EM_EXECUCAO = new Set();
 
 const log = (...a) => console.log(new Date().toISOString(), ...a);
 if (!OR_KEY) { console.error('OPENROUTER_API_KEY nao definida'); process.exit(1); }
 
 const hdrs = { 'apikey': API_KEY, 'Authorization': `Bearer ${API_KEY}`, 'Content-Type': 'application/json' };
 const oHdrs = { 'Authorization': `Bearer ${OR_KEY}`, 'Content-Type': 'application/json' };
+
+// ---------- Supabase com retry/backoff (garantia de conexao) ----------
+async function supabaseJson(url, init, { tentativas = 3, origem = 'Supabase' } = {}) {
+  let lastErr = null;
+  for (let t = 0; t < tentativas; t++) {
+    try {
+      const r = await fetch(url, Object.assign({}, init, { signal: AbortSignal.timeout(30000) }));
+      if (r.status === 429 || r.status >= 500) {
+        const back = Math.min(20, 3 * Math.pow(2, t));
+        await new Promise(res => setTimeout(res, back * 1000));
+        continue;
+      }
+      return r;
+    } catch (e) {
+      if (/fetch failed|TimeoutError|ECONNRESET|socket hang up|EPIPE/i.test(String(e.message || e.name))) {
+        lastErr = e;
+        const back = Math.min(20, 3 * Math.pow(2, t));
+        await new Promise(res => setTimeout(res, back * 1000));
+        continue;
+      }
+      throw e;
+    }
+  }
+  throw lastErr || new Error(`${origem} indisponivel apos retries`);
+}
 
 // ---------- Google Drive via rclone (secret hq-rclone) ----------
 // O secret generic "hq-rclone" e montado no Code Engine como arquivo
@@ -52,14 +85,31 @@ const RCLONE_CONF = process.env.RCLONE_CONF || '/etc/config/rclone.conf';
 const DRIVE_REMOTE = 'drive-hq';
 const exec = promisify(execFile);
 
-function driveRun(args) {
-  return exec(RCLONE_BIN, ['--config', RCLONE_CONF, ...args], { timeout: 90000, maxBuffer: 16 * 1024 * 1024 })
+function driveRun(args, timeout = 90000) {
+  return exec(RCLONE_BIN, ['--config', RCLONE_CONF, ...args], { timeout, maxBuffer: 16 * 1024 * 1024 })
     .then(r => r.stdout.trim())
     .catch(e => { throw new Error('rclone: ' + ((e && e.message) || e)); });
 }
 async function driveMkdir(remotePath) { await driveRun(['mkdir', `${DRIVE_REMOTE}:${remotePath}`]); }
 async function driveUpload(localFile, remotePath) { await driveRun(['copyto', localFile, `${DRIVE_REMOTE}:${remotePath}`]); }
 async function driveLink(remotePath) { try { return await driveRun(['link', `${DRIVE_REMOTE}:${remotePath}`]); } catch { return ''; } }
+
+// Garante que a pasta da demanda EXISTA e esteja acessivel no Drive (com retry).
+// Politica: toda demanda (analise ou backlog) recebe registro em kraefegg.mos3@gmail.com.
+async function garantirPastaDrive(raizPasta) {
+  let lastErr = '';
+  for (let t = 0; t < 3; t++) {
+    try {
+      await driveRun(['mkdir', `${DRIVE_REMOTE}:${raizPasta}`]);
+      const link = await driveRun(['link', `${DRIVE_REMOTE}:${raizPasta}`]);
+      return link;
+    } catch (e) {
+      lastErr = e.message;
+      await new Promise(res => setTimeout(res, 2500 * (t + 1)));
+    }
+  }
+  return { erro: lastErr };
+}
 
 // Subpastas padrao (reports por setor) dentro da pasta da demanda
 const PASTA_SETORES = {
@@ -143,20 +193,20 @@ async function pesquisaComGuardrail(cpapel, setor, foco, questao) {
 
 // ---------- Supabase: demandas ----------
 async function getDemanda(codigo) {
-  const r = await fetch(`${API_BASE}/demandas?codigo=eq.${codigo}`, { headers: hdrs, signal: AbortSignal.timeout(30000) });
+  const r = await supabaseJson(`${API_BASE}/demandas?codigo=eq.${codigo}`, { headers: hdrs });
   if (!r.ok) throw new Error(`Supabase GET ${r.status}`);
   const rows = await r.json();
   return rows && rows[0] ? rows[0] : null;
 }
 async function criarDemanda({ codigo, titulo, ideia, prioridade }) {
   const body = { codigo, titulo, descricao: `[IDEIA DIRETOR] ${ideia}`, responsavel: 'Railson Arruda (Diretor)', area: 'estrategia', fase: 'analise', prioridade: prioridade || 'alta', progresso: 0 };
-  const r = await fetch(`${API_BASE}/demandas`, { method: 'POST', headers: { ...hdrs, Prefer: 'return=representation' }, body: JSON.stringify(body), signal: AbortSignal.timeout(30000) });
+  const r = await supabaseJson(`${API_BASE}/demandas`, { method: 'POST', headers: { ...hdrs, Prefer: 'return=representation' }, body: JSON.stringify(body) });
   if (!r.ok) throw new Error(`Supabase POST ${r.status}`);
   const rows = await r.json();
   return rows && rows[0] ? rows[0] : body;
 }
 async function patDemanda(codigo, payload) {
-  const r = await fetch(`${API_BASE}/demandas?codigo=eq.${codigo}`, { method: 'PATCH', headers: hdrs, body: JSON.stringify(payload), signal: AbortSignal.timeout(30000) });
+  const r = await supabaseJson(`${API_BASE}/demandas?codigo=eq.${codigo}`, { method: 'PATCH', headers: hdrs, body: JSON.stringify(payload) });
   if (!r.ok) throw new Error(`Supabase PATCH ${r.status}`);
 }
 async function appendLog(codigo, nota) {
@@ -336,9 +386,116 @@ Direcionamento setorial:
 ${s.despacho}
 SAIDA ESPERADA: RESUMO EXECUTIVO final em bullets (pt-BR ASCII): [1] recomendacao,
 [2] produto/servico, [3] proximos passos, [4] como o Diretor pode ajustar. 5-8 bullets.`, Guardrails.resultado, { tokens: 2500 });
-  await setFase(s.codigo, 'concluida', 100, `RESULTADO ESTRATEGICO | CEO: ${d.decisao || 'aprovado'}`);
+  await setFase(s.codigo, 'concluida', 97, `RESULTADO ESTRATEGICO | CEO: ${d.decisao || 'aprovado'}`);
   await appendLog(s.codigo, `REPORTS POR SETOR no Drive: CEO - Demandas HQ/Demanda-${s.codigo}/`);
   return { resultado, finalizado: true };
+}
+
+// ---------- Exportables multiformato (md/json/csv/xml/txt/PDF/RTF) ----------
+const escXml = t => String(t ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&apos;');
+const escPdfTxt = t => String(t ?? '').replace(/([\\()])/g, '\\$1');
+const escRtf = t => String(t ?? '').replace(/[\\{}]/g, m => '\\' + m);
+const escCsv = t => { const s = String(t ?? ''); return /[;\n"]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s; };
+
+function pacoteExportables(s) {
+  const d = JSON.parse(s.decisao || '{}');
+  return {
+    codigo: s.codigo, titulo: s.titulo, questao: s.questao,
+    veredito: d.veredito || '', decisao: d.decisao || '', foco: d.foco || '',
+    alvos: d.alvos || '', setor_prioritario: d.setor_prioritario || '',
+    conselho: String(s.conselho || '').replace(/\s+/g, ' ').slice(0, 1200),
+    despacho: String(s.despacho || '').replace(/\s+/g, ' ').slice(0, 2500),
+    resultado: s.resultado || '',
+    gerado_em: new Date().toISOString()
+  };
+}
+function mkMarkdown(p) {
+  const d = JSON.parse(JSON.stringify(p));
+  return `# ${d.codigo} - ${d.titulo}
+
+**Questao:** ${d.questao}
+**Veredito:** ${d.veredito} | **Foco:** ${d.foco} | **Setor:** ${d.setor_prioritario}
+**Alvos:** ${d.alvos}
+
+## Conselho (pesquisa web)
+${d.conselho || '(sem parecer)'}
+
+## Direcionamento setorial
+${d.despacho || '(sem despacho)'}
+
+## Resultado executivo
+${d.resultado || '(sem resultado)'}
+
+*Gerado por CEO KRAEFEGG M.O. em ${d.gerado_em}*
+`;
+}
+function mkCsv(p) {
+  const rows = [['campo', 'valor']].concat(Object.entries(p).map(([k, v]) => [k, String(v ?? '')]));
+  return rows.map(r => r.map(escCsv).join(';')).join('\n');
+}
+function mkXml(p) {
+  const inner = Object.entries(p).map(([k, v]) => `  <${k}>${escXml(v)}</${k}>`).join('\n');
+  return `<?xml version="1.0" encoding="UTF-8"?>\n<demanda>\n${inner}\n</demanda>`;
+}
+function mkRtf(p) {
+  const t = String(p.resultado || p.decisao || '').replace(/\s+/g, ' ');
+  return `{\\rtf1\\ansi\\deff0{\\fonttbl{\\f0\\fnil Helvetica;}}\\f0\\fs22 ${escRtf(t)} }`;
+}
+function mkPdf(p) {
+  const texto = `KRAEFEGG M.O. - ${p.codigo} ${p.titulo}\nVeredito: ${p.veredito} ${p.decisao}\nAlvos: ${p.alvos}\n\n${p.resultado}`;
+  const linhas = String(texto || '').split(/\r?\n/).map(l => l.trim()).filter(Boolean);
+  const paginas = [];
+  let buf = [], y = 800;
+  for (const l of linhas) {
+    if (y < 44) { paginas.push(buf); buf = []; y = 800; }
+    buf.push(`BT /F1 9 Tf 40 ${y} Td (${escPdfTxt(l)}) Tj ET`);
+    y -= 12;
+  }
+  if (buf.length) paginas.push(buf);
+  const objs = [];
+  const add = body => { objs.push(`${objs.length + 1} 0 obj\n${body}\nendobj`); return objs.length; };
+  add('<< /Type /Catalog /Pages 2 0 R >>');
+  const pagObj = 2;
+  add('<< /Type /Pages /Kids [] /Count 0 >>');
+  const fontObj = add('<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica /Encoding /WinAnsiEncoding >>');
+  const refs = [];
+  for (const pg of paginas) {
+    const cont = pg.join('\n');
+    const contNum = add(`<< /Length ${cont.length} >>\nstream\n${cont}\nendstream`);
+    add(`<< /Type /Page /Parent ${pagObj} 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 ${fontObj} 0 R >> >> /Contents ${contNum} 0 R >>`);
+    refs.push(objs.length);
+  }
+  objs[pagObj - 1] = `${pagObj} 0 obj\n<< /Type /Pages /Kids [ ${refs.map(r => `${r} 0 R`).join(' ')} ] /Count ${refs.length} >>\nendobj`;
+  let blob = '%PDF-1.4\n', offs = [0];
+  for (const o of objs) { offs.push(blob.length); blob += o + '\n'; }
+  const xs = blob.length;
+  blob += `xref\n0 ${objs.length + 1}\n0000000000 65535 f \n${offs.slice(1).map(o => String(o).padStart(10, '0') + ' 00000 n \n').join('')}`;
+  blob += `trailer\n<< /Size ${objs.length + 1} /Root 1 0 R >>\nstartxref\n${xs}\n%%EOF`;
+  return Buffer.from(blob, 'latin1');
+}
+
+// Publica o pacote exportavel de cada demanda no Drive (06-Entregas/exportables)
+async function nodeExportables(s) {
+  await setFase(s.codigo, 'concluida', 98, 'Gerando exportables multiformato (md, json, csv, xml, txt, PDF, RTF)...');
+  const raiz = `CEO - Demandas HQ/Demanda-${s.codigo}`;
+  const dir = join('/app/out', s.codigo, 'exportables');
+  mkdirSync(dir, { recursive: true });
+  const p = pacoteExportables(s);
+  writeFileSync(join(dir, 'resumo.md'), mkMarkdown(p), 'utf8');
+  writeFileSync(join(dir, 'resumo.json'), JSON.stringify(p, null, 2), 'utf8');
+  writeFileSync(join(dir, 'resumo.csv'), mkCsv(p), 'utf8');
+  writeFileSync(join(dir, 'resumo.xml'), mkXml(p), 'utf8');
+  writeFileSync(join(dir, 'resumo.txt'), mkMarkdown(p), 'utf8');
+  writeFileSync(join(dir, 'resumo.rtf'), mkRtf(p), 'latin1');
+  writeFileSync(join(dir, 'resumo.pdf'), mkPdf(p));
+  const rel = `${raiz}/06-Entregas/exportables`;
+  const publicados = [];
+  for (const f of readdirSync(dir)) {
+    const local = join(dir, f);
+    try { await driveUpload(local, `${rel}/${f}`); publicados.push(`${f}(${statSync(local).size}B)`); } catch (e) { log(`upload ${f}: ${e.message}`); }
+  }
+  await setFase(s.codigo, 'concluida', 100, `EXPORTABLES publicados (${publicados.length}/${readdirSync(dir).length}) | ${rel}`);
+  return {};
 }
 
 const grafo = new StateGraph(State)
@@ -347,30 +504,56 @@ const grafo = new StateGraph(State)
   .addNode('n_decide', nodeCEO_Decide)
   .addNode('n_despacho', nodeDespacho)
   .addNode('n_resultado', nodeResultado)
+  .addNode('n_exportables', nodeExportables)
   .addEdge(START, 'n_estrutura')
   .addEdge('n_estrutura', 'n_conselho')
   .addEdge('n_conselho', 'n_decide')
   .addEdge('n_decide', 'n_despacho')
   .addEdge('n_despacho', 'n_resultado')
-  .addEdge('n_resultado', END)
+  .addEdge('n_resultado', 'n_exportables')
+  .addEdge('n_exportables', END)
   .compile();
 
 // ---------- Executa uma demanda ----------
 async function executar(codigo) {
-  const d = await getDemanda(codigo);
-  if (!d) throw new Error('demanda nao encontrada');
-  const ideia = String(d.descricao || d.titulo || '').replace(/^\[IDEIA DIRETOR\]\s*/i, '').trim();
-  // Política: toda demanda (backlog/análise) ganha pasta no Drive, mesmo em revisão
-  const raizPasta = `CEO - Demandas HQ/Demanda-${d.codigo}`;
+  if (!codigo || EM_EXECUCAO.has(codigo)) return null;
+  EM_EXECUCAO.add(codigo);
   try {
-    await driveMkdir(raizPasta);
-    const link = await driveLink(raizPasta);
-    await appendLog(d.codigo, `PASTA DRIVE: ${link || raizPasta}`);
-  } catch (e) {
-    await appendLog(d.codigo, `AVISO Drive: ${e.message}`);
+    const d = await getDemanda(codigo);
+    if (!d) throw new Error('demanda nao encontrada');
+    const ideia = String(d.descricao || d.titulo || '').replace(/^\[IDEIA DIRETOR\]\s*/i, '').trim();
+    // Política: toda demanda (backlog/análise) ganha pasta no Drive com verificação,
+    // mesmo em revisão. Marcador [ESTRATEGICO] sinaliza ao orquestrador tecnico (job)
+    // que esta demanda ja esta sendo conduzida pela equipe estrategica na nuvem.
+    await appendLog(d.codigo, '[ESTRATEGICO] despacho da equipe estrategica (cloud OpenRouter)');
+    const raizPasta = `CEO - Demandas HQ/Demanda-${d.codigo}`;
+    const liga = await garantirPastaDrive(raizPasta);
+    if (liga && liga.erro) await appendLog(d.codigo, `AVISO Drive: ${liga.erro}`);
+    else await appendLog(d.codigo, `PASTA DRIVE: ${liga || raizPasta}`);
+    const st = await grafo.invoke({ codigo: d.codigo, titulo: d.titulo, ideia: ideia || d.titulo });
+    return st;
+  } finally {
+    EM_EXECUCAO.delete(codigo);
   }
-  const st = await grafo.invoke({ codigo: d.codigo, titulo: d.titulo, ideia: ideia || d.titulo });
-  return st;
+}
+
+// Aplica a execucao a TODAS as demandas pendentes (analise OU backlog), sem
+// depender de acao manual: cada uma entra no fluxo da equipe estrategica em nuvem.
+async function processarTodasPendentes() {
+  const r = await supabaseJson(`${API_BASE}/demandas?or=(fase.eq.analise,fase.eq.backlog)&select=codigo,titulo,fase,descricao&order=id.asc&limit=50`, { headers: hdrs });
+  if (!r.ok) throw new Error(`Supabase GET ${r.status}`);
+  const arr = await r.json();
+  const pendentes = (Array.isArray(arr) ? arr : []).filter(d =>
+    d && d.codigo && !EM_EXECUCAO.has(d.codigo) && !String(d.descricao || '').includes('[ESTRATEGICO]'));
+  const despachadas = [];
+  for (const d of pendentes) {
+    despachadas.push(d.codigo);
+    executar(d.codigo).catch(async e => {
+      log(`falha ${d.codigo}: ${e.message}`);
+      try { await setFase(d.codigo, 'falha', 40, `Falha: ${e.message}`); } catch (_) {}
+    });
+  }
+  return { despachadas, total: pendentes.length };
 }
 
 // ---------- HTTP server (REST) ----------
@@ -382,82 +565,340 @@ function readBody(req) {
     req.on('error', rej);
   });
 }
-function json(res, code, obj) {
-  res.writeHead(code, {
+// ---------- Camada de seguranca: CORS restrito + rate-limit + headers ----------
+function corsOrigem(req) {
+  const origem = (req.headers.origin || '').trim();
+  if (!origem) return null; // nao-browser (curl/cron/servidor) -> autenticacao via token
+  if (CORS_ALLOWED.includes(origem)) return origem;
+  return null; // origem nao autorizada -> bloqueada no navegador
+}
+const CONTADORES = new Map();
+function rateCheck(req, chave, limite) {
+  const ip = ipDe(req);
+  const k = `${ip}|${chave}`;
+  const agora = Date.now();
+  const c = CONTADORES.get(k);
+  if (CONTADORES.size > 20000) CONTADORES.clear();
+  if (!c || agora - c.t0 > RATE.janela) { CONTADORES.set(k, { t0: agora, n: 1 }); return { ok: true, retry: 0 }; }
+  if (c.n >= limite) return { ok: false, retry: Math.ceil((c.t0 + RATE.janela - agora) / 1000) };
+  c.n++;
+  CONTADORES.set(k, c);
+  return { ok: true, retry: 0 };
+}
+function json(res, code, obj, req) {
+  const origem = req ? corsOrigem(req) : null;
+  const h = {
     'Content-Type': 'application/json; charset=utf-8',
-    'Access-Control-Allow-Origin': '*',
-    'Access-Control-Allow-Methods': 'GET,POST,OPTIONS',
+    'Access-Control-Allow-Methods': 'GET,POST,PATCH,DELETE,OPTIONS',
     'Access-Control-Allow-Headers': 'Content-Type, X-HQ-Token',
-    'Access-Control-Max-Age': '86400'
-  });
+    'Access-Control-Max-Age': '86400',
+    'X-Content-Type-Options': 'nosniff',
+    'X-Frame-Options': 'DENY',
+    'Referrer-Policy': 'no-referrer',
+    'Cache-Control': 'no-store'
+  };
+  if (origem) h['Access-Control-Allow-Origin'] = origem; // so reflete origem autorizada
+  res.writeHead(code, h);
   res.end(JSON.stringify(obj));
 }
 
+// ---------- Defesa ativa: deteccao + bloqueio automatico de atacantes ----------
+// Escopo ESTRITAMENTE DEFENSIVO: neutraliza o atacante NA FRONTEIRA (ban por IP,
+// rejeicao de payloads/sondas maliciosas). Nunca "responde fogo" (nada contra terceiros).
+const SEG = {
+  janela: 60_000,
+  maxFalhas: 8,          // 8 x 401/403 em 60s -> ban (forca bruta / origem proibida)
+  maxRotas: 15,          // 15 rotas inexistentes em 60s -> ban (varredura/reconhecimento)
+  banBaseMs: 30 * 60_000,
+  banMaxMs: 24 * 3600 * 1000,
+  eventos: [],
+  maxEventos: 150,
+  falhas: new Map(),     // ip -> {t0,n}
+  rotas: new Map(),      // ip -> {t0,n}
+  bans: new Map()        // ip -> {fim, motivo, n}
+};
+function ipRaw(req) { return String(req.socket.remoteAddress || '').replace(/^::ffff:/, ''); }
+function ipDe(req) {
+  const xff = String(req.headers['x-forwarded-for'] || '').split(',')[0].trim();
+  return (xff && xff !== 'unknown') ? xff : ipRaw(req);
+}
+// Apenas IPs publicos sao banidos: chamadas internas (cron/job/CE) nunca sofrem ban.
+function ehPublico(ip) {
+  if (!ip || ip === '0.0.0.0') return false;
+  if (/^(10\.|192\.168\.|127\.|169\.254\.|0\.|::1$)/.test(ip)) return false;
+  if (/^172\.(1[6-9]|2\d|3[01])\./.test(ip)) return false;
+  if (/^f[cd][0-9a-f]{2}:|^fe[89ab][0-9a-f]:/i.test(ip)) return false;
+  return true;
+}
+function segLog(kind, ip, detalhe) {
+  SEG.eventos.push({ at: new Date().toISOString(), tipo: kind, ip, detalhe: String(detalhe || '').slice(0, 200) });
+  if (SEG.eventos.length > SEG.maxEventos) SEG.eventos.shift();
+  console.log(`[SEG] ${kind} ${ip} ${detalhe}`);
+}
+function segBloquear(ip, motivo) {
+  const atual = SEG.bans.get(ip);
+  const n = (atual ? atual.n : 0) + 1;
+  const dur = Math.min(SEG.banMaxMs, SEG.banBaseMs * Math.pow(2, Math.min(n - 1, 5)));
+  SEG.bans.set(ip, { fim: Date.now() + dur, motivo, n });
+  segLog('ban', ip, `${motivo} (#${n}, +${Math.round(dur / 60000)}min)`);
+}
+function segFalha(req, tipo) {
+  const ip = ipDe(req);
+  if (!ehPublico(ip)) return;
+  const m = tipo === 'rotas' ? SEG.rotas : SEG.falhas;
+  const agora = Date.now();
+  const c = m.get(ip);
+  if (!c || agora - c.t0 > SEG.janela) { m.set(ip, { t0: agora, n: 1 }); return; }
+  c.n++;
+  const lim = tipo === 'rotas' ? SEG.maxRotas : SEG.maxFalhas;
+  if (c.n >= lim) { m.delete(ip); segBloquear(ip, tipo === 'rotas' ? 'varredura_de_rotas' : 'falhas_repetidas'); }
+  else m.set(ip, c);
+}
+function segBanido(ip) {
+  const b = SEG.bans.get(ip);
+  if (!b) return false;
+  if (Date.now() >= b.fim) { SEG.bans.delete(ip); return false; }
+  return true;
+}
+// Sinais conhecidos de sondagem/exploracao (URL path + query). Ban imediato.
+function sinalAtaque(url) {
+  let alvo = '';
+  try { alvo = decodeURIComponent(url.pathname + url.search); } catch { alvo = url.pathname + url.search; }
+  const t = alvo.toLowerCase();
+  if (/(?:^|\/)(?:admin|wp-admin|\.env(?:$|[?/])|\.git(?:\/|$)|server-status|actuator|phpmyadmin|\.aws|id_rsa|shell\.php|cmd\.exe)(?:$|[/?.=])/.test(t)) return 'sonda_admin';
+  if (/(?:\.\.(?:\/|%2f|\\|%5c)|%00)/.test(alvo)) return 'path_traversal';
+  if (/(?:union\s+select|'.{0,4}or\s+1\s*=\s*1|--\s*$)/i.test(t)) return 'sql_injection';
+  if (/(?:<script|<\/script|javascript:|onerror=|onload=|document\.cookie|eval\s*\(|\$\{|base64,)/i.test(t)) return 'injecao_script';
+  if (/(?:\|?\s*(?:cat|ls|whoami|env|sh)\b|`[^`]*;|\$\()/i.test(t)) return 'cmd_injection';
+  return null;
+}
+// Corpo de POST/PATCH: conteudo de website/malicioso (XSS armazenado, SQLi) -> rejeita ANTES de gravar.
+function corpoRisco(str) {
+  if (!str) return false;
+  return /(?:<script|<\/script|<iframe|<object|javascript:|onerror=|onload=|onclick=|document\.cookie|union\s+select|\bor\s+1\s*=\s*1\b)/i.test(str);
+}
+const LIMPEZA_SEG = setInterval(() => {
+  const agora = Date.now();
+  for (const [ip, b] of SEG.bans) if (agora >= b.fim) SEG.bans.delete(ip);
+  for (const m of [SEG.falhas, SEG.rotas]) for (const [ip, c] of m) if (agora - c.t0 > SEG.janela) m.delete(ip);
+}, 60_000);
+if (LIMPEZA_SEG.unref) LIMPEZA_SEG.unref();
+
 const server = createServer(async (req, res) => {
-  // Preflight CORS (requisicoes cross-origin do navegador)
-  if (req.method === 'OPTIONS') {
-    res.writeHead(204, {
-      'Access-Control-Allow-Origin': '*',
-      'Access-Control-Allow-Methods': 'GET,POST,OPTIONS',
-      'Access-Control-Allow-Headers': 'Content-Type, X-HQ-Token',
-      'Access-Control-Max-Age': '86400'
-    });
-    return res.end();
-  }
   const url = new URL(req.url, 'http://x');
-  const auth = req.headers['x-hq-token'];
   const u = url.pathname;
 
-  const autorizado = (req, res, fn) => {
-    if (auth !== ACCESS) return json(res, 401, { erro: 'acesso negado' });
+  // Fronteira: IP banido -> 403 (sem rotulo/retry); sonda maliciosa -> sinal + 403.
+  // Excecao: POST /security/unban continua acessivel ao DONO (exige token HQ valido)
+  // para permitir liberacao pos-incidente; sem token ninguem usa esse caminho.
+  const ipCliente = ipDe(req);
+  const eUnban = req.method === 'POST' && u === '/security/unban';
+  if (!eUnban && segBanido(ipCliente)) {
+    segLog('bloqueado', ipCliente, `${req.method} ${u}`);
+    return json(res, 403, { erro: 'acesso restrito' }, req);
+  }
+  const sinal = sinalAtaque(url);
+  if (sinal) {
+    segFalha(req, 'sinal_' + sinal);
+    segLog('ataque', ipCliente, `${req.method} ${u} [${sinal}]`);
+    return json(res, 403, { erro: 'acesso restrito' }, req);
+  }
+
+  // Preflight CORS: so autoriza origens da lista (navegador). Sem Origin (curl) -> 204 neutro.
+  if (req.method === 'OPTIONS') {
+    const origem = corsOrigem(req);
+    const h = {
+      'Access-Control-Allow-Methods': 'GET,POST,PATCH,DELETE,OPTIONS',
+      'Access-Control-Allow-Headers': 'Content-Type, X-HQ-Token',
+      'Access-Control-Max-Age': '86400'
+    };
+    if (origem) h['Access-Control-Allow-Origin'] = origem;
+    if (req.headers.origin && !origem) { segFalha(req, 'origem_nao_autorizada'); res.writeHead(403, Object.assign({ 'Content-Type': 'application/json' }, h)); return res.end(JSON.stringify({ erro: 'origem nao autorizada' })); }
+    res.writeHead(204, h);
+    return res.end();
+  }
+
+  const auth = req.headers['x-hq-token'];
+  // Fail-safe: servidor sem HQ_ACCESS_TOKEN configurado nega TUDO (mutacoes/leitura)
+  if (!ACCESS) return json(res, 503, { erro: 'acesso nao configurado (HQ_ACCESS_TOKEN ausente)' }, req);
+
+  const autorizado = fn => {
+    if (auth !== ACCESS) { segFalha(req, 'auth'); return json(res, 401, { erro: 'acesso negado' }, req); }
     return fn();
   };
+  const filaRate = (limite) => {
+    const r = rateCheck(req, limite);
+    if (!r.ok) { segFalha(req, 'excesso_rate'); return json(res, 429, { erro: 'muitas requisicoes', retry_apos: r.retry }, req); }
+    return false;
+  };
 
-  // Health (aberto)
-  if (req.method === 'GET' && (u === '/health' || u === '/')) return json(res, 200, { ok: true, servico: 'ce-strategic' });
+  // GET /health (publico, leve) — checa dependencias criticas: Supabase, Drive, modelo
+  if (req.method === 'GET' && (u === '/health' || u === '/')) {
+    if (filaRate('health', 60)) return;
+    try {
+      const supabaseOk = await supabaseJson(`${API_BASE}/demandas?select=codigo&limit=1`, { headers: hdrs }, { tentativas: 1 }).then(r => r.ok).catch(() => false);
+      let driveOk = false;
+      try { await driveRun(['lsd', `${DRIVE_REMOTE}:/CEO - Demandas HQ`], 15000); driveOk = true; } catch {}
+      return json(res, 200, { ok: supabaseOk && driveOk, servico: 'ce-strategic', supabase: supabaseOk ? 'ok' : 'erro', drive: driveOk ? 'ok' : 'erro', modelo: OR_KEY ? 'ok' : 'erro' }, req);
+    } catch (e) { return json(res, 200, { ok: false, servico: 'ce-strategic', erro: e.message }, req); }
+  }
 
-  // POST /demanda  -> cria e dispara a demanda estrategica
+  // POST /demanda  -> cria e dispara a demanda estrategica (aciona CEO/Conselho na nuvem)
   if (req.method === 'POST' && u === '/demanda') {
-    return autorizado(req, res, async () => {
+    if (filaRate('mut', RATE.limiteMutacao)) return;
+    return autorizado(async () => {
       try {
         const body = JSON.parse((await readBody(req)) || '{}');
         const ideia = String(body.ideia || '').trim();
-        if (!ideia) return json(res, 400, { erro: 'campo ideia obrigatorio' });
+        if (corpoRisco(ideia)) { segFalha(req, 'payload_malicioso'); return json(res, 400, { erro: 'conteudo rejeitado' }, req); }
+        if (!ideia) return json(res, 400, { erro: 'campo ideia obrigatorio' }, req);
         const codigo = String(body.codigo || 'S-' + Date.now().toString(36).toUpperCase());
         let rec;
         try { rec = await getDemanda(codigo); } catch { rec = null; }
         if (!rec) await criarDemanda({ codigo, titulo: body.titulo || ideia.slice(0, 60), ideia, prioridade: body.prioridade });
-        // dispara assincronamente
         executar(codigo).catch(e => { log(`falha ${codigo}: ${e.message}`); setFase(codigo, 'falha', 40, `Falha: ${e.message}`).catch(() => {}); });
-        return json(res, 202, { codigo, status: 'em_processamento', msg: 'demanda despachada ao CEO e conselho' });
-      } catch (e) { log('erro POST /demanda', e); return json(res, 500, { erro: e.message }); }
+        return json(res, 202, { codigo, status: 'em_processamento', msg: 'demanda despachada ao CEO e conselho' }, req);
+      } catch (e) { log('erro POST /demanda', e); return json(res, 500, { erro: e.message }, req); }
     });
+  }
+
+  // POST /processar -> lote de todas as pendentes. Token: header, ?token=, corpo/cloud-event.
+  if (req.method === 'POST' && u === '/processar') {
+    if (filaRate('processar', RATE.limiteProcessar)) return;
+    return (async () => {
+      let corpo = {};
+      try { corpo = JSON.parse((await readBody(req)) || '{}'); } catch { corpo = {}; }
+      const embrulho = corpo && typeof corpo === 'object' && corpo.data && typeof corpo.data === 'object' ? corpo.data : corpo;
+      const tk = auth || url.searchParams.get('token') || corpo.autorizado || corpo.token || embrulho.autorizado || embrulho.token || '';
+      if (tk !== ACCESS) { segFalha(req, 'auth'); return json(res, 401, { erro: 'acesso negado' }, req); }
+      try {
+        const r = await processarTodasPendentes();
+        return json(res, 202, { msg: r.despachadas.length ? 'agentes acionados na nuvem' : 'sem novas demandas pendentes', despachadas: r.despachadas, total: r.total }, req);
+      } catch (e) { return json(res, 500, { erro: e.message }, req); }
+    })();
   }
 
   // GET /demanda/:codigo -> status
   const m = u.match(/^\/demanda\/([^/]+)$/);
   if (req.method === 'GET' && m) {
-    return autorizado(req, res, async () => {
+    if (filaRate('geral', RATE.limiteGeral)) return;
+    return autorizado(async () => {
       try {
         const d = await getDemanda(m[1]);
-        if (!d) return json(res, 404, { erro: 'nao encontrada' });
-        return json(res, 200, { codigo: d.codigo, titulo: d.titulo, fase: d.fase, progresso: d.progresso, log: d.descricao || '' });
-      } catch (e) { return json(res, 500, { erro: e.message }); }
+        if (!d) return json(res, 404, { erro: 'nao encontrada' }, req);
+        return json(res, 200, { codigo: d.codigo, titulo: d.titulo, fase: d.fase, progresso: d.progresso, log: d.descricao || '' }, req);
+      } catch (e) { return json(res, 500, { erro: e.message }, req); }
     });
   }
 
-  // GET /demandas -> lista (status console)
+  // GET /demandas -> lista com select/permissao de campos (whitelist; sem '*')
   if (req.method === 'GET' && u === '/demandas') {
-    return autorizado(req, res, async () => {
+    if (filaRate('geral', RATE.limiteGeral)) return;
+    return autorizado(async () => {
       try {
-        const r = await fetch(`${API_BASE}/demandas?select=codigo,titulo,fase,prioridade,progresso,responsavel&order=id.desc&limit=30`, { headers: hdrs, signal: AbortSignal.timeout(30000) });
+        const sel = String(url.searchParams.get('select') || 'codigo,titulo,fase,prioridade,progresso,responsavel,criado_em,atualizado_em').split(',').map(s => s.trim()).filter(s => DEMANDA_CAMPOS.has(s));
+        if (!sel.length) sel.push('codigo');
+        const order = String(url.searchParams.get('order') || 'id.asc');
+        const lim = Math.min(500, Math.max(1, parseInt(url.searchParams.get('limit') || '100', 10) || 100));
+        const r = await supabaseJson(`${API_BASE}/demandas?select=${sel.join(',')}&order=${sel.includes('id') || /^[a-z_]+\.(asc|desc)$/.test(order) ? order : 'id.asc'}&limit=${lim}`, { headers: hdrs });
+        if (!r.ok) throw new Error('Supabase HTTP ' + r.status);
         const arr = await r.json();
-        return json(res, 200, Array.isArray(arr) ? arr : []);
-      } catch (e) { return json(res, 500, { erro: e.message }); }
+        return json(res, 200, Array.isArray(arr) ? arr : [], req);
+      } catch (e) { return json(res, 500, { erro: e.message }, req); }
     });
   }
 
-  return json(res, 404, { erro: 'rota nao encontrada' });
+  // POST /demandas -> cria registro (portal) — campos restritos a whitelist; 409 se codigo existir
+  if (req.method === 'POST' && u === '/demandas') {
+    if (filaRate('mut', RATE.limiteMutacao)) return;
+    return autorizado(async () => {
+      try {
+        const bruto = (await readBody(req)) || '{}';
+        if (corpoRisco(bruto)) { segFalha(req, 'payload_malicioso'); return json(res, 400, { erro: 'conteudo rejeitado' }, req); }
+        const body = JSON.parse(bruto);
+        const rec = {};
+        for (const k of Object.keys(body)) if (DEMANDA_CAMPOS.has(k)) rec[k] = body[k];
+        if (!rec.codigo || !rec.titulo) return json(res, 400, { erro: 'campos codigo e titulo obrigatorios' }, req);
+        const existe = await supabaseJson(`${API_BASE}/demandas?codigo=eq.${encodeURIComponent(rec.codigo)}&select=id`, { headers: hdrs }, { tentativas: 1 });
+        const ja = existe.ok ? (await existe.json()) : [];
+        if (Array.isArray(ja) && ja.length) return json(res, 409, { erro: 'codigo ja existe' }, req);
+        const r = await supabaseJson(`${API_BASE}/demandas`, { method: 'POST', headers: hdrs, body: JSON.stringify(rec) }, { origem: 'criacao' });
+        if (!r.ok) throw new Error('Supabase HTTP ' + r.status);
+        const created = await r.json().catch(() => rec);
+        return json(res, 201, Array.isArray(created) ? created[0] : created, req);
+      } catch (e) { return json(res, 500, { erro: e.message }, req); }
+    });
+  }
+
+  // PATCH /demandas/:codigo -> atualiza (campos restritos)
+  const pm = u.match(/^\/demandas\/([^/]+)$/);
+  if (req.method === 'PATCH' && pm) {
+    if (filaRate('mut', RATE.limiteMutacao)) return;
+    return autorizado(async () => {
+      try {
+        const brutoPatch = (await readBody(req)) || '{}';
+        if (corpoRisco(brutoPatch)) { segFalha(req, 'payload_malicioso'); return json(res, 400, { erro: 'conteudo rejeitado' }, req); }
+        const body = JSON.parse(brutoPatch);
+        const up = {};
+        for (const k of Object.keys(body)) if (DEMANDA_CAMPOS.has(k) && k !== 'codigo') up[k] = body[k];
+        if (!Object.keys(up).length) return json(res, 400, { erro: 'sem campos validos' }, req);
+        const r = await supabaseJson(`${API_BASE}/demandas?codigo=eq.${encodeURIComponent(pm[1])}`, { method: 'PATCH', headers: hdrs, body: JSON.stringify(up) }, { origem: 'atualizacao' });
+        if (!r.ok) throw new Error('Supabase HTTP ' + r.status);
+        return json(res, 200, { ok: true, codigo: pm[1] }, req);
+      } catch (e) { return json(res, 500, { erro: e.message }, req); }
+    });
+  }
+
+  // DELETE /demandas/:codigo
+  if (req.method === 'DELETE' && pm) {
+    if (filaRate('mut', RATE.limiteMutacao)) return;
+    return autorizado(async () => {
+      try {
+        const r = await supabaseJson(`${API_BASE}/demandas?codigo=eq.${encodeURIComponent(pm[1])}`, { method: 'DELETE', headers: hdrs }, { origem: 'exclusao' });
+        if (!r.ok) throw new Error('Supabase HTTP ' + r.status);
+        return json(res, 200, { ok: true, codigo: pm[1] }, req);
+      } catch (e) { return json(res, 500, { erro: e.message }, req); }
+    });
+  }
+
+  // Defesa: painel de controle — bans ativos, evento recente (requer token).
+  if (req.method === 'GET' && u === '/security') {
+    if (filaRate('geral', RATE.limiteGeral)) return;
+    return autorizado(async () => {
+      const agora = Date.now();
+      return json(res, 200, {
+        agora: new Date(agora).toISOString(),
+        bans: [...SEG.bans.entries()].map(([ip, b]) => ({ ip, motivo: b.motivo, n: b.n, expira_em: new Date(b.fim).toISOString(), resta_s: Math.max(0, Math.ceil((b.fim - agora) / 1000)) })),
+        eventos: SEG.eventos.slice(-40),
+        alertas: { falhas_60s: SEG.falhas.size, varredura_60s: SEG.rotas.size }
+      }, req);
+    });
+  }
+  if (req.method === 'POST' && u === '/security/ban') {
+    if (filaRate('mut', RATE.limiteMutacao)) return;
+    return autorizado(async () => {
+      const body = JSON.parse((await readBody(req)) || '{}');
+      const ip = String(body.ip || '').trim();
+      if (!ip) return json(res, 400, { erro: 'campo ip obrigatorio' }, req);
+      segBloquear(ip, 'banimento_manual');
+      return json(res, 200, { ok: true, ip }, req);
+    });
+  }
+  if (req.method === 'POST' && u === '/security/unban') {
+    if (filaRate('mut', RATE.limiteMutacao)) return;
+    return autorizado(async () => {
+      const body = JSON.parse((await readBody(req)) || '{}');
+      const ip = String(body.ip || '').trim();
+      SEG.bans.delete(ip);
+      SEG.falhas.delete(ip);
+      SEG.rotas.delete(ip);
+      segLog('unban', ip, 'liberado manualmente');
+      return json(res, 200, { ok: true }, req);
+    });
+  }
+
+  return segFalha(req, 'rotas'), json(res, 404, { erro: 'rota nao encontrada' }, req);
 });
 
 server.listen(PORT, () => log(`CE-STRATEGIC ouvindo na porta ${PORT}`));
+

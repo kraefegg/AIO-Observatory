@@ -8,6 +8,8 @@ AIO_Observatory_v2/
 firmware/config.py
 docs/oracle-cloud-connection.md.tmp
 .oci/
+.wrangler/
+opencode.json
 
 # Runtime
 node_modules/
