@@ -1,6 +1,6 @@
 // KRAEFEGG M.O. — Service Worker
 // Estrategia: network-first com fallback a cache (offline degrada com cache).
-const CACHE = 'kraefegg-mo-v1';
+const CACHE = 'kraefegg-mo-v2-techai';
 const SHELL = ['./', './index.html', './manifest.webmanifest', './icon.svg'];
 
 self.addEventListener('install', (e) => {

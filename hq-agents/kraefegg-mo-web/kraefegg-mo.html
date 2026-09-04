@@ -3,28 +3,27 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="theme-color" content="#0f2f3d">
-<meta name="description" content="KRAEFEGG M.O. — Plataforma Corporativa de Inteligência Operacional e Estratégia (CEO-agente + conselho)">
+<meta name="theme-color" content="#14181c">
+<meta name="description" content="KRAEFEGG M.O. — Tech-AI & Engineering Solutions · Mining · Energy · Environmental · Sistema Multiagente">
 <link rel="manifest" href="manifest.webmanifest">
-<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='18' fill='%230f2f3d'/><text x='50' y='68' font-size='58' text-anchor='middle' fill='%23ffffff' font-family='Arial'>M</text></svg>">
-<link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='18' fill='%230f2f3d'/><text x='50' y='68' font-size='58' text-anchor='middle' fill='%23ffffff' font-family='Arial'>M</text></svg>">
-<title>KRAEFEGG M.O. — Plataforma Corporativa de Inteligência Operacional</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='18' fill='%2314181c'/><text x='50' y='68' font-size='58' text-anchor='middle' fill='%23c0392b' font-family='Arial'>M</text></svg>">
+<link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='18' fill='%2314181c'/><text x='50' y='68' font-size='58' text-anchor='middle' fill='%23c0392b' font-family='Arial'>M</text></svg>">
+<title>KRAEFEGG M.O. — Tech-AI & Engineering Solutions</title>
 <style>
 /* ============================================================
-   KRAEFEGG M.O. — Plataforma Corporativa de Inteligência Operacional
+   KRAEFEGG M.O. — Tech-AI & Engineering Solutions (Mining · Energy · Environmental)
    Estética enterprise (sem game/HUD/neon). Digital Twin isométrico.
-   Paleta: grafite/carvão/cinza claro/branco + azul petróleo/azul profundo/
-   ciano discreto/verde operacional/âmbar.
+   Paleta: metalizado preto/carvão/cinza/branco + vermelho (accent #c0392b).
    ============================================================ */
 *{margin:0;padding:0;box-sizing:border-box}
 :root{
-  --carvao-950:#14181c; --carvao-900:#1b2025; --carvao-800:#232a31; --carvao-700:#2e363f;
-  --grafite-600:#3f4953; --grafite-500:#55606b; --cinza-400:#7b8792; --cinza-300:#9aa5af;
-  --cinza-200:#c4ccd3; --cinza-100:#e6eaee; --branco:#f7f9fb;
-  --azul-petroleo:#1b4d5e; --azul-profundo:#143a48; --ciano-discreto:#4f8ba0; --ciano-claro:#7fb4c4;
-  --verde-operacional:#3a7d5a; --verde-claro:#5d9c72; --ambar:#c98f3d; --amb-claro:#dfae63;
-  --vermelho:#b34a3d; --sombra:0 12px 30px rgba(15,20,26,.12);
-  --borda:#dde3e8; --borda-suave:#e9edf0;
+  --carvao-950:#0d0f11; --carvao-900:#14181c; --carvao-800:#1d2227; --carvao-700:#272d33;
+  --grafite-600:#39424b; --grafite-500:#4d565f; --cinza-400:#6b7681; --cinza-300:#9aa4ad;
+  --cinza-200:#c3c9cf; --cinza-100:#e6eaee; --branco:#f7f9fb;
+  --azul-petroleo:#c0392b; --azul-profundo:#a93226; --ciano-discreto:#8a2d22; --ciano-claro:#e07a70;
+  --verde-operacional:#b03a2e; --verde-claro:#d0594c; --ambar:#c65c4f; --amb-claro:#e07a70;
+  --vermelho:#c0392b; --sombra:0 12px 30px rgba(10,12,14,.22);
+  --borda:#2a3037; --borda-suave:#333a42;
   --fonte:'Segoe UI',system-ui,-apple-system,sans-serif;
 }
 html,body{height:100%}
@@ -215,7 +214,7 @@ tr.linha-ativa td{background:#e6f1f5;box-shadow:inset 3px 0 0 var(--azul-petrole
   <div class="topo-inner">
     <div class="marca">
       <img src="logo.png" alt="KRAEFEGG" class="logo-img">
-      <div><b>KRAEFEGG <span>M.O.</span></b><small>Inteligência Operacional</small></div>
+      <div><b>KRAEFEGG <span>M.O.</span></b><small>Tech-AI &amp; Engineering Solutions</small></div>
     </div>
     <nav>
       <button class="ativo" data-pag="equipe">Equipe</button>
@@ -253,7 +252,7 @@ tr.linha-ativa td{background:#e6f1f5;box-shadow:inset 3px 0 0 var(--azul-petrole
   <main id="conteudo"></main>
 </div>
 
-<footer class="rodape">KRAEFEGG M.O. — PLATAFORMA CORPORATIVA DE INTELIGÊNCIA OPERACIONAL · © 2026</footer>
+<footer class="rodape">KRAEFEGG M.O. — TECH-AI &amp; ENGINEERING SOLUTIONS · MINING · ENERGY · ENVIRONMENTAL · SISTEMA MULTIAGENTE · © 2026</footer>
 
 <div class="hq-modal" id="modal-demanda">
   <div class="hq-modal-box">
@@ -288,28 +287,36 @@ tr.linha-ativa td{background:#e6f1f5;box-shadow:inset 3px 0 0 var(--azul-petrole
    Dados e renderização (vanilla JS)
    ============================================================ */
 const DEPARTAMENTOS = [
-  { id:'engenharia', nome:'Engenharia & Dados', sigla:'ED', cor:'#1b4d5e', area:'bloco B · 1º andar', agentes:['Agente Eng. Dados','Agente Engenharia Civil'] },
-  { id:'ambiental', nome:'Ambiental & Segurança', sigla:'AS', cor:'#3a7d5a', area:'bloco C · térreo', agentes:['Agente Eng. Ambiental','Agente SST','Agente Monitoramento Ambiental'] },
-  { id:'mineracao', nome:'Mineração & Civil', sigla:'MC', cor:'#c98f3d', area:'bloco D · térreo', agentes:['Agente Mineração','Agente Geotecnia'] },
-  { id:'energia', nome:'Energia & Offshore', sigla:'EO', cor:'#143a48', area:'bloco A · 2º andar', agentes:['Agente Energia','Agente Offshore'] },
-  { id:'pesquisa', nome:'Pesquisa & Inovação', sigla:'PI', cor:'#4f8ba0', area:'bloco E · 3º andar', agentes:['Agente R&D','Agente Dados Científicos'] },
-  { id:'comercial', nome:'Comercial & Suporte', sigla:'CS', cor:'#34508c', area:'bloco F · térreo', agentes:['Agente Comercial','Agente Pré-venda'] },
-  { id:'orc', nome:'Orquestração', sigla:'OR', cor:'#55606b', area:'bloco central', agentes:['Orquestrador HQ','Agente Coordenação'] },
-  { id:'cyber', nome:'Cibersegurança & Consultoria', sigla:'CC', cor:'#b34a3d', area:'bloco G · 2º andar', agentes:['Agente Cibersegurança','Agente Consultoria'] },
+  { id:'exe', nome:'Executivo', sigla:'EXE', cor:'#c0392b', area:'bloco A · 3º andar', agentes:['CEO — Diretor Executivo','CTO — Diretor Técnico','Market Segment — Estrategista de Mercado'] },
+  { id:'int', nome:'Inteligência Corporativa', sigla:'INT', cor:'#39424b', area:'bloco B · 3º andar', agentes:['Inteligência Estratégica','Inteligência de Mercado','Inteligência Competitiva','Inteligência de Oportunidades'] },
+  { id:'res', nome:'Pesquisa', sigla:'RES', cor:'#6b7681', area:'bloco C · 2º andar', agentes:['Pesquisador Científico','Pesquisador Acadêmico','Pesquisador Técnico','Pesquisador de Mercado','Pesquisador Regulatório','Pesquisador Tecnológico'] },
+  { id:'eng', nome:'Engenharia', sigla:'ENG', cor:'#b03a2e', area:'bloco D · 2º andar', agentes:['Eng. de Mineração','Eng. de Energia Renovável','Eng. Ambiental','Perito Ambiental','Eng. Civil','Especialista Offshore','Eng. de Infraestrutura','Eng. de Segurança','Eng. Florestal','Mineralogista','Eng. Mecânico','Eng. de Energia','Eng. Naval'] },
+  { id:'tec', nome:'Tecnologia', sigla:'TEC', cor:'#272d33', area:'bloco E · 2º andar', agentes:['Eng. de Software','Eng. de IA/ML','Eng. de Dados','Eng. Cloud','Eng. de Automação','Cibersegurança','IoT & Embarcados','Dev Full Stack','Especialista LLM','Eng. de Agentes','Integração de APIs','Especialista GIS','SketchUp/Ruby'] },
+  { id:'bd', nome:'Desenvolvimento Comercial', sigla:'BD', cor:'#8a2d22', area:'bloco F · térreo', agentes:['Diretor Comercial','Prospecção','Contratos & Negócios','Analista de Mercado','Consultor Sênior','Parcerias','Gestão de Contas'] },
+  { id:'fin', nome:'Financeiro', sigla:'FIN', cor:'#5a5f66', area:'bloco G · térreo', agentes:['Diretor Financeiro','Contador','Pricing','Business Case','Análise Comercial','Análise de Custos'] },
+  { id:'ops', nome:'Operações', sigla:'OPS', cor:'#39424b', area:'bloco central · térreo', agentes:['Gestor de Projetos','Gestor de Entregas','Gestor de Recursos','PMO','Controle Documental','Planejador','Secretariado','RH & Operações','Jurídico/Compliance'] },
+  { id:'qua', nome:'Qualidade', sigla:'QUA', cor:'#e07a70', area:'bloco H · 1º andar', agentes:['Revisor Técnico','Verificador de Fatos','Validação de Fontes','Compliance Regulatório','Controle de Riscos','QA Documental'] },
+  { id:'knw', nome:'Conhecimento', sigla:'KNW', cor:'#7a7f85', area:'bloco I · 1º andar', agentes:['Gestor do Conhecimento'] },
 ];
 
 const SUBAGENTES = {
-  ambiental:['GIS','Legislação Ambiental','Monitoramento de Campo','Relatórios Técnicos','Auditoria'],
-  engenharia:['Hidrologia','Geotécnica','Modelagem','Banco de Dados','Análise Geoespacial'],
-  comercial:['Propostas','Contratos','Precificação','CRM','Pós-venda'],
-  orc:['Planejamento','Despacho','QA','Entrega','GOV'],
+  exe:['Planejamento Estratégico','Decisão Executiva','Gestão de Crise','Comunicação Corporativa'],
+  int:['Cenários Estratégicos','Monitoramento de Mercado','Benchmarking Competitivo','Sinalização de Oportunidades'],
+  res:['Revisão de Literatura','Validação Acadêmica','Especificações Técnicas','Dados Setoriais','Matriz Regulatória','Tendências Tecnológicas'],
+  eng:['Lavra & Reservas','Solar & Eólica','Licenciamento / PRAD','Perícia Ambiental','Estruturas & Geotecnia','Offshore & Portos','Infraestrutura','Segurança do Trabalho','Manejo Florestal','Mineralogia & Petrógrafia','Engenharia Mecânica','Sistemas Elétricos','Engenharia Naval'],
+  tec:['Software','IA/ML & RAG','ETL & Analytics','Cloud & IaC','RPA & CI/CD','Cibersegurança','IoT & Embarcados','Full Stack','LLM & Fine-tuning','Multiagentes','APIs & Middleware','GIS & Geoprocessamento','SketchUp/Ruby'],
+  bd:['Prospecção Outbound','Prospecção Inbound','Contratos & Termos','Análise de Mercado','Consultoria Sênior','Parcerias & JV','Gestão de Contas'],
+  fin:['DRE & Fluxo de Caixa','Contabilidade & Tributos','Precificação','Business Case & ROI','Pipeline & Funil','CAPEX / OPEX'],
+  ops:['Cronograma & Gantt','Controle de Entregas','Alocação de Recursos','PMO & Métricas','Controle Documental','Planejamento de Marcos'],
+  qua:['Revisão Técnica','Verificação Factual','Validação de Fontes','Compliance Regulatório','Matriz de Riscos','QA Documental'],
+  knw:['Legislação','Normas & Standards','Acervo Científico','Acervo Técnico','Base de Mercado','Lições Aprendidas'],
 };
 
 var DEMANDAS = [];
 function carregarDemandas(){
   const API = 'https://mrqjmdfulmnggozwjxlq.supabase.co/rest/v1';
   const KEY = 'sb_publishable_PGW_hFT4bnzA_bIS8EPx6g_LvxWNP4Y';
-  return fetch(API + '/demandas?select=codigo,titulo,descricao,responsavel,fase,prioridade,progresso&order=id.asc')
+  return fetch(API + '/demandas?select=codigo,titulo,descricao,responsavel,fase,prioridade,progresso&order=id.asc', { headers:{ 'apikey':KEY, 'Authorization':'Bearer '+KEY } })
     .then(function(r){ if(!r.ok) throw new Error('HTTP '+r.status); return r.json(); })
     .then(function(rows){
       DEMANDAS = (Array.isArray(rows)?rows:[]).map(function(x){
@@ -345,8 +352,13 @@ const KPIS = {
   demandas:5, concluidas:4, emCurso:1, taxa:80, agentes:16, subagentes:38, projetos:5, entregasDrive:4,
 };
 
+/* Totais corretos da estrutura corporativa (10 divisões · catálogo org/) */
+KPIS.agentes = DEPARTAMENTOS.reduce((n,d)=>n+(d.agentes||[]).length,0);
+KPIS.subagentes = Object.keys(SUBAGENTES).reduce((n,k)=>n+(SUBAGENTES[k]||[]).length,0);
+KPIS.divisoes = DEPARTAMENTOS.length;
+
 const PAG_TITULOS = {
-  equipe:'Equipe — Diretoria Técnica', demandas:'Demandas Ativas', projetos:'Projetos',
+  equipe:'Equipe — Divisões Corporativas', demandas:'Demandas Ativas', projetos:'Projetos',
   dossies:'Dossiês Técnicos', agentes:'Agentes Inteligentes', subagentes:'Subagentes Especializados',
   clientes:'Clientes & Parceiros', relatorios:'Relatórios', credenciais:'Credenciais & Acesso',
 };
@@ -358,17 +370,17 @@ function twinSvg(dep) {
   // faces isométricas simples por bloco
   let blocos = '';
   DEPARTAMENTOS.forEach((d,i)=>{
-    const col = i % 4, row = Math.floor(i/4);
-    const x = 60 + col*150, y = 40 + row*120;
-    const w=110, h=110, prof=40, cor=d.cor, ativo = dep===d.id;
+    const col = i % 5, row = Math.floor(i/5);
+    const x = 50 + col*110, y = 40 + row*108;
+    const w=104, h=80, prof=26, cor=d.cor, ativo = dep===d.id;
     const op = ativo ? '1' : '0.82';
     blocos += `
       <g class="dept-hover ${ativo?'ativo':''}" data-dept="${d.id}">
         <polygon points="${x},${y} ${x+w},${y} ${x+w},${y+h} ${x},${y+h}" fill="${cor}" opacity="${op}" stroke="#fff" stroke-width="1.5"/>
         <polygon points="${x},${y} ${x+w},${y} ${x+w-prof*0.7},${y-prof*0.6} ${x-prof*0.7},${y-prof*0.6}" fill="${cor}" opacity="${Number(op)*0.75}" stroke="#fff" stroke-width="1.2"/>
         <polygon points="${x},${y} ${x-prof*0.7},${y-prof*0.6} ${x-prof*0.7},${y+h-prof*0.6} ${x},${y+h}" fill="${cor}" opacity="${Number(op)*0.6}" stroke="#fff" stroke-width="1.2"/>
-        <rect class="dept-tag" x="${x-8}" y="${y+52}" width="${w+16}" height="26" rx="5" fill="rgba(20,24,28,.82)" stroke="#fff"/>
-        <text class="lbl-txt" x="${x+w/2}" y="${y+69}" text-anchor="middle" fill="#fff" font-size="11" font-weight="700" font-family="Segoe UI">${d.sigla}</text>
+        <rect class="dept-tag" x="${x-8}" y="${y+40}" width="${w+16}" height="24" rx="5" fill="rgba(20,24,28,.82)" stroke="#fff"/>
+        <text class="lbl-txt" x="${x+w/2}" y="${y+56}" text-anchor="middle" fill="#fff" font-size="11" font-weight="700" font-family="Segoe UI">${d.sigla}</text>
       </g>`;
   });
   return `<svg viewBox="0 0 640 300" role="img" aria-label="Digital Twin do escritório KRAEFEGG M.O.">
@@ -388,18 +400,18 @@ function paginaEquipe(sel){
   const d = DEPARTAMENTOS.find(x=>x.id===selDep);
   return `
   <div class="banner-hero">
-    <img src="banner.png" alt="KRAEFEGG M.O. — Inteligência Operacional">
+    <img src="banner.png" alt="KRAEFEGG M.O. — Tech-AI & Engineering Solutions">
     <div class="banner-overlay">
       <div>
         <h1>KRAEFEGG M.O.</h1>
-        <p>Plataforma corporativa de inteligência operacional · Digital Twin da Diretoria Técnica</p>
+        <p>Tech-AI &amp; Engineering Solutions · Mining · Energy · Environmental · Sistema Multiagente</p>
       </div>
-      <span class="banner-chip"><span class="dot ok"></span> 16 agentes ativos</span>
+      <span class="banner-chip"><span class="dot ok"></span> ${KPIS.agentes} agentes · ${KPIS.divisoes} divisões</span>
     </div>
   </div>
   <div class="page-titulo">
-    <div><h1>Equipe — Diretoria Técnica</h1><p>Organograma KRAEFEGG M.O. · Digital Twin do escritório corporativo</p></div>
-    <div class="barra-status"><span class="dot ok"></span> Sistemas operacionais · 16 agentes ativos</div>
+    <div><h1>Equipe — Divisões Corporativas</h1><p>Organograma KRAEFEGG M.O. · Digital Twin do escritório corporativo</p></div>
+    <div class="barra-status"><span class="dot ok"></span> Sistemas operacionais · ${KPIS.agentes} agentes ativos</div>
   </div>
   <div class="kpis">
     <div class="kpi-card" style="--accent:var(--azul-petroleo)"><div class="kpi-label">Demandas</div><div class="kpi-val">${KPIS.demandas}</div><div class="kpi-sub"><span class="tend sobe">${KPIS.concluidas}</span> concluídas</div></div>
@@ -411,16 +423,16 @@ function paginaEquipe(sel){
     <div class="painel">
       <div class="painel-titulo"><h2>Digital Twin — Escritório</h2><span>${d.nome}</span></div>
       <div id="cena-twin">${twinSvg(selDep)}
-        <div class="twin-legenda">Blocos: A–G + central · departamentos da Diretoria Técnica</div>
+<div class="twin-legenda">Blocos: ${DEPARTAMENTOS.length} divisões corporativas · clique para filtrar</div>
         <div class="twin-hud"><span>Departamento</span><b>${d.sigla} · ${d.nome}</b><span>${d.area}</span></div>
       </div>
     </div>
     <div class="painel">
-      <div class="painel-titulo"><h2>Organograma</h2><span>Diretoria → Agentes → Subagentes</span></div>
+      <div class="painel-titulo"><h2>Organograma</h2><span>Divisão → Agentes → Especialistas</span></div>
       <div class="painel-corpo">
         <div style="padding:12px;background:#f7f9fb;border:1px solid var(--borda-suave);border-radius:8px;margin-bottom:14px;border-left:4px solid var(--azul-petroleo)">
           <b style="font-size:15px;color:var(--carvao-900)">KRAEFEGG M.O.</b>
-          <div style="color:var(--grafite-500);font-size:13px">Diretoria Técnica — <b>Railson Arruda</b> · <span class="chip azul">Diretor Técnico</span></div>
+          <div style="color:var(--grafite-500);font-size:13px">Organograma corporativo — <b>Railson Arruda</b> · <span class="chip azul">Diretor Técnico</span></div>
         </div>
         <div style="font-size:12px;font-weight:700;color:var(--cinza-400);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">${d.nome} · Agentes</div>
         ${d.agentes.map(a=>`
@@ -793,11 +805,11 @@ function paginaVisaoGeral(){
   const emCurso = (DEMANDAS.length?DEMANDAS:DEMANDAS_FALLBACK).filter(d=>(d.prog||0)<100);
   return `
   <div class="banner-hero">
-    <img src="banner.png" alt="KRAEFEGG M.O. — Inteligência Operacional">
+    <img src="banner.png" alt="KRAEFEGG M.O. — Tech-AI & Engineering Solutions">
     <div class="banner-overlay">
       <div>
         <h1>Visão Geral</h1>
-        <p>Painel executivo · plataforma corporativa de inteligência operacional KRAEFEGG M.O.</p>
+        <p>Painel executivo · Tech-AI &amp; Engineering Solutions · Mining · Energy · Environmental</p>
       </div>
       <span class="banner-chip"><span class="dot ok"></span> ${KPIS.agentes} agentes ativos</span>
     </div>
@@ -840,7 +852,7 @@ function paginaDigitalTwin(sel){
   <div class="painel">
     <div class="painel-titulo"><h2>Planta 3D — Departamentos</h2><span>${DEPARTAMENTOS.length} blocos</span></div>
     <div id="cena-twin">${twinSvg(sel)}
-      <div class="twin-legenda">Blocos: A–G + central · departamentos da Diretoria Técnica</div>
+      <div class="twin-legenda">Blocos: ${DEPARTAMENTOS.length} divisões corporativas · clique para filtrar</div>
       <div class="twin-hud"><span>Departamento</span><b>${DEPARTAMENTOS.map(d=>d.sigla).join(' · ')}</b><span>Clique em um bloco para detalhar</span></div>
     </div>
   </div>
@@ -896,7 +908,7 @@ function montaMenu(){
     ['⁂','Subagentes','subagentes'],['▪','Clientes','clientes'],['▤','Relatórios','relatorios'],
     ['⚿','Credenciais','credenciais']];
   const nav = document.getElementById('menu-lateral');
-  nav.innerHTML = `<div class="menu-titulo">Diretoria Técnica</div>` + itens.map(([ic,label,pag])=>
+  nav.innerHTML = `<div class="menu-titulo">Divisões Corporativas</div>` + itens.map(([ic,label,pag])=>
     `<div class="menu-item ${pag===CURRENT_PAG?'ativo':''}" data-nav="${pag}">
        <span class="mi-ico">${ic}</span>${label}</div>`).join('');
   nav.querySelectorAll('.menu-item').forEach(el=>{
@@ -920,7 +932,8 @@ function abrirNovaDemanda(){
   document.getElementById('btn-salvar').textContent = 'Criar Demanda';
   document.getElementById('btn-excluir').style.display = 'none';
   document.getElementById('nd-id').value = '';
-  document.getElementById('nd-cod').value = proximoCodigo();
+  document.getElementById('nd-cod').value = 'calculando…';
+  reservarCodigo().then(function(c){ document.getElementById('nd-cod').value = c; });
   document.getElementById('nd-cod').readOnly = true;
   document.getElementById('nd-titulo').value = '';
   document.getElementById('nd-prompt').value = '';
@@ -952,8 +965,29 @@ function abrirEdicao(idx){
 function fecharModal(){ document.getElementById('modal-demanda').classList.remove('aberto'); }
 
 function proximoCodigo(){
-  const max = DEMANDAS.reduce(function(m,d){ const n=parseInt(String(d.cod||'').replace(/\D/g,''),10); return (!isNaN(n)&&n>m)?n:m; }, 15);
-  return 'D-'+(max+1);
+  const usados = DEMANDAS.map(function(d){ return String(d.cod||''); });
+  const nums = [];
+  usados.forEach(function(c){ const m = /^D-(\d+)$/.exec(c); if(m) nums.push(+m[1]); });
+  let n = (nums.length?Math.max.apply(null,nums):15) + 1;
+  let cand = 'D-'+n;
+  while(usados.indexOf(cand)>=0){ n++; cand='D-'+n; }
+  return cand;
+}
+
+function reservarCodigo(){
+  const API = 'https://mrqjmdfulmnggozwjxlq.supabase.co/rest/v1';
+  const KEY = 'sb_publishable_PGW_hFT4bnzA_bIS8EPx6g_LvxWNP4Y';
+  return fetch(API + '/demandas?select=codigo&limit=1000', { headers:{ 'apikey':KEY, 'Authorization':'Bearer '+KEY } })
+    .then(function(r){ if(!r.ok) throw new Error('HTTP '+r.status); return r.json(); })
+    .then(function(rows){
+      const usados = DEMANDAS.concat(Array.isArray(rows)?rows:[]).map(function(d){ return String(d.cod||d.codigo||''); });
+      const nums = [];
+      usados.forEach(function(c){ const m = /^D-(\d+)$/.exec(c); if(m) nums.push(+m[1]); });
+      let n = (nums.length?Math.max.apply(null,nums):15) + 1;
+      let cand = 'D-'+n;
+      while(usados.indexOf(cand)>=0){ n++; cand='D-'+n; }
+      return cand;
+    });
 }
 
 function salvarDemanda(ev){
@@ -968,14 +1002,21 @@ function salvarDemanda(ev){
   const prio = document.getElementById('nd-prio').value;
   const prog = Math.max(0, Math.min(100, +document.getElementById('nd-prog').value || 0));
   const resp = document.getElementById('nd-resp').value.trim();
-  if(!codigo || !titulo) return;
+  if(!codigo || !titulo || codigo==='calculando…') return;
   const API = 'https://mrqjmdfulmnggozwjxlq.supabase.co/rest/v1';
   const KEY = 'sb_publishable_PGW_hFT4bnzA_bIS8EPx6g_LvxWNP4Y';
-  const payload = { codigo:codigo, titulo:titulo, descricao:prompt||titulo, fase:fase, prioridade:prio, progresso:prog, responsavel:resp||null };
-  const url = id ? (API + '/demandas?id=eq.' + id) : (API + '/demandas');
-  const method = id ? 'PATCH' : 'POST';
-  fetch(url, { method:method, headers:{ 'apikey':KEY, 'Authorization':'Bearer '+KEY, 'Content-Type':'application/json' }, body: JSON.stringify(payload) })
-    .then(function(r){ if(!r.ok) throw new Error('HTTP '+r.status); return; })
+  function tenta(cod){
+    const payload = { codigo:cod, titulo:titulo, descricao:prompt||titulo, fase:fase, prioridade:prio, progresso:prog, responsavel:resp||null };
+    const url = id ? (API + '/demandas?id=eq.' + id) : (API + '/demandas');
+    const method = id ? 'PATCH' : 'POST';
+    return fetch(url, { method:method, headers:{ 'apikey':KEY, 'Authorization':'Bearer '+KEY, 'Content-Type':'application/json' }, body: JSON.stringify(payload) })
+      .then(function(r){
+        if(r.status===409 && !id) return reservarCodigo().then(function(c2){ return tenta(c2); });
+        if(!r.ok) throw new Error('HTTP '+r.status);
+        return;
+      });
+  }
+  tenta(codigo)
     .then(function(){
       msg.textContent = (id?'Demanda atualizada':'Demanda criada') + ' com sucesso.';
       msg.className = 'hq-msg ok';

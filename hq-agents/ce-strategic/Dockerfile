@@ -4,7 +4,7 @@ RUN apk add --no-cache rclone
 WORKDIR /app
 COPY package.json package-lock.json ./
 RUN npm ci --omit=dev --ignore-scripts && npm cache clean --force
-COPY index.mjs ./
+COPY index.mjs guardrails.mjs ./
 ENV PORT=8080
 EXPOSE 8080
 CMD ["node", "index.mjs"]

@@ -1,0 +1,9 @@
+.git
+.gitignore
+*.md
+*.txt
+*.zip
+*.tar*
+*.tmp
+*.bak
+tests

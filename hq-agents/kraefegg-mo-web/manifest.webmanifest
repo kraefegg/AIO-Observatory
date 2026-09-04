@@ -1,12 +1,12 @@
 {
-  "name": "KRAEFEGG M.O. — Plataforma de Inteligência Operacional e Estratégia",
+  "name": "KRAEFEGG M.O. — Tech-AI & Engineering Solutions",
   "short_name": "KRAEFEGG M.O.",
-  "description": "Plataforma corporativa de inteligência operacional e estratégia (CEO-agente + conselho de especialistas)",
+  "description": "Tech-AI & Engineering Solutions · Mining · Energy · Environmental · Sistema Multiagente",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",
-  "background_color": "#0f2f3d",
-  "theme_color": "#0f2f3d",
+  "background_color": "#14181c",
+  "theme_color": "#14181c",
   "lang": "pt-BR",
   "icons": [
     {

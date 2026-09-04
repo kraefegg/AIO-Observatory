@@ -46,3 +46,18 @@ real, com upload ao Drive. Executado pelo Task Scheduler local.
 - Plano: portar `hq-orquestrador.ps1` para um job Node.js (fetch a OpenRouter/Supabase,
   upload Drive via rclone empacotado com token OAuth como Secret do Code Engine),
   agendado por cron job do Code Engine. Suporte 24/7.
+
+### Guardrails aplicados (patterns CrewAI) — `ce-strategic`
+Reforco do backend estrategico com validacao de saida em cada no do LangGraph,
+seguindo o guia de design de tarefas CrewAI (task-first, guardrails, structured output):
+
+- `guardrails.mjs`: modulos de validacao reutilizaveis:
+  - `checkNoSecrets` — bloqueia vazamento de chaves/tokens/senhas (inclui padrões OpenRouter/Supabase/GitHub/AWS).
+  - `parseJSON` — parsing resiliente de JSON de resposta de IA (remove fances/ruído).
+  - `Guardrails.{decisao, questao, parecer, resultado}` — validadores por nó (veredito válido, tamanho mínimo, campos obrigatórios).
+  - `aiComGuardrail` — wrapper que reprocessa a IA até N vezes se a validação falhar (feedback ao modelo).
+- Aplicado em: `CEO_Estrutura` (questão), `Conselho` (5 pareceres), `CEO_Decide` (JSON estruturado), `Resultado` (resumo executivo).
+- `appendLog` agora sanitiza segredos antes de gravar no Supabase (nunca persiste chave).
+- Dockerfile atualizado para copiar `guardrails.mjs`.
+
+Teste: `node ce-strategic/test-guardrails.mjs` (8 asserções de validação).

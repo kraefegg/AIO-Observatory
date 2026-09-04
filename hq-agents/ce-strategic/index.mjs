@@ -27,6 +27,7 @@ import { promisify } from 'node:util';
 import { mkdirSync, writeFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { Annotation, StateGraph, START, END } from '@langchain/langgraph';
+import { Guardrails, aiComGuardrail, checkNoSecrets, parseJSON } from './guardrails.mjs';
 
 const PORT = process.env.PORT || 8080;
 const ACCESS = process.env.HQ_ACCESS_TOKEN || 'kraefegg-mo-2026';
@@ -108,29 +109,35 @@ async function ai(content, { model = MODEL, tokens = 4000, maxRetry = 5 } = {}) 
   throw new Error('Falha apos retries (modelos indisponiveis)');
 }
 
-// ---------- Pesquisa web real (multi-fontes) ----------
-// Usa modelo com capacidade de busca (web) do OpenRouter para retornar
-// cidacoes de multiplas fontes reais; fallback para o modelo default.
-async function pesquisaWeb(papel, setor, pergunta) {
-  const prompt = [
-    `Voce e um especialista de mercado (${papel}) realizando PESQUISA WEB REAL.`,
-    `Setor/mercado: ${setor}`,
-    `Questao a investigar: ${pergunta}`,
+// ---------- Pesquisa web real (multi-fontes) com guardrail ----------
+// Usa modelo com capacidade de busca (web) + fallback; saida validada
+// contra segredos e tamanho minimo antes de seguir no fluxo.
+function promptPesquisa(cpapel, setor, foco, questao) {
+  return [
+    `Voce e um especialista de mercado (${cpapel}) realizando PESQUISA WEB REAL.`,
+    `Setor/mercado: ${setor}. Foco: ${foco}`,
+    `Questao a investigar: ${questao}`,
     '',
-    'Execute uma busca na web por FONTES REAIS E MULTIPLAS (relatorios de mercado, dados de ',
-    'governo/agencias, noticias, publicacoes setoriais, tendencias e metricas quantitativas).',
-    'Retorne (pt-BR, ASCII puro, sem acentos) em formato objetivo:',
-    '1) DADOS: principais metricas, tamanho de mercado, crescimento, drivers e riscos (com numeros).',
+    'Execute uma busca na web por FONTES REAIS E MULTIPLAS (relatorios, dados de ',
+    'gov/agencias, noticias, metricas quantitativas).',
+    'Retorne (pt-BR, ASCII puro) em formato objetivo:',
+    '1) DADOS: metricas, tamanho de mercado, crescimento, drivers e riscos (numeros).',
     '2) FONTES: lista de 3-6 fontes reais com nome e URL (dominio).',
-    '3) OPORTUNIDADES: 3-5 oportunidades de produto/servico para a consultoria KRAEFEGG.',
+    '3) OPORTUNIDADES: 3-5 oportunidades de produto/servico para a KRAEFEGG.',
     '4) ALVOS: tipos de empresas/investidores/publico-alvo.',
+    'NAO inclua chaves, tokens, senhas ou dados sensiveis no parecer.',
     'Seja concreto e baseado em informacoes reais pesquisadas.'
   ].join('\n');
+}
+
+async function pesquisaComGuardrail(cpapel, setor, foco, questao) {
+  const prompt = promptPesquisa(cpapel, setor, foco, questao);
   try {
-    return await ai(prompt, { model: SEARCH_MODEL, tokens: 3000 });
+    return await aiComGuardrail(ai, prompt, Guardrails.parecer, { model: SEARCH_MODEL, tokens: 3000 });
   } catch (e) {
-    log(`[websearch fallback] ${papel}: ${e.message}`);
-    try { return await ai(prompt, { model: MODEL, tokens: 3000 }); } catch (_) { return `(sem pesquisa: ${e.message})`; }
+    log(`[websearch fallback] ${cpapel}: ${e.message}`);
+    try { return await aiComGuardrail(ai, prompt, Guardrails.parecer, { model: MODEL, tokens: 3000 }); }
+    catch (_) { return `(sem pesquisa: ${e.message})`; }
   }
 }
 
@@ -155,10 +162,13 @@ async function patDemanda(codigo, payload) {
 async function appendLog(codigo, nota) {
   const ascii = String(nota ?? '').replace(/[^\x20-\x7E]/g, ' ').replace(/\s+/g, ' ').trim();
   if (!ascii) return;
+  // Guardrail anti-vazamento: nunca grava chaves no Supabase
+  const sec = checkNoSecrets(ascii);
+  const texto = sec.ok ? ascii : '[CONTROLE] entrada bloqueada por guardrail de seguranca';
   try {
     const d = await getDemanda(codigo);
     const atual = d?.descricao || '';
-    const nova = atual ? `${atual} | [AGENTE] ${ascii}` : `[AGENTE] ${ascii}`;
+    const nova = atual ? `${atual} | [AGENTE] ${texto}` : `[AGENTE] ${texto}`;
     await patDemanda(codigo, { descricao: nova });
   } catch (e) { log(`falha log ${codigo}: ${e.message}`); }
 }
@@ -197,16 +207,23 @@ const State = Annotation.Root({
 // CEO-agente orquestrador#1: entende a ideia e estrutura a questao estrategica
 async function nodeCEO_Estrutura(s) {
   await setFase(s.codigo, 'analise', 10, 'CEO-agente analisando a ideia...');
-  const q = await ai(`
+  const q = await aiComGuardrail(ai, `
 Voce e o CEO-agente orquestrador n.1 de uma consultoria multidisciplinar KRAEFEGG
 (construcao civil, meio ambiente, energia, mineracao, logistica, naval, aeroespacial, IoT/Edge).
 
 Ideia do Diretor (proprietario): "${s.ideia}"
 
-Sua tarefa: transformar essa ideia em uma QUESTAO ESTRATEGICA clara para investigacao de
-mercado pelo conselho de 5 especialistas. Retorne (pt-BR ASCII): a questao (pergunta),
-o objetivo de negocio, os alvos (empresas/investidores/publico) e as dimensoes de mercado
-a investigar. Texto objetivo, 4-8 frases.`, 1500);
+SUA TAREFA (single-purpose: apenas estruturar a questao estrategica):
+Transformar essa ideia em uma QUESTAO ESTRATEGICA clara para investigacao de
+mercado pelo conselho de 5 especialistas.
+
+SAIDA ESPERADA (4-8 frases, pt-BR ASCII, objetiva):
+- a questao (pergunta central)
+- o objetivo de negocio
+- os alvos (empresas/investidores/publico)
+- as dimensoes de mercado a investigar
+
+NAO execute pesquisa nem decida aqui — apenas estruture a questao.`, Guardrails.questao, { tokens: 1500 });
   await setFase(s.codigo, 'analise', 20, 'CEO estruturou a questao estrategica');
   return { questao: q };
 }
@@ -217,7 +234,7 @@ async function nodeConselho(s) {
   const pareceres = [];
   for (const c of CONSELHO) {
     await setFase(s.codigo, 'analise', 30 + CONSELHO.indexOf(c) * 4, `Conselheiro ${c.papel} pesquisando...`);
-    const r = await pesquisaWeb(c.papel, c.setor, `${s.questao}\nFoco do conselheiro: ${c.foco}`);
+    const r = await pesquisaComGuardrail(c.papel, c.setor, c.foco, s.questao);
     pareceres.push({ id: c.id, papel: c.papel, parecer: r });
     log(`[conselho] ${c.id} ok`);
   }
@@ -227,18 +244,18 @@ async function nodeConselho(s) {
 // CEO-agente decide
 async function nodeCEO_Decide(s) {
   await setFase(s.codigo, 'analise', 55, 'CEO-agente consolidando e decidindo...');
-  const decisao = await ai(`
+  const prompt = `
 Voce e o CEO-agente orquestrador n.1. Consolide os pareceres do conselho e DECIDA o
-direcionamento da empresa. 
+direcionamento da empresa.
 Questao: ${s.questao}
 Pareceres do conselho (pesquisa web):
 ${s.conselho}
 Decida em pt-BR ASCII e retorne SOMENTE JSON valido (sem texto extra) no formato:
 {"veredito":"APROVAR|MELHORAR|REPROPOR","decisao":"<decisao em 2-4 frases>","foco":"<foco de produto/servico>","alvos":"<alvos>","setor_prioritario":"<setor>"}
 Considere: aderencia ao perfil da KRAEFEGG (multimercado), oportunidade real e exequivel,
-e necessidade do mercado. Se MELHORAR/REPROPOR, inclua a correcao/proposta na decisao.`, 1500);
-  let d = {};
-  try { d = JSON.parse(decisao.replace(/```json\s*/g, '').replace(/```/g, '').trim()); } catch { d = { veredito: 'APROVAR', decisao: decisao }; }
+e necessidade do mercado. Se MELHORAR/REPROPOR, inclua a correcao/proposta na decisao.`;
+  const decisao = await aiComGuardrail(ai, prompt, Guardrails.decisao, { tokens: 1500 });
+  const d = parseJSON(decisao) || { veredito: 'APROVAR', decisao: '[fallback] decisao nao estruturada' };
   await setFase(s.codigo, d.veredito === 'APROVAR' ? 'execucao' : 'revisao', 60, `CEO decidiu: ${d.veredito}`);
   return { decisao: JSON.stringify(d) };
 }
@@ -311,14 +328,14 @@ async function nodeDespacho(s) {
 // Resultado final consolidado
 async function nodeResultado(s) {
   const d = JSON.parse(s.decisao || '{}');
-  const resultado = await ai(`
+  const resultado = await aiComGuardrail(ai, `
 Voce e o CEO-agente orquestrador n.1. Consolide o RESULTADO FINAL estrategico da empresa
 para a ideia do Diretor.
 Decisao: ${d.decisao || ''}
 Direcionamento setorial:
 ${s.despacho}
-Retorne (pt-BR ASCII) um RESUMO EXECUTIVO final em bullets: recomendacao, produto/servico,
-proximos passos, e como o Diretor pode ajustar. 5-8 bullets.`, 2500);
+SAIDA ESPERADA: RESUMO EXECUTIVO final em bullets (pt-BR ASCII): [1] recomendacao,
+[2] produto/servico, [3] proximos passos, [4] como o Diretor pode ajustar. 5-8 bullets.`, Guardrails.resultado, { tokens: 2500 });
   await setFase(s.codigo, 'concluida', 100, `RESULTADO ESTRATEGICO | CEO: ${d.decisao || 'aprovado'}`);
   await appendLog(s.codigo, `REPORTS POR SETOR no Drive: CEO - Demandas HQ/Demanda-${s.codigo}/`);
   return { resultado, finalizado: true };
