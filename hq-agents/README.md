@@ -61,3 +61,18 @@ seguindo o guia de design de tarefas CrewAI (task-first, guardrails, structured 
 - Dockerfile atualizado para copiar `guardrails.mjs`.
 
 Teste: `node ce-strategic/test-guardrails.mjs` (8 asserções de validação).
+
+---
+
+## Desenvolvedor
+
+**KRAEFEGG M.O.** é desenvolvido por **Railson Nogueira de Arruda**.
+
+Formação:
+- Engenharias — Ambiental, de Segurança, Florestal, Energias Renováveis, Perícia e Auditoria Ambiental, Mineralogia;
+- Analista de Automação de Sistemas pelo SENAI;
+- Embedded Systems, IoT e Edge AI;
+- Generative AI, Cyber, Data, AI Engineering;
+- Frontend-Backend (Fullstack): JavaScript, Python, SQL.
+
+LinkedIn: [linkedin.com/in/railsonarruda-engineering](https://www.linkedin.com/in/railsonarruda-engineering/)
