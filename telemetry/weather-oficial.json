@@ -2,7 +2,7 @@
   "schema": "AIO.weather.oficial/v1",
   "site": "car01",
   "geocode": "2504074",
-  "ts": "2026-09-08T05:26:56+00:00",
+  "ts": "2026-09-08T09:54:48+00:00",
   "fonte": "INMET previsão oficial 15 dias · Open-Meteo precipitação real 7 dias",
   "estacao": null,
   "previsao15d": [
@@ -11,24 +11,24 @@
       "manha": {
         "resumo": "Poucas nuvens",
         "temp_max": 32,
-        "temp_min": 18,
+        "temp_min": 17,
         "vento": "Moderados",
-        "dir_vento": "SE-W",
+        "dir_vento": "SE-E",
         "icone": "29"
       },
       "tarde": {
         "resumo": "Poucas nuvens",
         "temp_max": 32,
-        "temp_min": 18,
-        "vento": "Fracos",
+        "temp_min": 17,
+        "vento": "Moderados",
         "dir_vento": "SE-E",
         "icone": "29"
       },
       "noite": {
         "resumo": "Poucas nuvens",
         "temp_max": 32,
-        "temp_min": 18,
-        "vento": "Fracos",
+        "temp_min": 17,
+        "vento": "Moderados",
         "dir_vento": "SE-E",
         "icone": "51"
       }
@@ -36,28 +36,28 @@
     {
       "data": "09/09/2026",
       "manha": {
-        "resumo": "Nublado",
-        "temp_max": 30,
+        "resumo": "Claro",
+        "temp_max": 31,
         "temp_min": 18,
         "vento": "Moderados",
         "dir_vento": "SE-E",
-        "icone": "39"
+        "icone": "28"
       },
       "tarde": {
         "resumo": "Poucas nuvens",
-        "temp_max": 30,
+        "temp_max": 31,
         "temp_min": 18,
         "vento": "Moderados",
         "dir_vento": "SE-E",
         "icone": "29"
       },
       "noite": {
-        "resumo": "Encoberto",
-        "temp_max": 30,
+        "resumo": "Claro",
+        "temp_max": 31,
         "temp_min": 18,
-        "vento": "Fracos",
+        "vento": "Moderados",
         "dir_vento": "SE-E",
-        "icone": "44"
+        "icone": "12"
       }
     },
     {
