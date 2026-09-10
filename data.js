@@ -79,6 +79,21 @@ const AIO = {
 
   // ---------- SENSORIAMENTO REMOTO (exports reais Sentinel-2 do repo kraefegg/AIO) ----------
   rsRepoBase:"https://raw.githubusercontent.com/kraefegg/AIO/main/",
+  // ---------- EARTH ENGINE EXPORTS (static GeoJSON, NO credentials no frontend) ----------
+  // These URLs Pont to pre-exported GeoJSON files from Earth Engine.
+  // To use: run `earthengine export` for each dataset and host the resulting
+  // GeoJSON files via GitHub Pages raw URLs or Oracle Cloud Storage.
+  // The frontend only consumes static data - NO secrets are exposed in the browser.
+  eeBaseUrl: "https://raw.githubusercontent.com/kraefegg/AIO-Observatory/main/ee-exports",
+  eeNdviGeojsonUrl: null,          // NDVI export from EEE (Polygon/Coverage)
+  eeNdwiGeojsonUrl: null,          // NDWI export from EEE (Water bodies)
+  eeNdbiGeojsonUrl: null,          // NDBI export from EEE (Built surface)
+  eeSaviGeojsonUrl: null,          // SAVI export from EEE (Vegetation-soil adjustment)
+  eeConfidenceGeojsonUrl: null,    // Dynamic World confidence (Top-1 probability)
+  eeEntropyGeojsonUrl: null,       // Dynamic World entropy (uncertainty)
+  eeChangeGeojsonUrl: null,        // Change detection 2021→2026
+  eeDynamicWorldUrl: null,         // Dynamic World tile URL (if using tile cache)
+  // -----------------------------------
   rsPanels:[
     {code:"NDVI", gif:"Sentinel-2_L2A-1065485713259736-timelapse.gif", title:"Índice de Vegetação por Diferença Normalizada",
       desc:"Vigor fotossintético da cobertura vegetal, calculado via Sentinel-2 L2A. Série estatística (CSV) real no repositório.", hasStats:true},

@@ -829,7 +829,7 @@ const AIOApp = (() => {
   }
 
   // ---------- MAPA ----------
-  let mapInst=null, layers={}, polyLayer=null, uploadedLayer=null, fireLayer=null;
+  let mapInst=null, layers={}, polyLayer=null, uploadedLayer=null, fireLayer=null, eeLayers={};
   function renderMapa(){
     if(mapInst){ mapInst.remove(); mapInst=null; }
     mapInst = L.map('leafletMap').setView([LAT,LON], 12);
@@ -837,6 +837,27 @@ const AIOApp = (() => {
     layers.sat = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',{attribution:'© Esri'});
     layers.topo = L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png',{attribution:'© OpenTopoMap'});
     layers.osm.addTo(mapInst);
+
+    // ---- EARTH ENGINE LAYERS (static GeoJSON, NO credentials no frontend) ----
+    // These layers are pre-exported from Earth Engine and hosted publicly.
+    // To add new EEE layers: export via `earthengine export` and host the GeoJSON
+    // via GitHub Pages raw URLs or Oracle Cloud Storage. The frontend only consumes
+    // static data - no secrets are exposed in the browser.
+    const eeBaseUrl = AIO.eeBaseUrl || 'https://raw.githubusercontent.com/kraefegg/AIO-Observatory/main/ee-exports';
+    layers.dw = L.tileLayer(`${eeBaseUrl}/dynamicworld-{z}-{x}-{y}.png`, {
+      attribution: '© Google Earth Engine / Dynamic World',
+      opacity: 0.7,
+      className: 'ee-layer'
+    });
+    layers.ndvi_ee = L.geoJSON(null, { attribution: '© Google Earth Engine / NDVI', className: 'ee-layer' });
+    layers.ndwi_ee = L.geoJSON(null, { attribution: '© Google Earth Engine / NDWI', className: 'ee-layer' });
+    layers.ndbi_ee = L.geoJSON(null, { attribution: '© Google Earth Engine / NDBI', className: 'ee-layer' });
+    layers.savi_ee = L.geoJSON(null, { attribution: '© Google Earth Engine / SAVI', className: 'ee-layer' });
+    layers.confidence_ee = L.geoJSON(null, { attribution: '© Google Earth Engine / Confidence', className: 'ee-layer' });
+    layers.entropy_ee = L.geoJSON(null, { attribution: '© Google Earth Engine / Entropy', className: 'ee-layer' });
+    layers.change_2021_2026_ee = L.geoJSON(null, { attribution: '© Google Earth Engine / Change 2021→2026', className: 'ee-layer' });
+    eeLayers = { dw, ndvi, ndwi, ndbi, savi, confidence, entropy, change: change_2021_2026_ee };
+
     const poly = [[LAT+0.012,LON-0.02],[LAT+0.014,LON+0.018],[LAT-0.01,LON+0.022],[LAT-0.015,LON-0.015]];
     polyLayer = L.polygon(poly,{color:'#3fe0ff', weight:2, fillColor:'#3fe0ff', fillOpacity:.12}).bindPopup(`<b>${AIO.project.name}</b><br>Área: ${AIO.project.area_km2} km²`);
 
@@ -856,10 +877,56 @@ const AIOApp = (() => {
             }).addTo(mapInst); chip.classList.add('on'); }
           return;
         }
-        document.querySelectorAll('.chip-toggle[data-layer]').forEach(c=>{ if(['osm','sat','topo'].includes(c.dataset.layer)) c.classList.remove('on'); });
-        Object.entries(layers).forEach(([k,l])=>{ if(mapInst.hasLayer(l)) mapInst.removeLayer(l); });
-        layers[key].addTo(mapInst); chip.classList.add('on');
+        // Earth Engine layer toggle
+        if(key && key.startsWith('ee-')){
+          const eeKey = key.substring(3); // e.g. 'dw', 'ndvi_ee', etc.
+          const eeLayer = eeLayers[eeKey];
+          if(!eeLayer) return;
+          if(mapInst.hasLayer(eeLayer)){ mapInst.removeLayer(eeLayer); chip.classList.remove('on'); }
+          else { eeLayer.addTo(mapInst); chip.classList.add('on'); }
+          return;
+        }
+        // Original base layer toggle
+        if(key==='osm'||key==='sat'||key==='topo'){
+          document.querySelectorAll('.chip-toggle[data-layer]').forEach(c=>{ if(['osm','sat','topo'].includes(c.dataset.layer)) c.classList.remove('on'); });
+          Object.entries(layers).forEach(([k,l])=>{ if(mapInst.hasLayer(l)) mapInst.removeLayer(l); });
+          layers[key].addTo(mapInst); chip.classList.add('on');
+          return;
+        }
+        // Upload KML / KMZ / JSON
+        if(key===undefined || key==='upload'||key==='clear'){
+          // fallback to original upload handling
+          return;
+        }
       });
+    });
+
+    // Load Earth Engine GeoJSON data (pre-exported, static - no secrets)
+    async function loadEEGeoJSON(layerKey, url){
+      try{
+        const res = await fetch(url);
+        if(!res.ok) throw new Error('HTTP ' + res.status);
+        const gj = await res.json();
+        if(layers[layerKey]) mapInst.removeLayer(layers[layerKey]);
+        layers[layerKey] = L.geoJSON(gj, { attribution: '© Google Earth Engine', className: 'ee-layer' }).addTo(mapInst);
+        // Update corresponding EE layer placeholder
+        if(eeLayers[layerKey]) mapInst.removeLayer(eeLayers[layerKey]);
+        eeLayers[layerKey] = L.geoJSON(gj, { attribution: '© Google Earth Engine', className: 'ee-layer' });
+      }catch(e){ console.warn('EE GeoJSON load failed for', layerKey, e.message); }
+    }
+
+    // Initialize with sample/static EEE data if available
+    document.addEventListener('DOMContentLoaded', ()=>{
+      // Dynamic World tile layer (if URL configured)
+      if(AIO.eeDynamicWorldUrl) layers.dw.setUrl(AIO.eeDynamicWorldUrl);
+      // Load static GeoJSON layers from exported EEE data
+      loadEEGeoJSON('ndvi_ee', AIO.eeNdviGeojsonUrl || null);
+      loadEEGeoJSON('ndwi_ee', AIO.eeNdwiGeojsonUrl || null);
+      loadEEGeoJSON('ndbi_ee', AIO.eeNdbiGeojsonUrl || null);
+      loadEEGeoJSON('savi_ee', AIO.eeSaviGeojsonUrl || null);
+      loadEEGeoJSON('confidence_ee', AIO.eeConfidenceGeojsonUrl || null);
+      loadEEGeoJSON('entropy_ee', AIO.eeEntropyGeojsonUrl || null);
+      loadEEGeoJSON('change_2021_2026_ee', AIO.eeChangeGeojsonUrl || null);
     });
 
     // Upload KML / KMZ / JSON

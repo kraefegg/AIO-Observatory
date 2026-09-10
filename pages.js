@@ -223,8 +223,15 @@ PAGES.mapas = () => `
     <span class="chip-toggle" data-layer="topo"><i class="fa-solid fa-mountain"></i> Topográfico</span>
     <span class="chip-toggle" data-layer="poly"><i class="fa-solid fa-draw-polygon"></i> Polígono PRAD</span>
     <span class="chip-toggle" data-layer="fire"><i class="fa-solid fa-fire"></i> Focos de Calor (INPE)</span>
-  </div>
-</div>
+    <!-- Earth Engine layers (static GeoJSON, no credentials in frontend) -->
+    <span class="chip-toggle" data-layer="ee-dw"><i class="fa-solid fa-globe"></i> Dynamic World</span>
+    <span class="chip-toggle" data-layer="ee-ndvi"><i class="fa-solid fa-leaf"></i> NDVI EEE</span>
+    <span class="chip-toggle" data-layer="ee-ndwi"><i class="fa-solid fa-tint"></i> NDWI EEE</span>
+    <span class="chip-toggle" data-layer="ee-ndbi"><i class="fa-solid fa-bold"></i> NDBI EEE</span>
+    <span class="chip-toggle" data-layer="ee-savi"><i class="fa-solid fa-seedling"></i> SAVI EEE</span>
+    <span class="chip-toggle" data-layer="ee-confidence"><i class="fa-solid fa-exclamation-circle"></i> Confiança</span>
+    <span class="chip-toggle" data-layer="ee-entropy"><i class="fa-solid fa-brain"></i> Entropia</span>
+    <span class="chip-toggle" data-layer="ee-change"><i class="fa-solid fa-exchange"></i> Mudança 2021→2026</span>
 `;
 
 PAGES.csv = () => `
