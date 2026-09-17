@@ -2,7 +2,7 @@
   "schema": "AIO.weather.oficial/v1",
   "site": "car01",
   "geocode": "2504074",
-  "ts": "2026-09-17T03:12:08+00:00",
+  "ts": "2026-09-17T08:47:10+00:00",
   "fonte": "INMET estação A387 (SANTA CRUZ DO CAPIBARIBE, 36 km) · INMET previsão oficial 15 dias · Open-Meteo precipitação real 7 dias",
   "estacao": {
     "codigo": "A387",
@@ -11,19 +11,19 @@
     "distancia_km": "36",
     "lat": "-7.95083333",
     "lon": "-36.22583332",
-    "medicao": "2026-09-17 0200",
+    "medicao": "2026-09-17 0800",
     "atual": {
-      "temperatura_c": 21.9,
-      "sensacao_c": 21.4,
-      "umidade_pct": 82.0,
-      "pressao_hpa": 967.5,
-      "vento_kmh": 8.3,
-      "rajada_kmh": 22.7,
-      "vento_dir_deg": 112.0,
+      "temperatura_c": 19.5,
+      "sensacao_c": 21.1,
+      "umidade_pct": 89.0,
+      "pressao_hpa": 967.1,
+      "vento_kmh": 2.9,
+      "rajada_kmh": 7.6,
+      "vento_dir_deg": 180.0,
       "chuva_mm": 0.0,
       "radiacao_kjm2": 0.0,
-      "temp_max_c": 22.5,
-      "temp_min_c": 21.9
+      "temp_max_c": 20.5,
+      "temp_min_c": 19.5
     }
   },
   "previsao15d": [
@@ -182,24 +182,24 @@
       0.0,
       0.0,
       0.6,
-      0.0
+      0.1
     ],
     "uv_max": 8.9,
     "temp_max": 32.3,
     "temp_min": 20.1
   },
   "calculos": {
-    "eto_mm_dia": 2.62,
+    "eto_mm_dia": 3.2,
     "eto_metodo": "Hargreaves–Samani (Tmax/Tmin INMET + Ra astronômica)",
     "hidrologia": {
-      "q_m3s": 0.98,
-      "v_ms": 0.136,
+      "q_m3s": 1.05,
+      "v_ms": 0.146,
       "area_m2": 7.2,
       "precip_recente_mm": 0.2,
-      "precip_hoje_mm": 0,
-      "classe": "SECA",
+      "precip_hoje_mm": 0.1,
+      "classe": "CAUDAL BAIXO",
       "rotulo": "Seca / estiagem",
-      "vol_diario_m3": 84672
+      "vol_diario_m3": 90720
     },
     "hidrologia_metodo": "Q = A × V · A = 7,2 m² · V por pluviosidade real 3 dias",
     "arvores": {
