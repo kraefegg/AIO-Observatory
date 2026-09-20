@@ -2,7 +2,7 @@
   "schema": "AIO.weather.oficial/v1",
   "site": "car01",
   "geocode": "2504074",
-  "ts": "2026-09-20T16:37:30+00:00",
+  "ts": "2026-09-20T19:10:35+00:00",
   "fonte": "INMET estação A387 (SANTA CRUZ DO CAPIBARIBE, 36 km) · INMET previsão oficial 15 dias · Open-Meteo precipitação real 7 dias",
   "estacao": {
     "codigo": "A387",
@@ -11,18 +11,18 @@
     "distancia_km": "36",
     "lat": "-7.95083333",
     "lon": "-36.22583332",
-    "medicao": "2026-09-20 1600",
+    "medicao": "2026-09-20 1800",
     "atual": {
-      "temperatura_c": 30.0,
-      "sensacao_c": 25.9,
-      "umidade_pct": 33.0,
-      "pressao_hpa": 963.7,
-      "vento_kmh": 19.1,
-      "rajada_kmh": 39.6,
-      "vento_dir_deg": 161.0,
+      "temperatura_c": 30.2,
+      "sensacao_c": 26.7,
+      "umidade_pct": 30.0,
+      "pressao_hpa": 963.0,
+      "vento_kmh": 14.8,
+      "rajada_kmh": 37.4,
+      "vento_dir_deg": 148.0,
       "chuva_mm": 0.0,
-      "radiacao_kjm2": 3256.5,
-      "temp_max_c": 31.4,
+      "radiacao_kjm2": 1921.7,
+      "temp_max_c": 31.3,
       "temp_min_c": 29.4
     }
   },
@@ -60,7 +60,7 @@
         "resumo": "Muitas nuvens",
         "temp_max": 33,
         "temp_min": 17,
-        "vento": "Fracos",
+        "vento": "Moderados",
         "dir_vento": "SE-E",
         "icone": "34"
       },
@@ -69,14 +69,14 @@
         "temp_max": 33,
         "temp_min": 17,
         "vento": "Moderados",
-        "dir_vento": "SE-E",
+        "dir_vento": "SE-W",
         "icone": "29"
       },
       "noite": {
         "resumo": "Poucas nuvens",
         "temp_max": 33,
         "temp_min": 17,
-        "vento": "Moderados",
+        "vento": "Fracos",
         "dir_vento": "SE-E",
         "icone": "51"
       }
@@ -189,7 +189,7 @@
     "temp_min": 20.0
   },
   "calculos": {
-    "eto_mm_dia": 5.8,
+    "eto_mm_dia": 5.65,
     "eto_metodo": "Hargreaves–Samani (Tmax/Tmin INMET + Ra astronômica)",
     "hidrologia": {
       "q_m3s": 1.09,
@@ -211,7 +211,7 @@
       "raio_km": 3.0
     },
     "risco_fogo": {
-      "risco_pct": 57,
+      "risco_pct": 52,
       "dias_sem_chuva": 3
     }
   }
