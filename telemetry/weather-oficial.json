@@ -2,7 +2,7 @@
   "schema": "AIO.weather.oficial/v1",
   "site": "car01",
   "geocode": "2504074",
-  "ts": "2026-09-29T02:06:37+00:00",
+  "ts": "2026-09-29T08:46:39+00:00",
   "fonte": "INMET estação A387 (SANTA CRUZ DO CAPIBARIBE, 36 km) · INMET previsão oficial 15 dias · Open-Meteo precipitação real 7 dias",
   "estacao": {
     "codigo": "A387",
@@ -11,19 +11,19 @@
     "distancia_km": "36",
     "lat": "-7.95083333",
     "lon": "-36.22583332",
-    "medicao": "2026-09-29 0100",
+    "medicao": "2026-09-29 0800",
     "atual": {
-      "temperatura_c": 23.0,
-      "sensacao_c": 22.3,
-      "umidade_pct": 79.0,
-      "pressao_hpa": 964.0,
-      "vento_kmh": 9.0,
-      "rajada_kmh": 25.6,
-      "vento_dir_deg": 107.0,
+      "temperatura_c": 21.3,
+      "sensacao_c": 22.5,
+      "umidade_pct": 84.0,
+      "pressao_hpa": 963.1,
+      "vento_kmh": 4.0,
+      "rajada_kmh": 12.6,
+      "vento_dir_deg": 100.0,
       "chuva_mm": 0.0,
       "radiacao_kjm2": 0.0,
-      "temp_max_c": 23.2,
-      "temp_min_c": 22.9
+      "temp_max_c": 21.3,
+      "temp_min_c": 20.9
     }
   },
   "previsao15d": [
@@ -82,30 +82,30 @@
       }
     },
     {
-      "data": "28/09/2026",
+      "data": "03/10/2026",
       "manha": {
-        "resumo": "Muitas nuvens",
-        "temp_max": 32,
-        "temp_min": 19,
-        "vento": "Fracos",
-        "dir_vento": "SE-E",
-        "icone": "34"
+        "resumo": null,
+        "temp_max": null,
+        "temp_min": null,
+        "vento": null,
+        "dir_vento": null,
+        "icone": null
       },
       "tarde": {
-        "resumo": "Muitas nuvens",
-        "temp_max": 32,
-        "temp_min": 19,
-        "vento": "Moderados",
-        "dir_vento": "E-SE",
-        "icone": "34"
+        "resumo": null,
+        "temp_max": null,
+        "temp_min": null,
+        "vento": null,
+        "dir_vento": null,
+        "icone": null
       },
       "noite": {
-        "resumo": "Muitas nuvens",
-        "temp_max": 32,
-        "temp_min": 19,
-        "vento": "Fracos",
-        "dir_vento": "E-SE",
-        "icone": "56"
+        "resumo": null,
+        "temp_max": null,
+        "temp_min": null,
+        "vento": null,
+        "dir_vento": null,
+        "icone": null
       }
     },
     {
@@ -113,15 +113,15 @@
       "manha": {
         "resumo": "Muitas nuvens",
         "temp_max": 32,
-        "temp_min": 18,
-        "vento": "Moderados",
+        "temp_min": 19,
+        "vento": "Fracos",
         "dir_vento": "SE-E",
         "icone": "34"
       },
       "tarde": {
         "resumo": "Muitas nuvens com possibilidade de chuva isolada",
         "temp_max": 32,
-        "temp_min": 18,
+        "temp_min": 19,
         "vento": "Moderados",
         "dir_vento": "E-SE",
         "icone": "36"
@@ -129,77 +129,77 @@
       "noite": {
         "resumo": "Muitas nuvens",
         "temp_max": 32,
-        "temp_min": 18,
+        "temp_min": 19,
         "vento": "Fracos",
-        "dir_vento": "SE-E",
+        "dir_vento": "E-SE",
         "icone": "56"
       }
     },
     {
       "data": "30/09/2026",
       "manha": {
-        "resumo": null,
-        "temp_max": null,
-        "temp_min": null,
-        "vento": null,
-        "dir_vento": null,
-        "icone": null
+        "resumo": "Encoberto",
+        "temp_max": 32,
+        "temp_min": 18,
+        "vento": "Fracos",
+        "dir_vento": "E-SE",
+        "icone": "44"
       },
       "tarde": {
-        "resumo": null,
-        "temp_max": null,
-        "temp_min": null,
-        "vento": null,
-        "dir_vento": null,
-        "icone": null
+        "resumo": "Muitas nuvens",
+        "temp_max": 32,
+        "temp_min": 18,
+        "vento": "Moderados",
+        "dir_vento": "E-W",
+        "icone": "34"
       },
       "noite": {
-        "resumo": null,
-        "temp_max": null,
-        "temp_min": null,
-        "vento": null,
-        "dir_vento": null,
-        "icone": null
+        "resumo": "Nublado",
+        "temp_max": 32,
+        "temp_min": 18,
+        "vento": "Moderados",
+        "dir_vento": "E-SE",
+        "icone": "61"
       }
     }
   ],
   "openmeteo": {
     "time": [
-      "2026-09-21",
       "2026-09-22",
       "2026-09-23",
       "2026-09-24",
       "2026-09-25",
       "2026-09-26",
       "2026-09-27",
-      "2026-09-28"
+      "2026-09-28",
+      "2026-09-29"
     ],
     "precip_sum": [
-      0.0,
       0.0,
       0.0,
       0.0,
       0.2,
       0.0,
       0.0,
-      0.7
+      0.7,
+      0.1
     ],
-    "uv_max": 9.2,
-    "temp_max": 32.6,
-    "temp_min": 18.3
+    "uv_max": 9.25,
+    "temp_max": 34.2,
+    "temp_min": 18.6
   },
   "calculos": {
-    "eto_mm_dia": 1.94,
+    "eto_mm_dia": 2.13,
     "eto_metodo": "Hargreaves–Samani (Tmax/Tmin INMET + Ra astronômica)",
     "hidrologia": {
-      "q_m3s": 1.22,
-      "v_ms": 0.17,
+      "q_m3s": 1.09,
+      "v_ms": 0.152,
       "area_m2": 7.2,
       "precip_recente_mm": 0.3,
-      "precip_hoje_mm": 0.7,
+      "precip_hoje_mm": 0.1,
       "classe": "CAUDAL BAIXO",
       "rotulo": "Seca / estiagem",
-      "vol_diario_m3": 105408
+      "vol_diario_m3": 94176
     },
     "hidrologia_metodo": "Q = A × V · A = 7,2 m² · V por pluviosidade real 3 dias",
     "arvores": {
@@ -211,8 +211,8 @@
       "raio_km": 3.0
     },
     "risco_fogo": {
-      "risco_pct": 34,
-      "dias_sem_chuva": 7
+      "risco_pct": 41,
+      "dias_sem_chuva": 6
     }
   }
 }
