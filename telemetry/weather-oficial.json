@@ -2,7 +2,7 @@
   "schema": "AIO.weather.oficial/v1",
   "site": "car01",
   "geocode": "2504074",
-  "ts": "2026-09-30T09:09:09+00:00",
+  "ts": "2026-09-30T16:00:10+00:00",
   "fonte": "INMET estação A387 (SANTA CRUZ DO CAPIBARIBE, 36 km) · INMET previsão oficial 15 dias · Open-Meteo precipitação real 7 dias",
   "estacao": {
     "codigo": "A387",
@@ -11,39 +11,39 @@
     "distancia_km": "36",
     "lat": "-7.95083333",
     "lon": "-36.22583332",
-    "medicao": "2026-09-30 0800",
+    "medicao": "2026-09-30 1500",
     "atual": {
-      "temperatura_c": 22.1,
-      "sensacao_c": 22.0,
-      "umidade_pct": 80.0,
-      "pressao_hpa": 963.2,
-      "vento_kmh": 7.2,
-      "rajada_kmh": 17.3,
-      "vento_dir_deg": 123.0,
+      "temperatura_c": 31.9,
+      "sensacao_c": 29.9,
+      "umidade_pct": 43.0,
+      "pressao_hpa": 962.6,
+      "vento_kmh": 14.0,
+      "rajada_kmh": 29.9,
+      "vento_dir_deg": 97.0,
       "chuva_mm": 0.0,
-      "radiacao_kjm2": 0.0,
-      "temp_max_c": 22.2,
-      "temp_min_c": 22.1
+      "radiacao_kjm2": 3857.5,
+      "temp_max_c": 32.4,
+      "temp_min_c": 30.9
     }
   },
   "previsao15d": [
     {
       "data": "01/10/2026",
       "manha": {
-        "resumo": "Nublado",
+        "resumo": "Poucas nuvens",
         "temp_max": 32,
         "temp_min": 18,
         "vento": "Fracos",
         "dir_vento": "E-SE",
-        "icone": "39"
+        "icone": "29"
       },
       "tarde": {
-        "resumo": "Nublado",
+        "resumo": "Muitas nuvens",
         "temp_max": 32,
         "temp_min": 18,
         "vento": "Moderados",
         "dir_vento": "E-NE",
-        "icone": "39"
+        "icone": "34"
       },
       "noite": {
         "resumo": "Muitas nuvens",
@@ -189,7 +189,7 @@
     "temp_min": 21.9
   },
   "calculos": {
-    "eto_mm_dia": 1.1,
+    "eto_mm_dia": 5.25,
     "eto_metodo": "Hargreaves–Samani (Tmax/Tmin INMET + Ra astronômica)",
     "hidrologia": {
       "q_m3s": 0.96,
@@ -211,7 +211,7 @@
       "raio_km": 3.0
     },
     "risco_fogo": {
-      "risco_pct": 38,
+      "risco_pct": 58,
       "dias_sem_chuva": 5
     }
   }
