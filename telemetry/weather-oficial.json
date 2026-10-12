@@ -2,7 +2,7 @@
   "schema": "AIO.weather.oficial/v1",
   "site": "car01",
   "geocode": "2504074",
-  "ts": "2026-10-12T03:13:00+00:00",
+  "ts": "2026-10-12T11:08:46+00:00",
   "fonte": "INMET estação A387 (SANTA CRUZ DO CAPIBARIBE, 36 km) · INMET previsão oficial 15 dias · Open-Meteo precipitação real 7 dias",
   "estacao": {
     "codigo": "A387",
@@ -11,19 +11,19 @@
     "distancia_km": "36",
     "lat": "-7.95083333",
     "lon": "-36.22583332",
-    "medicao": "2026-10-12 0200",
+    "medicao": "2026-10-12 1000",
     "atual": {
-      "temperatura_c": 21.8,
-      "sensacao_c": 20.4,
-      "umidade_pct": 74.0,
-      "pressao_hpa": 963.9,
-      "vento_kmh": 9.4,
-      "rajada_kmh": 24.5,
-      "vento_dir_deg": 104.0,
+      "temperatura_c": 22.9,
+      "sensacao_c": 21.8,
+      "umidade_pct": 77.0,
+      "pressao_hpa": 964.3,
+      "vento_kmh": 9.7,
+      "rajada_kmh": 22.3,
+      "vento_dir_deg": 106.0,
       "chuva_mm": 0.0,
-      "radiacao_kjm2": 0.0,
-      "temp_max_c": 22.3,
-      "temp_min_c": 21.8
+      "radiacao_kjm2": 985.1,
+      "temp_max_c": 22.9,
+      "temp_min_c": 20.4
     }
   },
   "previsao15d": [
@@ -33,16 +33,16 @@
         "resumo": "Poucas nuvens",
         "temp_max": 33,
         "temp_min": 17,
-        "vento": "Moderados",
-        "dir_vento": "E-W",
+        "vento": "Fracos",
+        "dir_vento": "E-SE",
         "icone": "29"
       },
       "tarde": {
         "resumo": "Muitas nuvens",
         "temp_max": 33,
         "temp_min": 17,
-        "vento": "Fracos",
-        "dir_vento": "E-SE",
+        "vento": "Moderados",
+        "dir_vento": "E-W",
         "icone": "34"
       },
       "noite": {
@@ -50,7 +50,7 @@
         "temp_max": 33,
         "temp_min": 17,
         "vento": "Fracos",
-        "dir_vento": "SE-E",
+        "dir_vento": "E-SE",
         "icone": "51"
       }
     },
@@ -59,25 +59,25 @@
       "manha": {
         "resumo": "Claro",
         "temp_max": 34,
-        "temp_min": 18,
+        "temp_min": 17,
         "vento": "Moderados",
         "dir_vento": "E-SE",
         "icone": "28"
       },
       "tarde": {
-        "resumo": "Claro",
+        "resumo": "Nublado",
         "temp_max": 34,
-        "temp_min": 18,
-        "vento": "Fracos",
-        "dir_vento": "E-SE",
-        "icone": "28"
+        "temp_min": 17,
+        "vento": "Moderados",
+        "dir_vento": "E-W",
+        "icone": "39"
       },
       "noite": {
         "resumo": "Claro",
         "temp_max": 34,
-        "temp_min": 18,
+        "temp_min": 17,
         "vento": "Fracos",
-        "dir_vento": "SE-E",
+        "dir_vento": "E-SE",
         "icone": "12"
       }
     },
@@ -189,7 +189,7 @@
     "temp_min": 19.1
   },
   "calculos": {
-    "eto_mm_dia": 2.48,
+    "eto_mm_dia": 5.49,
     "eto_metodo": "Hargreaves–Samani (Tmax/Tmin INMET + Ra astronômica)",
     "hidrologia": {
       "q_m3s": 0.81,
