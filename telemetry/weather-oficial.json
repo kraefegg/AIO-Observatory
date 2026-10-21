@@ -2,7 +2,7 @@
   "schema": "AIO.weather.oficial/v1",
   "site": "car01",
   "geocode": "2504074",
-  "ts": "2026-10-21T19:45:58+00:00",
+  "ts": "2026-10-21T22:53:01+00:00",
   "fonte": "INMET estação A387 (SANTA CRUZ DO CAPIBARIBE, 36 km) · INMET previsão oficial 15 dias · Open-Meteo precipitação real 7 dias",
   "estacao": {
     "codigo": "A387",
@@ -11,19 +11,19 @@
     "distancia_km": "36",
     "lat": "-7.95083333",
     "lon": "-36.22583332",
-    "medicao": "2026-10-21 1900",
+    "medicao": "2026-10-21 2200",
     "atual": {
-      "temperatura_c": 31.5,
-      "sensacao_c": 28.3,
-      "umidade_pct": 38.0,
-      "pressao_hpa": 960.8,
-      "vento_kmh": 18.7,
-      "rajada_kmh": 41.4,
-      "vento_dir_deg": 134.0,
+      "temperatura_c": 26.7,
+      "sensacao_c": 24.3,
+      "umidade_pct": 59.0,
+      "pressao_hpa": 963.7,
+      "vento_kmh": 13.3,
+      "rajada_kmh": 31.3,
+      "vento_dir_deg": 121.0,
       "chuva_mm": 0.0,
-      "radiacao_kjm2": 1364.7,
-      "temp_max_c": 32.8,
-      "temp_min_c": 31.3
+      "radiacao_kjm2": 0.0,
+      "temp_max_c": 27.9,
+      "temp_min_c": 26.7
     }
   },
   "previsao15d": [
@@ -182,24 +182,24 @@
       0.0,
       0.0,
       0.0,
-      0.6
+      0.9
     ],
     "uv_max": 9.35,
     "temp_max": 34.8,
     "temp_min": 20.4
   },
   "calculos": {
-    "eto_mm_dia": 5.41,
+    "eto_mm_dia": 4.38,
     "eto_metodo": "Hargreaves–Samani (Tmax/Tmin INMET + Ra astronômica)",
     "hidrologia": {
-      "q_m3s": 1.15,
-      "v_ms": 0.16,
+      "q_m3s": 1.37,
+      "v_ms": 0.19,
       "area_m2": 7.2,
-      "precip_recente_mm": 0.3,
-      "precip_hoje_mm": 0.6,
+      "precip_recente_mm": 0.5,
+      "precip_hoje_mm": 0.9,
       "classe": "CAUDAL BAIXO",
       "rotulo": "Seca / estiagem",
-      "vol_diario_m3": 99359
+      "vol_diario_m3": 118368
     },
     "hidrologia_metodo": "Q = A × V · A = 7,2 m² · V por pluviosidade real 3 dias",
     "arvores": {
@@ -211,7 +211,7 @@
       "raio_km": 3.0
     },
     "risco_fogo": {
-      "risco_pct": 59,
+      "risco_pct": 34,
       "dias_sem_chuva": 7
     }
   }
