@@ -2,7 +2,7 @@
   "schema": "AIO.weather.oficial/v1",
   "site": "car01",
   "geocode": "2504074",
-  "ts": "2026-10-30T16:05:16+00:00",
+  "ts": "2026-10-30T20:56:03+00:00",
   "fonte": "INMET estação A387 (SANTA CRUZ DO CAPIBARIBE, 36 km) · INMET previsão oficial 15 dias · Open-Meteo precipitação real 7 dias",
   "estacao": {
     "codigo": "A387",
@@ -11,19 +11,19 @@
     "distancia_km": "36",
     "lat": "-7.95083333",
     "lon": "-36.22583332",
-    "medicao": "2026-10-30 1500",
+    "medicao": "2026-10-30 2000",
     "atual": {
-      "temperatura_c": 32.6,
-      "sensacao_c": 31.1,
-      "umidade_pct": 35.0,
-      "pressao_hpa": 960.9,
-      "vento_kmh": 10.4,
-      "rajada_kmh": 32.0,
-      "vento_dir_deg": 124.0,
+      "temperatura_c": 32.9,
+      "sensacao_c": 30.9,
+      "umidade_pct": 34.0,
+      "pressao_hpa": 958.9,
+      "vento_kmh": 13.0,
+      "rajada_kmh": 23.0,
+      "vento_dir_deg": 81.0,
       "chuva_mm": 0.0,
-      "radiacao_kjm2": 3833.2,
-      "temp_max_c": 32.8,
-      "temp_min_c": 30.9
+      "radiacao_kjm2": 490.9,
+      "temp_max_c": 34.4,
+      "temp_min_c": 32.9
     }
   },
   "previsao15d": [
@@ -139,26 +139,26 @@
       "data": "31/10/2026",
       "manha": {
         "resumo": "Poucas nuvens",
-        "temp_max": 34,
-        "temp_min": 19,
-        "vento": "Fracos",
-        "dir_vento": "E-SE",
+        "temp_max": 35,
+        "temp_min": 20,
+        "vento": "Moderados",
+        "dir_vento": "E-NE",
         "icone": "29"
       },
       "tarde": {
         "resumo": "Poucas nuvens",
-        "temp_max": 34,
-        "temp_min": 19,
+        "temp_max": 35,
+        "temp_min": 20,
         "vento": "Moderados",
-        "dir_vento": "E-SE",
+        "dir_vento": "E-W",
         "icone": "29"
       },
       "noite": {
         "resumo": "Poucas nuvens",
-        "temp_max": 34,
-        "temp_min": 19,
-        "vento": "Moderados",
-        "dir_vento": "E-W",
+        "temp_max": 35,
+        "temp_min": 20,
+        "vento": "Fracos",
+        "dir_vento": "E-SE",
         "icone": "51"
       }
     }
@@ -189,7 +189,7 @@
     "temp_min": 21.6
   },
   "calculos": {
-    "eto_mm_dia": 6.09,
+    "eto_mm_dia": 5.6,
     "eto_metodo": "Hargreaves–Samani (Tmax/Tmin INMET + Ra astronômica)",
     "hidrologia": {
       "q_m3s": 0.72,
