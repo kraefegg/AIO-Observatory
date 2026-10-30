@@ -2,7 +2,7 @@
   "schema": "AIO.weather.oficial/v1",
   "site": "car01",
   "geocode": "2504074",
-  "ts": "2026-10-30T09:15:35+00:00",
+  "ts": "2026-10-30T16:05:16+00:00",
   "fonte": "INMET estação A387 (SANTA CRUZ DO CAPIBARIBE, 36 km) · INMET previsão oficial 15 dias · Open-Meteo precipitação real 7 dias",
   "estacao": {
     "codigo": "A387",
@@ -11,19 +11,19 @@
     "distancia_km": "36",
     "lat": "-7.95083333",
     "lon": "-36.22583332",
-    "medicao": "2026-10-30 0800",
+    "medicao": "2026-10-30 1500",
     "atual": {
-      "temperatura_c": 22.1,
-      "sensacao_c": 22.5,
-      "umidade_pct": 83.0,
-      "pressao_hpa": 962.1,
-      "vento_kmh": 6.5,
-      "rajada_kmh": 16.2,
-      "vento_dir_deg": 109.0,
+      "temperatura_c": 32.6,
+      "sensacao_c": 31.1,
+      "umidade_pct": 35.0,
+      "pressao_hpa": 960.9,
+      "vento_kmh": 10.4,
+      "rajada_kmh": 32.0,
+      "vento_dir_deg": 124.0,
       "chuva_mm": 0.0,
-      "radiacao_kjm2": 0.6,
-      "temp_max_c": 22.9,
-      "temp_min_c": 22.1
+      "radiacao_kjm2": 3833.2,
+      "temp_max_c": 32.8,
+      "temp_min_c": 30.9
     }
   },
   "previsao15d": [
@@ -138,28 +138,28 @@
     {
       "data": "31/10/2026",
       "manha": {
-        "resumo": "Nublado",
+        "resumo": "Poucas nuvens",
         "temp_max": 34,
         "temp_min": 19,
         "vento": "Fracos",
         "dir_vento": "E-SE",
-        "icone": "39"
+        "icone": "29"
       },
       "tarde": {
-        "resumo": "Nublado",
+        "resumo": "Poucas nuvens",
         "temp_max": 34,
         "temp_min": 19,
         "vento": "Moderados",
         "dir_vento": "E-SE",
-        "icone": "39"
+        "icone": "29"
       },
       "noite": {
-        "resumo": "Claro",
+        "resumo": "Poucas nuvens",
         "temp_max": 34,
         "temp_min": 19,
         "vento": "Moderados",
         "dir_vento": "E-W",
-        "icone": "12"
+        "icone": "51"
       }
     }
   ],
@@ -189,7 +189,7 @@
     "temp_min": 21.6
   },
   "calculos": {
-    "eto_mm_dia": 3.21,
+    "eto_mm_dia": 6.09,
     "eto_metodo": "Hargreaves–Samani (Tmax/Tmin INMET + Ra astronômica)",
     "hidrologia": {
       "q_m3s": 0.72,
@@ -211,7 +211,7 @@
       "raio_km": 3.0
     },
     "risco_fogo": {
-      "risco_pct": 23,
+      "risco_pct": 53,
       "dias_sem_chuva": 0
     }
   }
