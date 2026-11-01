@@ -2,7 +2,7 @@
   "schema": "AIO.weather.oficial/v1",
   "site": "car01",
   "geocode": "2504074",
-  "ts": "2026-10-31T23:50:58+00:00",
+  "ts": "2026-11-01T03:08:43+00:00",
   "fonte": "INMET estação A387 (SANTA CRUZ DO CAPIBARIBE, 36 km) · INMET previsão oficial 15 dias · Open-Meteo precipitação real 7 dias",
   "estacao": {
     "codigo": "A387",
@@ -11,19 +11,19 @@
     "distancia_km": "36",
     "lat": "-7.95083333",
     "lon": "-36.22583332",
-    "medicao": "2026-10-31 2300",
+    "medicao": "2026-11-01 0200",
     "atual": {
-      "temperatura_c": 26.9,
-      "sensacao_c": 24.8,
-      "umidade_pct": 63.0,
-      "pressao_hpa": 961.2,
-      "vento_kmh": 13.3,
-      "rajada_kmh": 30.6,
-      "vento_dir_deg": 88.0,
+      "temperatura_c": 23.5,
+      "sensacao_c": 23.0,
+      "umidade_pct": 79.0,
+      "pressao_hpa": 961.7,
+      "vento_kmh": 9.0,
+      "rajada_kmh": 26.6,
+      "vento_dir_deg": 118.0,
       "chuva_mm": 0.0,
       "radiacao_kjm2": 0.0,
-      "temp_max_c": 28.3,
-      "temp_min_c": 26.9
+      "temp_max_c": 24.2,
+      "temp_min_c": 23.5
     }
   },
   "previsao15d": [
@@ -57,28 +57,28 @@
     {
       "data": "02/11/2026",
       "manha": {
-        "resumo": null,
-        "temp_max": null,
-        "temp_min": null,
-        "vento": null,
-        "dir_vento": null,
-        "icone": null
+        "resumo": "Encoberto",
+        "temp_max": 33,
+        "temp_min": 19,
+        "vento": "Moderados",
+        "dir_vento": "E-SE",
+        "icone": "44"
       },
       "tarde": {
-        "resumo": null,
-        "temp_max": null,
-        "temp_min": null,
-        "vento": null,
-        "dir_vento": null,
-        "icone": null
+        "resumo": "Claro",
+        "temp_max": 33,
+        "temp_min": 19,
+        "vento": "Moderados",
+        "dir_vento": "E-SE",
+        "icone": "28"
       },
       "noite": {
-        "resumo": null,
-        "temp_max": null,
-        "temp_min": null,
-        "vento": null,
-        "dir_vento": null,
-        "icone": null
+        "resumo": "Claro",
+        "temp_max": 33,
+        "temp_min": 19,
+        "vento": "Fracos",
+        "dir_vento": "SE-W",
+        "icone": "12"
       }
     },
     {
@@ -136,43 +136,43 @@
       }
     },
     {
-      "data": "31/10/2026",
+      "data": "05/11/2026",
       "manha": {
-        "resumo": "Poucas nuvens",
-        "temp_max": 38,
-        "temp_min": 19,
-        "vento": "Fracos",
-        "dir_vento": "E-SE",
-        "icone": "29"
+        "resumo": null,
+        "temp_max": null,
+        "temp_min": null,
+        "vento": null,
+        "dir_vento": null,
+        "icone": null
       },
       "tarde": {
-        "resumo": "Poucas nuvens",
-        "temp_max": 38,
-        "temp_min": 19,
-        "vento": "Fracos",
-        "dir_vento": "E-SE",
-        "icone": "29"
+        "resumo": null,
+        "temp_max": null,
+        "temp_min": null,
+        "vento": null,
+        "dir_vento": null,
+        "icone": null
       },
       "noite": {
-        "resumo": "Poucas nuvens",
-        "temp_max": 38,
-        "temp_min": 19,
-        "vento": "Moderados",
-        "dir_vento": "E-W",
-        "icone": "51"
+        "resumo": null,
+        "temp_max": null,
+        "temp_min": null,
+        "vento": null,
+        "dir_vento": null,
+        "icone": null
       }
     }
   ],
   "openmeteo": {
     "time": [
-      "2026-10-24",
       "2026-10-25",
       "2026-10-26",
       "2026-10-27",
       "2026-10-28",
       "2026-10-29",
       "2026-10-30",
-      "2026-10-31"
+      "2026-10-31",
+      "2026-11-01"
     ],
     "precip_sum": [
       0.0,
@@ -184,12 +184,12 @@
       0.0,
       0.0
     ],
-    "uv_max": 9.45,
-    "temp_max": 34.5,
-    "temp_min": 21.1
+    "uv_max": 9.4,
+    "temp_max": 34.8,
+    "temp_min": 20.9
   },
   "calculos": {
-    "eto_mm_dia": 4.78,
+    "eto_mm_dia": 3.1,
     "eto_metodo": "Hargreaves–Samani (Tmax/Tmin INMET + Ra astronômica)",
     "hidrologia": {
       "q_m3s": 0.72,
