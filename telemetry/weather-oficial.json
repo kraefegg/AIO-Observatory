@@ -2,7 +2,7 @@
   "schema": "AIO.weather.oficial/v1",
   "site": "car01",
   "geocode": "2504074",
-  "ts": "2026-11-11T01:35:32+00:00",
+  "ts": "2026-11-11T08:36:47+00:00",
   "fonte": "INMET estação A387 (SANTA CRUZ DO CAPIBARIBE, 36 km) · INMET previsão oficial 15 dias · Open-Meteo precipitação real 7 dias",
   "estacao": {
     "codigo": "A387",
@@ -11,57 +11,30 @@
     "distancia_km": "36",
     "lat": "-7.95083333",
     "lon": "-36.22583332",
-    "medicao": "2026-11-11 0100",
+    "medicao": "2026-11-11 0800",
     "atual": {
-      "temperatura_c": 25.4,
-      "sensacao_c": 23.3,
-      "umidade_pct": 71.0,
-      "pressao_hpa": 967.9,
-      "vento_kmh": 13.3,
-      "rajada_kmh": 30.6,
-      "vento_dir_deg": 129.0,
+      "temperatura_c": 23.4,
+      "sensacao_c": 24.3,
+      "umidade_pct": 79.0,
+      "pressao_hpa": 966.4,
+      "vento_kmh": 5.0,
+      "rajada_kmh": 12.6,
+      "vento_dir_deg": 109.0,
       "chuva_mm": 0.0,
-      "radiacao_kjm2": 0.0,
-      "temp_max_c": 25.9,
-      "temp_min_c": 25.4
+      "radiacao_kjm2": 1.1,
+      "temp_max_c": 23.5,
+      "temp_min_c": 23.2
     }
   },
   "previsao15d": [
-    {
-      "data": "10/11/2026",
-      "manha": {
-        "resumo": "Muitas nuvens",
-        "temp_max": 34,
-        "temp_min": 20,
-        "vento": "Moderados",
-        "dir_vento": "E-SE",
-        "icone": "34"
-      },
-      "tarde": {
-        "resumo": "Muitas nuvens com possibilidade de chuva isolada",
-        "temp_max": 34,
-        "temp_min": 20,
-        "vento": "Moderados",
-        "dir_vento": "E-SE",
-        "icone": "36"
-      },
-      "noite": {
-        "resumo": "Muitas nuvens",
-        "temp_max": 34,
-        "temp_min": 20,
-        "vento": "Moderados",
-        "dir_vento": "SE-E",
-        "icone": "56"
-      }
-    },
     {
       "data": "11/11/2026",
       "manha": {
         "resumo": "Poucas nuvens",
         "temp_max": 34,
-        "temp_min": 21,
-        "vento": "Moderados",
-        "dir_vento": "SE-E",
+        "temp_min": 20,
+        "vento": "Fortes",
+        "dir_vento": "W-SW",
         "icone": "29"
       },
       "tarde": {
@@ -75,7 +48,7 @@
       "noite": {
         "resumo": "Poucas nuvens",
         "temp_max": 34,
-        "temp_min": 21,
+        "temp_min": 20,
         "vento": "Moderados",
         "dir_vento": "SE-E",
         "icone": "51"
@@ -84,28 +57,28 @@
     {
       "data": "12/11/2026",
       "manha": {
-        "resumo": null,
-        "temp_max": null,
-        "temp_min": null,
-        "vento": null,
-        "dir_vento": null,
-        "icone": null
+        "resumo": "Encoberto com pancadas de chuva e trovoadas isoladas",
+        "temp_max": 33,
+        "temp_min": 27,
+        "vento": "Fortes",
+        "dir_vento": "W-SW",
+        "icone": "48"
       },
       "tarde": {
-        "resumo": null,
-        "temp_max": null,
-        "temp_min": null,
-        "vento": null,
-        "dir_vento": null,
-        "icone": null
+        "resumo": "Encoberto com pancadas de chuva e trovoadas isoladas",
+        "temp_max": 33,
+        "temp_min": 27,
+        "vento": "Moderados",
+        "dir_vento": "E-SE",
+        "icone": "48"
       },
       "noite": {
-        "resumo": null,
-        "temp_max": null,
-        "temp_min": null,
-        "vento": null,
-        "dir_vento": null,
-        "icone": null
+        "resumo": "Muitas nuvens",
+        "temp_max": 33,
+        "temp_min": 27,
+        "vento": "Moderados",
+        "dir_vento": "E-W",
+        "icone": "56"
       }
     },
     {
@@ -161,18 +134,45 @@
         "dir_vento": null,
         "icone": null
       }
+    },
+    {
+      "data": "15/11/2026",
+      "manha": {
+        "resumo": null,
+        "temp_max": null,
+        "temp_min": null,
+        "vento": null,
+        "dir_vento": null,
+        "icone": null
+      },
+      "tarde": {
+        "resumo": null,
+        "temp_max": null,
+        "temp_min": null,
+        "vento": null,
+        "dir_vento": null,
+        "icone": null
+      },
+      "noite": {
+        "resumo": null,
+        "temp_max": null,
+        "temp_min": null,
+        "vento": null,
+        "dir_vento": null,
+        "icone": null
+      }
     }
   ],
   "openmeteo": {
     "time": [
-      "2026-11-03",
       "2026-11-04",
       "2026-11-05",
       "2026-11-06",
       "2026-11-07",
       "2026-11-08",
       "2026-11-09",
-      "2026-11-10"
+      "2026-11-10",
+      "2026-11-11"
     ],
     "precip_sum": [
       0.0,
@@ -181,25 +181,25 @@
       0.0,
       0.0,
       0.0,
-      0.0,
-      0.8
+      0.9,
+      0.5
     ],
     "uv_max": 9.4,
-    "temp_max": 35.0,
-    "temp_min": 21.3
+    "temp_max": 35.4,
+    "temp_min": 21.8
   },
   "calculos": {
-    "eto_mm_dia": 2.74,
+    "eto_mm_dia": 2.01,
     "eto_metodo": "Hargreaves–Samani (Tmax/Tmin INMET + Ra astronômica)",
     "hidrologia": {
-      "q_m3s": 1.3,
-      "v_ms": 0.18,
+      "q_m3s": 1.47,
+      "v_ms": 0.204,
       "area_m2": 7.2,
-      "precip_recente_mm": 0.4,
-      "precip_hoje_mm": 0.8,
+      "precip_recente_mm": 0.5,
+      "precip_hoje_mm": 0.5,
       "classe": "CAUDAL BAIXO",
       "rotulo": "Seca / estiagem",
-      "vol_diario_m3": 112320
+      "vol_diario_m3": 127008
     },
     "hidrologia_metodo": "Q = A × V · A = 7,2 m² · V por pluviosidade real 3 dias",
     "arvores": {
@@ -211,8 +211,8 @@
       "raio_km": 3.0
     },
     "risco_fogo": {
-      "risco_pct": 34,
-      "dias_sem_chuva": 7
+      "risco_pct": 31,
+      "dias_sem_chuva": 6
     }
   }
 }
