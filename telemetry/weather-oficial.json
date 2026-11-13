@@ -2,8 +2,8 @@
   "schema": "AIO.weather.oficial/v1",
   "site": "car01",
   "geocode": "2504074",
-  "ts": "2026-11-12T20:12:08+00:00",
-  "fonte": "INMET estação A387 (SANTA CRUZ DO CAPIBARIBE, 36 km) · INMET previsão oficial 15 dias · Open-Meteo precipitação real 7 dias",
+  "ts": "2026-11-13T01:16:57+00:00",
+  "fonte": "INMET estação A387 (SANTA CRUZ DO CAPIBARIBE, 36 km) · INMET previsão oficial 15 dias",
   "estacao": {
     "codigo": "A387",
     "nome": "SANTA CRUZ DO CAPIBARIBE",
@@ -11,19 +11,19 @@
     "distancia_km": "36",
     "lat": "-7.95083333",
     "lon": "-36.22583332",
-    "medicao": "2026-11-12 1900",
+    "medicao": "2026-11-13 0000",
     "atual": {
-      "temperatura_c": 31.7,
-      "sensacao_c": 29.3,
-      "umidade_pct": 40.0,
-      "pressao_hpa": 961.9,
-      "vento_kmh": 14.8,
-      "rajada_kmh": 38.5,
-      "vento_dir_deg": 104.0,
+      "temperatura_c": 24.3,
+      "sensacao_c": 22.8,
+      "umidade_pct": 71.0,
+      "pressao_hpa": 965.1,
+      "vento_kmh": 10.8,
+      "rajada_kmh": 29.2,
+      "vento_dir_deg": 100.0,
       "chuva_mm": 0.0,
-      "radiacao_kjm2": 1387.1,
-      "temp_max_c": 32.6,
-      "temp_min_c": 31.2
+      "radiacao_kjm2": 0.0,
+      "temp_max_c": 25.2,
+      "temp_min_c": 24.3
     }
   },
   "previsao15d": [
@@ -163,44 +163,11 @@
       }
     }
   ],
-  "openmeteo": {
-    "time": [
-      "2026-11-05",
-      "2026-11-06",
-      "2026-11-07",
-      "2026-11-08",
-      "2026-11-09",
-      "2026-11-10",
-      "2026-11-11",
-      "2026-11-12"
-    ],
-    "precip_sum": [
-      0.0,
-      0.0,
-      0.0,
-      0.0,
-      0.0,
-      0.9,
-      0.6,
-      0.4
-    ],
-    "uv_max": 9.4,
-    "temp_max": 35.0,
-    "temp_min": 21.5
-  },
+  "openmeteo": null,
   "calculos": {
-    "eto_mm_dia": 5.24,
+    "eto_mm_dia": 3.59,
     "eto_metodo": "Hargreaves–Samani (Tmax/Tmin INMET + Ra astronômica)",
-    "hidrologia": {
-      "q_m3s": 1.53,
-      "v_ms": 0.212,
-      "area_m2": 7.2,
-      "precip_recente_mm": 0.6,
-      "precip_hoje_mm": 0.4,
-      "classe": "CAUDAL BAIXO",
-      "rotulo": "Seca / estiagem",
-      "vol_diario_m3": 132192
-    },
+    "hidrologia": null,
     "hidrologia_metodo": "Q = A × V · A = 7,2 m² · V por pluviosidade real 3 dias",
     "arvores": {
       "ndvi": 0.42,
@@ -211,8 +178,8 @@
       "raio_km": 3.0
     },
     "risco_fogo": {
-      "risco_pct": 58,
-      "dias_sem_chuva": 5
+      "risco_pct": 13,
+      "dias_sem_chuva": 0
     }
   }
 }
