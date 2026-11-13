@@ -2,7 +2,7 @@
   "schema": "AIO.weather.oficial/v1",
   "site": "car01",
   "geocode": "2504074",
-  "ts": "2026-11-13T08:17:26+00:00",
+  "ts": "2026-11-13T16:36:09+00:00",
   "fonte": "INMET estação A387 (SANTA CRUZ DO CAPIBARIBE, 36 km) · INMET previsão oficial 15 dias · Open-Meteo precipitação real 7 dias",
   "estacao": {
     "codigo": "A387",
@@ -11,19 +11,19 @@
     "distancia_km": "36",
     "lat": "-7.95083333",
     "lon": "-36.22583332",
-    "medicao": "2026-11-13 0700",
+    "medicao": "2026-11-13 1600",
     "atual": {
-      "temperatura_c": 22.8,
-      "sensacao_c": 21.8,
-      "umidade_pct": 79.0,
-      "pressao_hpa": 963.6,
-      "vento_kmh": 9.7,
-      "rajada_kmh": 21.2,
-      "vento_dir_deg": 148.0,
+      "temperatura_c": 32.3,
+      "sensacao_c": 30.6,
+      "umidade_pct": 40.0,
+      "pressao_hpa": 962.0,
+      "vento_kmh": 12.2,
+      "rajada_kmh": 27.4,
+      "vento_dir_deg": 82.0,
       "chuva_mm": 0.0,
-      "radiacao_kjm2": 0.0,
-      "temp_max_c": 22.9,
-      "temp_min_c": 22.6
+      "radiacao_kjm2": 2956.9,
+      "temp_max_c": 34.2,
+      "temp_min_c": 31.4
     }
   },
   "previsao15d": [
@@ -57,28 +57,28 @@
     {
       "data": "14/11/2026",
       "manha": {
-        "resumo": "Claro",
+        "resumo": "Poucas nuvens",
         "temp_max": 35,
         "temp_min": 19,
         "vento": "Fracos",
         "dir_vento": "E-SE",
-        "icone": "28"
+        "icone": "29"
       },
       "tarde": {
-        "resumo": "Encoberto",
+        "resumo": "Muitas nuvens",
         "temp_max": 35,
         "temp_min": 19,
         "vento": "Moderados",
         "dir_vento": "E-NE",
-        "icone": "44"
+        "icone": "34"
       },
       "noite": {
-        "resumo": "Encoberto",
+        "resumo": "Muitas nuvens",
         "temp_max": 35,
         "temp_min": 19,
         "vento": "Moderados",
         "dir_vento": "E-W",
-        "icone": "44"
+        "icone": "56"
       }
     },
     {
@@ -182,24 +182,24 @@
       0.9,
       0.6,
       0.3,
-      5.6
+      1.3
     ],
     "uv_max": 9.4,
     "temp_max": 36.2,
     "temp_min": 21.0
   },
   "calculos": {
-    "eto_mm_dia": 1.98,
+    "eto_mm_dia": 7.54,
     "eto_metodo": "Hargreaves–Samani (Tmax/Tmin INMET + Ra astronômica)",
     "hidrologia": {
-      "q_m3s": 2.88,
-      "v_ms": 0.4,
+      "q_m3s": 1.96,
+      "v_ms": 0.272,
       "area_m2": 7.2,
-      "precip_recente_mm": 3.0,
-      "precip_hoje_mm": 5.6,
-      "classe": "REGIME NORMAL",
-      "rotulo": "Chuva fraca recente",
-      "vol_diario_m3": 248832
+      "precip_recente_mm": 0.9,
+      "precip_hoje_mm": 1.3,
+      "classe": "CAUDAL BAIXO",
+      "rotulo": "Seca / estiagem",
+      "vol_diario_m3": 169344
     },
     "hidrologia_metodo": "Q = A × V · A = 7,2 m² · V por pluviosidade real 3 dias",
     "arvores": {
@@ -211,7 +211,7 @@
       "raio_km": 3.0
     },
     "risco_fogo": {
-      "risco_pct": 25,
+      "risco_pct": 55,
       "dias_sem_chuva": 4
     }
   }
