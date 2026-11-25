@@ -2,7 +2,7 @@
   "schema": "AIO.weather.oficial/v1",
   "site": "car01",
   "geocode": "2504074",
-  "ts": "2026-11-25T11:52:02+00:00",
+  "ts": "2026-11-25T20:49:37+00:00",
   "fonte": "INMET estação A387 (SANTA CRUZ DO CAPIBARIBE, 36 km) · INMET previsão oficial 15 dias · Open-Meteo precipitação real 7 dias",
   "estacao": {
     "codigo": "A387",
@@ -11,19 +11,19 @@
     "distancia_km": "36",
     "lat": "-7.95083333",
     "lon": "-36.22583332",
-    "medicao": "2026-11-25 1100",
+    "medicao": "2026-11-25 2000",
     "atual": {
-      "temperatura_c": 27.2,
-      "sensacao_c": 25.3,
-      "umidade_pct": 62.0,
-      "pressao_hpa": 965.5,
-      "vento_kmh": 13.0,
-      "rajada_kmh": 28.1,
-      "vento_dir_deg": 84.0,
+      "temperatura_c": 30.9,
+      "sensacao_c": 27.8,
+      "umidade_pct": 43.0,
+      "pressao_hpa": 961.3,
+      "vento_kmh": 18.7,
+      "rajada_kmh": 36.7,
+      "vento_dir_deg": 86.0,
       "chuva_mm": 0.0,
-      "radiacao_kjm2": 1494.4,
-      "temp_max_c": 28.2,
-      "temp_min_c": 25.6
+      "radiacao_kjm2": 549.6,
+      "temp_max_c": 33.1,
+      "temp_min_c": 30.9
     }
   },
   "previsao15d": [
@@ -57,28 +57,28 @@
     {
       "data": "26/11/2026",
       "manha": {
-        "resumo": "Claro",
-        "temp_max": 37,
-        "temp_min": 19,
-        "vento": "Fracos",
+        "resumo": "Poucas nuvens",
+        "temp_max": 36,
+        "temp_min": 20,
+        "vento": "Moderados",
         "dir_vento": "E-SE",
-        "icone": "28"
+        "icone": "29"
       },
       "tarde": {
-        "resumo": "Encoberto",
-        "temp_max": 37,
-        "temp_min": 19,
+        "resumo": "Poucas nuvens",
+        "temp_max": 36,
+        "temp_min": 20,
         "vento": "Moderados",
         "dir_vento": "E-SE",
-        "icone": "44"
+        "icone": "29"
       },
       "noite": {
-        "resumo": "Claro",
-        "temp_max": 37,
-        "temp_min": 19,
-        "vento": "Moderados",
-        "dir_vento": "E-SE",
-        "icone": "12"
+        "resumo": "Poucas nuvens",
+        "temp_max": 36,
+        "temp_min": 20,
+        "vento": "Fracos",
+        "dir_vento": "SE-E",
+        "icone": "51"
       }
     },
     {
@@ -189,7 +189,7 @@
     "temp_min": 21.8
   },
   "calculos": {
-    "eto_mm_dia": 6.41,
+    "eto_mm_dia": 6.57,
     "eto_metodo": "Hargreaves–Samani (Tmax/Tmin INMET + Ra astronômica)",
     "hidrologia": {
       "q_m3s": 0.79,
@@ -211,7 +211,7 @@
       "raio_km": 3.0
     },
     "risco_fogo": {
-      "risco_pct": 47,
+      "risco_pct": 72,
       "dias_sem_chuva": 8
     }
   }
